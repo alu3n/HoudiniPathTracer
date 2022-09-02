@@ -15,8 +15,7 @@ set( library_name HoudiniPathTracer )
 
 add_library( ${library_name} SHARED
     HoudiniHook/Hook.cpp
-    HoudiniHook/Hook.hpp
-)
+        )
 
 target_link_libraries( ${library_name} Houdini )
 
