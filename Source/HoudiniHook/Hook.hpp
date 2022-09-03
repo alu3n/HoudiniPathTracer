@@ -7,8 +7,7 @@
 
 #include <ROP/ROP_Node.h>
 #include <UT/UT_StringHolder.h>
-
-
+#include <PRM/PRM_Include.h>
 
 class PathTracer : public ROP_Node{
 public:
@@ -17,9 +16,8 @@ public:
     static const UT_StringHolder NodeName; //Name of the rop node when created
 protected:
     PathTracer(OP_Network *net, const char *name, OP_Operator *op);
-    ~PathTracer() override{};
+    ~PathTracer() override;
 };
-
 
 
 #endif //NPRG045_HOOK_HPP

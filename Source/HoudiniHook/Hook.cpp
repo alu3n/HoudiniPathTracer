@@ -13,16 +13,44 @@
 #include <UT/UT_DSOVersion.h>
 #include <UT/UT_OFStream.h>
 
+static PRM_Name prmNames[]{
+        PRM_Name{"cameraPath", "Camera Path"},
+        PRM_Name{"sampleCount","Sample Count"},
+        PRM_Name{"areaLight","Area Light"},
+        PRM_Name{"geometryTarget","Geometry Traget"}
+};
+
+static PRM_Default prmDefaults[]{
+    PRM_Default{0,""},
+    PRM_Default{100},
+    PRM_Default{0,""},
+    PRM_Default{0,""}
+};
+
+static PRM_Template prmTemplates[]{
+    PRM_Template{PRM_STRING,PRM_TYPE_DYNAMIC_PATH,1,&prmNames[0],&prmDefaults[0]},
+    PRM_Template{PRM_INT,1,&prmNames[1],&prmDefaults[1]},
+    PRM_Template{PRM_STRING,PRM_TYPE_DYNAMIC_PATH,1,&prmNames[2],&prmDefaults[2]},
+    PRM_Template{PRM_STRING,PRM_TYPE_DYNAMIC_PATH,1,&prmNames[3],&prmDefaults[3]}
+};
+
 OP_Node *PathTracer::BuildOPNode(OP_Network *net, const char *name, OP_Operator *op) {
     return new PathTracer(net,name,op);
 }
 
+
+
 PRM_Template *PathTracer::BuildPRMTemplate() {
-    return nullptr;
+    return &prmTemplates[0];
 }
+
 
 PathTracer::PathTracer(OP_Network *net, const char *name, OP_Operator *op) : ROP_Node(net,name,op) {
 
+}
+
+PathTracer::~PathTracer(){
+    //Todo: Delete parameters
 }
 
 void newDriverOperator(OP_OperatorTable *table){
