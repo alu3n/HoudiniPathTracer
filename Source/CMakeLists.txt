@@ -2,10 +2,8 @@ cmake_minimum_required( VERSION 3.6 )
 
 project( NPRG045 )
 
-# TODO: Set env variables locally, give user instructions to do the same
-
-set( HFS /Applications/Houdini/Houdini19.5.353/Frameworks/Houdini.framework/Versions/Current/Resources)
-set( CMAKE_PREFIX_PATH /Applications/Houdini/Houdini19.5.353/Frameworks/Houdini.framework/Versions/Current/Resources/toolkit/cmake)
+set( HFS $ENV{HFS} )
+set( CMAKE_PREFIX_PATH $ENV{CMAKE_PREFIX_PATH} )
 
 list( APPEND CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}" )
 
@@ -15,7 +13,9 @@ set( library_name HoudiniPathTracer )
 
 add_library( ${library_name} SHARED
     HoudiniHook/Hook.cpp
-        )
+    HoudiniHook/Hook.hpp
+    Core/PathTracer.hpp
+)
 
 target_link_libraries( ${library_name} Houdini )
 

@@ -9,14 +9,14 @@
 #include <UT/UT_StringHolder.h>
 #include <PRM/PRM_Include.h>
 
-class PathTracer : public ROP_Node{
+class PathTracerHook : public ROP_Node{
 public:
     static PRM_Template *BuildPRMTemplate();
     static OP_Node *BuildOPNode(OP_Network *net, const char *name, OP_Operator *op);
     static const UT_StringHolder NodeName; //Name of the rop node when created
 protected:
-    PathTracer(OP_Network *net, const char *name, OP_Operator *op);
-    ~PathTracer() override;
+    PathTracerHook(OP_Network *net, const char *name, OP_Operator *op);
+    ~PathTracerHook() override;
 };
 
 

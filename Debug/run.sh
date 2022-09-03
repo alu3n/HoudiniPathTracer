@@ -2,7 +2,9 @@
 
 #!/bin/bash
 
+source ../config.env
+
 cd Build
 make
 cd ..
-/Applications/Houdini/Houdini19.5.353/Frameworks/Houdini.framework/Versions/Current/Resources/bin/houdini ./debug.hipnc
+${HOUDINI_BINARY_PATH} ${DEBUG_SCENE_PATH}
