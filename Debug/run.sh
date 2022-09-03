@@ -4,7 +4,11 @@
 
 source ../config.env
 
+# TODO: cmake is unnecessary in some scenarios, prevent it!
+
+mkdir Build
 cd Build
+cmake ../../Source
 make
-cd ..
+
 ${HOUDINI_BINARY_PATH} ${DEBUG_SCENE_PATH}
