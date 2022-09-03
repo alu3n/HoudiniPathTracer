@@ -11,3 +11,4 @@ For macOS:
 
 ## Build
 Follow instruction on (HDK Page)[https://www.sidefx.com/docs/hdk/_h_d_k__intro__compiling.html]
+**IMPORTANT: ** As of now some of the scripts have hardcoded variables which correspond to locations on my computer etc. I will change them to env variables in the future!
