@@ -13,7 +13,10 @@ set( library_name HoudiniPathTracer )
 
 add_library( ${library_name} SHARED
     HoudiniHook/Hook.cpp
-    HoudiniHook/Hook.hpp
+    HoudiniHook/GeoEditNode.hpp
+    HoudiniHook/GeoEditNode.cpp
+    HoudiniHook/PathTracerNode.hpp
+    HoudiniHook/PathTracerNode.cpp
     Core/PathTracer.hpp
 )
 
