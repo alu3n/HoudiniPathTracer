@@ -6,8 +6,6 @@
 #define NPRG045_PATHTRACERNODE_HPP
 
 #include <ROP/ROP_Node.h>
-
-#include <ROP/ROP_Node.h>
 #include <UT/UT_StringHolder.h>
 #include <PRM/PRM_Include.h>
 

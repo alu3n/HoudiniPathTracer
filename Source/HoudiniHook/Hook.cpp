@@ -24,7 +24,7 @@ void newDriverOperator(OP_OperatorTable *table){
 
 void newSopOperator(OP_OperatorTable *table){
     table->addOperator(new OP_Operator(
-    "asdasded",
+    "geo_edit",
     "Geo Edit",
     GeoEditNode::BuildOPNode,
     GeoEditNode::BuildPRMTemplate(),

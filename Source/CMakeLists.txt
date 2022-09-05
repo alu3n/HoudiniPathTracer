@@ -12,6 +12,7 @@ find_package( Houdini REQUIRED )
 set( library_name HoudiniPathTracer )
 
 add_library( ${library_name} SHARED
+    Core/PathTracer.cpp
     HoudiniHook/Hook.cpp
     HoudiniHook/GeoEditNode.hpp
     HoudiniHook/GeoEditNode.cpp
