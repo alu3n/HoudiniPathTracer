@@ -14,8 +14,9 @@ set( library_name HoudiniPathTracer )
 #Todo: Break the project into multiple libraries to avoid linking problems
 
 add_library( ${library_name} SHARED
-    Core/PathTracer/PathTracer.cpp
     Core/SceneComponents/Camera.cpp
+    Core/Renderer.cpp
+    Core/WhittedRayTracer/WhittedRayTracer.cpp
     HoudiniHook/DebugNode.cpp
     HoudiniHook/Hook.cpp
     HoudiniHook/RendererNode.cpp

@@ -11,26 +11,26 @@
 #include <vector>
 #include <array>
 
-/*
- *
- */
 
 using ImageMatrix = std::vector<std::vector<UT_Vector3F>>;
 
 struct RenderSettings{
+    RenderSettings(Camera cam, int fps);
     Camera Cam; //Todo: Put info such as shutterspeed etc. into camera
 //    UT_Vector2i Framerange;
-    int fps;
+    int FPS;
 };
 
 class Renderer{
 public:
-    Renderer(RenderSettings settings);
+    Renderer(RenderSettings settings, SOP_Node * geo); //Todo: Change input
     virtual ImageMatrix RenderImage(int frame);
     virtual std::vector<ImageMatrix> RenderAnimation(UT_Vector2i framerange);
 protected:
-    virtual UT_Vector3F RenderPixel(UT_Vector2i pixelCoords) = 0;
+    virtual UT_Vector3F RenderPixel(UT_Vector2i pixelCoords, int frame) = 0;
+
     RenderSettings Settings;
+    SOP_Node * Geo;
 };
 
 #endif //NPRG045_RENDERER_HPP
