@@ -23,13 +23,13 @@ public:
     Camera(OBJ_Camera * cam, OP_Context & context);
     GU_Ray GenerateRay(UT_Vector2i, OP_Context & context); //Slower due to the parameter loading
     GU_Ray GenerateRay(UT_Vector2i);
+    UT_Vector2i ImageResolution;
 private:
     void LoadCamera(OP_Context & context);
 
     OBJ_Camera * CameraNode;
 //    fpreal LastTimepoint; //Todo: Maybe add check to avoid reloading camera /w same timepoint
 
-    UT_Vector2i ImageResolution;
 
     fpreal FocalLength;
     fpreal Aperture;
