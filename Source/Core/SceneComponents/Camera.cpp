@@ -5,55 +5,63 @@
 
 #include "Camera.hpp"
 
+#include <iostream>
 #include <exception>
 #include <OBJ/OBJ_Node.h>
 #include <OBJ/OBJ_Camera.h>
 
-//Camera::Camera(UT_Vector2i resolution, float focalLenght, float aperture) {
-//    Resolution = resolution;
-//    FocalLength = focalLenght/1000.0;
-//    Aperture = aperture/1000.0;
-//
-//    XIncrement = UT_Vector3F(Aperture/resolution.x(),0,0);
-//    YIncrement = UT_Vector3F(0,-XIncrement.x(),0);
-//    CornerPosition = UT_Vector3F(-Aperture/2,XIncrement.x()*resolution.y()/2,FocalLength);
-//    Origin = UT_Vector3F(0,0,0);
-//}
-
-Camera::Camera(OBJ_Camera *camera, fpreal32 time) {
-    CameraNode = camera;
-
-    Resolution = UT_Vector2i(
-            camera->evalInt("res",0,time),
-            camera->evalInt("res",1,time)
-    );
-    FocalLength = camera->evalFloat("focal",0,time)/1000.0;
-    Aperture = camera->evalFloat("aperture",0,time)/1000.0;
-
-    XIncrement = UT_Vector3F(Aperture/Resolution.x(),0,0);
-    YIncrement = UT_Vector3F(0,-XIncrement.x(),0);
-    CornerPosition = UT_Vector3F(-Aperture/2,XIncrement.x()*Resolution.y()/2,FocalLength);
-    Origin = UT_Vector3F(0,0,0);
-
-    UT_DMatrix4 world_xform;
-    OP_Context context(time);
-    camera->getInverseLocalToWorldTransform(context,world_xform);
-    Origin = Origin*world_xform;
+//Todo: Place this function outside the camera class... I wasn't able to find norm function
+UT_Vector4F normalize(UT_Vector4F vec){
+    float scale = sqrt(vec.x()*vec.x()+vec.y()*vec.y()+vec.z()*vec.z());
+    return (1/scale)*vec;
 }
 
+Camera::Camera(OBJ_Camera *cam, OP_Context & context) {
+    CameraNode = cam;
+    LoadCamera(context);
+}
 
-GU_Ray Camera::GenerateRay(UT_Vector2i pixel) {
-    //Todo: Generate rays with respect to certain distribution, cook, improve speed
-
-    if (pixel.x() < 0 || pixel.x() >= Resolution.x() || pixel.y() < 0 || pixel.y() >= Resolution.y()) {
+GU_Ray Camera::GenerateRay(UT_Vector2i PixelCoords) {
+    if (PixelCoords.x() < 0 || PixelCoords.x() >= ImageResolution.x() || PixelCoords.y() < 0 || PixelCoords.y() >= ImageResolution.y()) {
         throw std::invalid_argument("Pixel must be in a range supported by the camera!");
     }
 
-    auto projectionPlaneIntersection = CornerPosition + (0.5+pixel.x()) * XIncrement + (0.5+pixel.y()) * YIncrement;
-    auto position = projectionPlaneIntersection - Origin;
+    //Todo: Add other sampling methods ... this is just generating ray in the center of the pixel
+    auto positionOnSensor = CornerPosition + (0.5+PixelCoords.x()) * XIncrement + (0.5+PixelCoords.y()) * YIncrement;
+    auto directionVector = positionOnSensor - Origin;
 
-    float scale = sqrt(position.x()*position.x() + position.y()*position.y()+ position.z()*position.z());
+    auto dir4 = normalize(directionVector);
 
-    return {position,(1/scale)*position};
-    //Todo: normalize the vector
+
+    UT_Vector3F dir = UT_Vector3F(dir4.x(),dir4.y(),dir4.z());
+    UT_Vector3F org = UT_Vector3F(positionOnSensor.x(),positionOnSensor.y(),positionOnSensor.z());
+    return {org,dir};
 }
+
+GU_Ray Camera::GenerateRay(UT_Vector2i PixelCoords, OP_Context & context) {
+    LoadCamera(context);
+    return GenerateRay(PixelCoords);
+}
+
+void Camera::LoadCamera(OP_Context &context) {
+    auto time = context.getTime();
+
+    ImageResolution = UT_Vector2i(
+            CameraNode->evalInt("res", 0, time),
+            CameraNode->evalInt("res", 1, time)
+    );
+
+    FocalLength = CameraNode->evalFloat("focal", 0, time) / 1000.0; //mm -> m
+    Aperture = CameraNode->evalFloat("aperture", 0, time) / 1000.0; //mm -> m
+
+    UT_Matrix4D worldTransform;
+    CameraNode->getLocalToWorldTransform(context,worldTransform);
+
+    std::cout << worldTransform << std::endl;
+
+    XIncrement = UT_Vector4F(Aperture / ImageResolution.x(), 0, 0, 0)*worldTransform;
+    YIncrement = UT_Vector4F(0, -XIncrement.x(), 0, 0)*worldTransform;
+    CornerPosition = UT_Vector4F(-Aperture / 2, XIncrement.x() * ImageResolution.y() / 2, -FocalLength, 1)*worldTransform;
+    Origin = UT_Vector4F(0, 0, 0, 1)*worldTransform;
+}
+
