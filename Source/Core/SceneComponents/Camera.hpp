@@ -17,10 +17,12 @@
 
 class Camera{
 public:
-    Camera(UT_Vector2i resolution, float focalLength, float aperture);
+//    Camera(UT_Vector2i resolution, float focalLength, float aperture);
     Camera(OBJ_Camera * cam,fpreal32 time);
     GU_Ray GenerateRay(UT_Vector2i pixel);
 private:
+    OBJ_Camera * CameraNode;
+
     UT_Vector2i Resolution;
     float FocalLength;
     float Aperture;

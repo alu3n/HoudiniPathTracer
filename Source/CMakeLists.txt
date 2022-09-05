@@ -11,14 +11,14 @@ find_package( Houdini REQUIRED )
 
 set( library_name HoudiniPathTracer )
 
+#Todo: Break the project into multiple libraries to avoid linking problems
+
 add_library( ${library_name} SHARED
-    Core/PathTracer.cpp
+    Core/PathTracer/PathTracer.cpp
+    Core/SceneComponents/Camera.cpp
+    HoudiniHook/DebugNode.cpp
     HoudiniHook/Hook.cpp
-    HoudiniHook/GeoEditNode.hpp
-    HoudiniHook/GeoEditNode.cpp
-    HoudiniHook/PathTracerNode.hpp
-    HoudiniHook/PathTracerNode.cpp
-    Core/PathTracer.hpp
+    HoudiniHook/RendererNode.cpp
 )
 
 target_link_libraries( ${library_name} Houdini )

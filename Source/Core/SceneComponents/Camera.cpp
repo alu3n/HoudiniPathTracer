@@ -9,19 +9,19 @@
 #include <OBJ/OBJ_Node.h>
 #include <OBJ/OBJ_Camera.h>
 
-Camera::Camera(UT_Vector2i resolution, float focalLenght, float aperture) {
-    Resolution = resolution;
-    FocalLength = focalLenght/1000.0;
-    Aperture = aperture/1000.0;
-
-    XIncrement = UT_Vector3F(Aperture/resolution.x(),0,0);
-    YIncrement = UT_Vector3F(0,-XIncrement.x(),0);
-    CornerPosition = UT_Vector3F(-Aperture/2,XIncrement.x()*resolution.y()/2,FocalLength);
-    Origin = UT_Vector3F(0,0,0);
-}
+//Camera::Camera(UT_Vector2i resolution, float focalLenght, float aperture) {
+//    Resolution = resolution;
+//    FocalLength = focalLenght/1000.0;
+//    Aperture = aperture/1000.0;
+//
+//    XIncrement = UT_Vector3F(Aperture/resolution.x(),0,0);
+//    YIncrement = UT_Vector3F(0,-XIncrement.x(),0);
+//    CornerPosition = UT_Vector3F(-Aperture/2,XIncrement.x()*resolution.y()/2,FocalLength);
+//    Origin = UT_Vector3F(0,0,0);
+//}
 
 Camera::Camera(OBJ_Camera *camera, fpreal32 time) {
-
+    CameraNode = camera;
 
     Resolution = UT_Vector2i(
             camera->evalInt("res",0,time),
@@ -43,6 +43,8 @@ Camera::Camera(OBJ_Camera *camera, fpreal32 time) {
 
 
 GU_Ray Camera::GenerateRay(UT_Vector2i pixel) {
+    //Todo: Generate rays with respect to certain distribution, cook, improve speed
+
     if (pixel.x() < 0 || pixel.x() >= Resolution.x() || pixel.y() < 0 || pixel.y() >= Resolution.y()) {
         throw std::invalid_argument("Pixel must be in a range supported by the camera!");
     }
