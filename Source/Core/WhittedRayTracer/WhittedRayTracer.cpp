@@ -6,37 +6,62 @@
 
 #include <SOP/SOP_Node.h>
 #include <GU/GU_Detail.h>
-#include <GU/GU_RayIntersect.h>
-#include <GU/GU_RayPrimitive.h>
 
-
-
-UT_Vector3F WhittedRayTracer::RenderPixel(UT_Vector2i pixelCoords, int frame) {
+ImageMatrix WhittedRayTracer::RenderImage(int frame){
     OP_Context context(1.0/frame);
     GU_DetailHandle * temp = static_cast<GU_DetailHandle *>(Geo->getCookedData(context));
+    intersect = new GU_RayIntersect(temp->gdp());
 
-    GU_RayIntersect intersect(temp->gdp());
+    ImageMatrix image;
+    int pixelCount = Settings.Cam.ImageResolution.x()*Settings.Cam.ImageResolution.y();
+    int pixelNow = 0;
+
+    //Todo: Create better implementation that would support parallelism
+    for(int px = 0; px < Settings.Cam.ImageResolution.x(); ++px){
+        image.push_back({});
+        for(int py = 0; py < Settings.Cam.ImageResolution.y(); ++py){
+//            std::cout << "Rendering pixel: " << pixelNow << " of " << pixelCount << std::endl;
+            image[px].push_back(RenderPixel({px,py},frame));
+            pixelNow++;
+        }
+    }
+    return image;
+}
+
+UT_Vector3F WhittedRayTracer::RenderPixel(UT_Vector2i pixelCoords, int frame) {
+//    OP_Context context(1.0/frame);
+//    GU_DetailHandle * temp = static_cast<GU_DetailHandle *>(Geo->getCookedData(context));
+
+//    GU_RayIntersect intersect(temp->gdp());
     GU_RayInfo info;
     auto ray = Settings.Cam.GenerateRay(pixelCoords);
-
-
-    intersect.sendRay(ray.org,ray.dir,info);
-
-    if(info.myTValid){
-        return{1,0,0};
-    }
-    else{
-        return{0,0,0};
-    }
-//    return {info.myTmax,info.myTmin,0};
-
-//    if(info.myTmax > 0){
-//        return {1,0,0};
+    intersect->sendRay(ray.org,ray.dir,info);
+//
+//    if(info.myTValid){
+//        return{1,0,0};
 //    }
-//    return {0,0,0};
-//    GU_RayIntersect()
-
+//    else{
+//        return{0,0,0};
+//    }
+    return Shade(info,ray);
 }
+
+//Todo: Place this function outside the camera class... I wasn't able to find norm function
+UT_Vector3F normalize(UT_Vector3F vec){
+    float scale = sqrt(vec.x()*vec.x()+vec.y()*vec.y()+vec.z()*vec.z());
+    return (1/scale)*vec;
+}
+
+UT_Vector3F WhittedRayTracer::Shade(GU_RayInfo &info, GU_Ray & ray) {
+    if(!info.myTValid) return {0,0,0};
+
+    auto intPos = ray.org + info.myTmax*ray.dir;
+    auto illuminationDirection = normalize(PointLightPosition - intPos);
+    auto lambert = dot(info.myNml,illuminationDirection);
+    return {lambert,lambert,lambert};
+//    info.myNml;
+}
+
 
 WhittedRayTracer::WhittedRayTracer(RenderSettings settings, SOP_Node *geo) : Renderer(settings, geo) {
 
