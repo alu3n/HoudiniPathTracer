@@ -2,15 +2,18 @@
 // Created by Vojtěch Pröschl on 04.09.2022.
 //
 
+#include "RenderView.hpp"
 #include "RendererNode.hpp"
 #include "../Core/PathTracer/PathTracer.hpp"
+#include "../Core/SceneComponents/Camera.hpp"
+#include "../Core/WhittedRayTracer/WhittedRayTracer.hpp"
 
 #include <vector>
 #include <OP/OP_Director.h>
 #include <OBJ/OBJ_Camera.h>
 #include <OBJ/OBJ_Light.h>
-//#include <AU/AU_Input.h>
-//#include <UT/UT_BitArray.h>
+#include <AU/AU_Input.h>
+#include <UT/UT_BitArray.h>
 #include <IMG/IMG_File.h>
 #include <IMG/IMG_TileDevice.h>
 #include <IMG/IMG_TileOptions.h>
@@ -38,19 +41,59 @@ static PRM_Default prmDefaults[]{
 };
 
 int Debug(void *data,int index, fpreal64 time, const PRM_Template *tplate) {
-//    UT_PtrArray<PXL_Raster *> images;
-//
-//    IMG_File *file = IMG_File::open("/Users/vojtechproschl/Desktop/sheetmusic.png");
-//    file->readImages(images);
-//    images.
-//    IMG_TileDevice *device = IMG_TileDevice::newMPlayDevice();
-//    device->setSendPIDFlag(false);
-//    device->terminateOnConnectionLost(false);
+    auto cameraNode = OPgetDirector()->getOBJNode("/obj/Camera1")->castToOBJCamera();
+    auto sopNode = OPgetDirector()->getSOPNode("/obj/geo2");
 
-//    IMG_TileOptions *tileOpt = new IMG_TileOptions();
-//    mp->open(*tileOpt, 1280, 720, 1, 3000, 2.0);
+    OP_Context context(time);
+    std::cout << context.getTime() << std::endl;
+    Camera camera(cameraNode, context);
 
-    std::cout << "IMAGE LOADED" << std::endl;
+    RenderSettings settings(camera,24);
+    WhittedRayTracer rayTracer(settings,sopNode);
+
+//    std::cout << "LOADED" << std::endl;
+//    auto image = rayTracer.RenderImage(0);
+//    std::cout << "RENDERED" << std::endl;
+
+    int rx = camera.ImageResolution.x();
+    int ry = camera.ImageResolution.y();
+
+
+//    std::vector<std::vector<UT_Vector4F>> imageMatrix;
+//    for(int y = 0; y < 16; ++y){
+//        imageMatrix.push_back({});
+//        for(int x = 0; x < 16; ++x){
+//            imageMatrix.back().push_back({0,1,0,0});
+//        }
+//    }
+
+
+    auto viewer = RenderView({rx,ry},{16,16});
+    viewer.Open();
+
+    int tilesX = rx / 16;
+    int tilesY = ry / 16;
+    std::cout << tilesX << std::endl;
+    std::cout << tilesY << std::endl;
+
+    std::cout << "Rendering" << std::endl;
+
+    rayTracer.LoadFrame(0);
+
+    auto test = rayTracer.RenderTile(0,0,15,0,15);
+
+    for(int x = 0; x < tilesX; ++x){
+        for(int y = 0; y < tilesY; ++y){
+            auto tile = rayTracer.RenderTile(0,x*16,x*16+15,y*16,y*16+15);
+            viewer.PushTile(tile,x*16,x*16+15,y*16,y*16+15);
+        }
+    }
+
+
+    std::cout << "Done" << std::endl;
+//    viewer.PushTile(imageMatrix,32,47,32,47);
+//    std::cout << "VIEW SHOULD OPEN" << std::endl;
+
     return 0;
 }
 PRM_Template

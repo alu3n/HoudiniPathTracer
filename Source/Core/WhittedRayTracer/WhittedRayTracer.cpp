@@ -7,14 +7,20 @@
 #include <SOP/SOP_Node.h>
 #include <GU/GU_Detail.h>
 
-ImageMatrix WhittedRayTracer::RenderImage(int frame){
+void WhittedRayTracer::LoadFrame(int frame) {
     OP_Context context(1.0/frame);
     GU_DetailHandle * temp = static_cast<GU_DetailHandle *>(Geo->getCookedData(context));
     intersect = new GU_RayIntersect(temp->gdp());
+}
+
+ImageMatrix WhittedRayTracer::RenderImage(int frame){
+    LoadFrame(frame);
 
     ImageMatrix image;
     int pixelCount = Settings.Cam.ImageResolution.x()*Settings.Cam.ImageResolution.y();
     int pixelNow = 0;
+
+
 
     //Todo: Create better implementation that would support parallelism
     for(int px = 0; px < Settings.Cam.ImageResolution.x(); ++px){
@@ -29,21 +35,23 @@ ImageMatrix WhittedRayTracer::RenderImage(int frame){
 }
 
 UT_Vector3F WhittedRayTracer::RenderPixel(UT_Vector2i pixelCoords, int frame) {
-//    OP_Context context(1.0/frame);
-//    GU_DetailHandle * temp = static_cast<GU_DetailHandle *>(Geo->getCookedData(context));
+    UT_Vector3F colorBuffer{0,0,0};
 
-//    GU_RayIntersect intersect(temp->gdp());
-    GU_RayInfo info;
-    auto ray = Settings.Cam.GenerateRay(pixelCoords);
-    intersect->sendRay(ray.org,ray.dir,info);
-//
-//    if(info.myTValid){
-//        return{1,0,0};
-//    }
-//    else{
-//        return{0,0,0};
-//    }
-    return Shade(info,ray);
+    int sampleCount = 1;
+
+    for(int i = 0; i < sampleCount; ++i){
+        GU_RayInfo info;
+        auto ray = Settings.Cam.GenerateRay(pixelCoords);
+        intersect->sendRay(ray.org,ray.dir,info);
+        colorBuffer += Shade(info,ray);
+    }
+//    return colorBuffer;
+    float multiplier = 1.0/sampleCount;
+    return multiplier*colorBuffer;
+//    UT_Vector3F rtrColor(0.1*colorBuffer.x(),0.1*colorBuffer.x(),0.1*colorBuffer.x());
+
+//    return rtrColor;
+//    return Shade(info,ray);
 }
 
 //Todo: Place this function outside the camera class... I wasn't able to find norm function

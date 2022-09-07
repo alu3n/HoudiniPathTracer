@@ -16,9 +16,10 @@ UT_Vector4F normalize(UT_Vector4F vec){
     return (1/scale)*vec;
 }
 
-Camera::Camera(OBJ_Camera *cam, OP_Context & context) {
+Camera::Camera(OBJ_Camera *cam,OP_Context & context) {
     CameraNode = cam;
     LoadCamera(context);
+    generator = UniformGenerator(123.0);
 }
 
 GU_Ray Camera::GenerateRay(UT_Vector2i PixelCoords) {
@@ -26,8 +27,10 @@ GU_Ray Camera::GenerateRay(UT_Vector2i PixelCoords) {
         throw std::invalid_argument("Pixel must be in a range supported by the camera!");
     }
 
+    auto sample = generator.Generate01D2();
+
     //Todo: Add other sampling methods ... this is just generating ray in the center of the pixel
-    auto positionOnSensor = CornerPosition + (0.5+PixelCoords.x()) * XIncrement + (0.5+PixelCoords.y()) * YIncrement;
+    auto positionOnSensor = CornerPosition + (sample.x()+PixelCoords.x()) * XIncrement + (sample.y()+PixelCoords.y()) * YIncrement;
     auto directionVector = positionOnSensor - Origin;
 
     auto dir4 = normalize(directionVector);
@@ -55,6 +58,7 @@ void Camera::LoadCamera(OP_Context &context) {
     Aperture = CameraNode->evalFloat("aperture", 0, time) / 1000.0; //mm -> m
 
     UT_Matrix4D worldTransform;
+
     CameraNode->getLocalToWorldTransform(context,worldTransform);
 
     std::cout << worldTransform << std::endl;

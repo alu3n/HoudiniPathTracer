@@ -15,17 +15,21 @@
  * https://www.sidefx.com/docs/houdini/nodes/obj/cam.html
  */
 
-
+#include "../Utility/SampleGenerators.hpp"
 //TODO: This implementation does not sampling in
 
 class Camera{
 public:
-    Camera(OBJ_Camera * cam, OP_Context & context);
+    Camera(OBJ_Camera * cam,OP_Context & context);
     GU_Ray GenerateRay(UT_Vector2i, OP_Context & context); //Slower due to the parameter loading
     GU_Ray GenerateRay(UT_Vector2i);
     UT_Vector2i ImageResolution;
 private:
+    int rayIndex = 0;
     void LoadCamera(OP_Context & context);
+    SampleGenerator generator;
+
+
 
     OBJ_Camera * CameraNode;
 //    fpreal LastTimepoint; //Todo: Maybe add check to avoid reloading camera /w same timepoint
