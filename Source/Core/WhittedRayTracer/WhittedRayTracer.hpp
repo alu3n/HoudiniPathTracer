@@ -13,11 +13,9 @@
 class WhittedRayTracer : public Renderer{
 public:
     WhittedRayTracer(RenderSettings settings, SOP_Node * geo);
-    ImageMatrix RenderImage(int frame) override;
 protected:
-    UT_Vector3F RenderPixel(UT_Vector2i pixelCoords, int frame) override;
-    GU_RayIntersect * intersect;
-    UT_Vector3F Shade(GU_RayInfo & info, GU_Ray & ray);
+    UT_Vector4F RenderPixel(UT_Vector2i pixelCoords) override;
+    UT_Vector4F Shade(GU_RayInfo & info, GU_Ray & ray);
     UT_Vector3F PointLightPosition = {10,5,3};
 };
 

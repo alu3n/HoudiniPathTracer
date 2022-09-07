@@ -12,25 +12,30 @@
 #include <array>
 
 
-using ImageMatrix = std::vector<std::vector<UT_Vector3F>>;
+using ImageMatrix = std::vector<std::vector<UT_Vector4F>>;
 
 struct RenderSettings{
+    RenderSettings() = default;
     RenderSettings(Camera cam, int fps);
     Camera Cam; //Todo: Put info such as shutterspeed etc. into camera
-//    UT_Vector2i Framerange;
     int FPS;
 };
+
+//Todo: Change image matrix to RGBA
 
 class Renderer{
 public:
     Renderer(RenderSettings settings, SOP_Node * geo); //Todo: Change input
-    virtual ImageMatrix RenderImage(int frame);
-    virtual std::vector<ImageMatrix> RenderAnimation(UT_Vector2i framerange);
+//    virtual ImageMatrix RenderImage(int frame);
+    virtual ImageMatrix RenderTile(fpreal time, int tx0, int tx1, int ty0, int ty1);
+//    virtual std::vector<ImageMatrix> RenderAnimation(UT_Vector2i framerange);
+    virtual void LoadFrame(fpreal time);
 protected:
-    virtual UT_Vector3F RenderPixel(UT_Vector2i pixelCoords, int frame) = 0;
-
+    virtual UT_Vector4F RenderPixel(UT_Vector2i pixelCoords) = 0;
+    GU_RayIntersect * intersect;
     RenderSettings Settings;
     SOP_Node * Geo;
+
 };
 
 #endif //NPRG045_RENDERER_HPP

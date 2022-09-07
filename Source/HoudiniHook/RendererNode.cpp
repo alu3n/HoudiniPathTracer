@@ -2,11 +2,12 @@
 // Created by Vojtěch Pröschl on 04.09.2022.
 //
 
-#include "RenderView.hpp"
+#include "../Interface/RenderView.hpp"
 #include "RendererNode.hpp"
 #include "../Core/PathTracer/PathTracer.hpp"
 #include "../Core/SceneComponents/Camera.hpp"
 #include "../Core/WhittedRayTracer/WhittedRayTracer.hpp"
+#include "../Interface/RendererInterface.hpp"
 
 #include <vector>
 #include <OP/OP_Director.h>
@@ -24,85 +25,52 @@
 
 //Names of the node interface elements
 static PRM_Name prmNames[]{
-        PRM_Name{"cameraPath", "Camera Path"},
-        PRM_Name{"sampleCount","Sample Count"},
-        PRM_Name{"areaLight","Area Light"},
-        PRM_Name{"geometryTarget","Geometry Traget"},
-        PRM_Name{"debugButton","Debug Button"}
+    PRM_Name{"sampleCount", "Sample Count"},
+    PRM_Name{"tileSize", "Tile Size"},
+    PRM_Name{"fps", "FPS"},
+    PRM_Name{"frameRange", "Frame Range"},
+    PRM_Name{"renderEngine", "Render Engine"},
+    PRM_Name{"camera","Camera"},
+    PRM_Name{"light","Light"},
+    PRM_Name{"geometry","Geometry"},
+    PRM_Name{"renderFrameRange", "Render Frame Range"},
+    PRM_Name{"renderCurrentFrame", "Render Current Frame"}
 };
 
-//Default values of the interface elements
-static PRM_Default prmDefaults[]{
-        PRM_Default{0,""},
-        PRM_Default{100},
-        PRM_Default{0,""},
-        PRM_Default{0,""},
-        PRM_Default{0,""}
-};
+static PRM_Default defSampleCount = {0};
+static PRM_Default defTileSize[] = {16,16};
+static PRM_Default defFps = {24};
+static PRM_Default defFrameRange[] = {{0},{240}};
+static PRM_Default defRenderEngine = {0}; //Temp solution... 0->Whitted, 1->PathTracing...
+static PRM_Default defCamera = {0,""};
+static PRM_Default defLight = {0,""};
+static PRM_Default defGeometry = {0,""};
+static PRM_Default defGeneral {0,""};
 
-int Debug(void *data,int index, fpreal64 time, const PRM_Template *tplate) {
-    auto cameraNode = OPgetDirector()->getOBJNode("/obj/Camera1")->castToOBJCamera();
-    auto sopNode = OPgetDirector()->getSOPNode("/obj/geo2");
-
-    OP_Context context(time);
-    std::cout << context.getTime() << std::endl;
-    Camera camera(cameraNode, context);
-
-    RenderSettings settings(camera,24);
-    WhittedRayTracer rayTracer(settings,sopNode);
-
-//    std::cout << "LOADED" << std::endl;
-//    auto image = rayTracer.RenderImage(0);
-//    std::cout << "RENDERED" << std::endl;
-
-    int rx = camera.ImageResolution.x();
-    int ry = camera.ImageResolution.y();
-
-
-//    std::vector<std::vector<UT_Vector4F>> imageMatrix;
-//    for(int y = 0; y < 16; ++y){
-//        imageMatrix.push_back({});
-//        for(int x = 0; x < 16; ++x){
-//            imageMatrix.back().push_back({0,1,0,0});
-//        }
-//    }
-
-
-    auto viewer = RenderView({rx,ry},{16,16});
-    viewer.Open();
-
-    int tilesX = rx / 16;
-    int tilesY = ry / 16;
-    std::cout << tilesX << std::endl;
-    std::cout << tilesY << std::endl;
-
-    std::cout << "Rendering" << std::endl;
-
-    rayTracer.LoadFrame(0);
-
-    auto test = rayTracer.RenderTile(0,0,15,0,15);
-
-    for(int x = 0; x < tilesX; ++x){
-        for(int y = 0; y < tilesY; ++y){
-            auto tile = rayTracer.RenderTile(0,x*16,x*16+15,y*16,y*16+15);
-            viewer.PushTile(tile,x*16,x*16+15,y*16,y*16+15);
-        }
-    }
-
-
-    std::cout << "Done" << std::endl;
-//    viewer.PushTile(imageMatrix,32,47,32,47);
-//    std::cout << "VIEW SHOULD OPEN" << std::endl;
-
-    return 0;
+int RenderFrame(void *data, int index, fpreal64 time, const PRM_Template *tplate){
+    RendererInterface rendererInterface((RendererNode *)data);
+    rendererInterface.LoadData();
+    rendererInterface.RenderFrame();
 }
-PRM_Template
-static  prmTemplates[]{
-        PRM_Template{PRM_STRING,PRM_TYPE_DYNAMIC_PATH,1,&prmNames[0],&prmDefaults[0]},
-        PRM_Template{PRM_INT,1,&prmNames[1],&prmDefaults[1]},
-        PRM_Template{PRM_STRING,PRM_TYPE_DYNAMIC_PATH,1,&prmNames[2],&prmDefaults[2]},
-        PRM_Template{PRM_STRING,PRM_TYPE_DYNAMIC_PATH,1,&prmNames[3],&prmDefaults[3]},
-        PRM_Template{PRM_CALLBACK,1,&prmNames[4],&prmDefaults[4],0,0,PRM_Callback(Debug)}
+
+int RenderFrameRange(void *data, int index, fpreal64 time, const PRM_Template *tplate){
+    std::cout << "Not implemented yet!" << std::endl;
+}
+
+static auto callBack = {PRM_Callback(RenderFrame),PRM_Callback(RenderFrameRange)};
+
+
+PRM_Template static prmTemplates[]{
+    PRM_Template{PRM_INT,1,&prmNames[0],&defSampleCount},
+    PRM_Template{PRM_INT,2,&prmNames[1],defTileSize},
+    PRM_Template{PRM_INT,1,&prmNames[2],&defFps},
+    PRM_Template{PRM_INT,2,&prmNames[3],defFrameRange},
+    PRM_Template{PRM_INT,1,&prmNames[4],&defRenderEngine},
+    PRM_Template{PRM_STRING,PRM_TYPE_DYNAMIC_PATH,1,&prmNames[5],&defCamera},
+    PRM_Template{PRM_STRING,PRM_TYPE_DYNAMIC_PATH,1,&prmNames[6],&defLight},
+    PRM_Template{PRM_STRING,PRM_TYPE_DYNAMIC_PATH,1,&prmNames[7],&defGeometry},
+    PRM_Template{PRM_CALLBACK,1,&prmNames[8],&defGeneral,0,0,PRM_Callback(RenderFrameRange)},
+    PRM_Template{PRM_CALLBACK,1,&prmNames[9],&defGeneral,0,0,PRM_Callback(RenderFrame)}
 };
 
 OP_Node *RendererNode::BuildOPNode(OP_Network *net, const char *name, OP_Operator *op) {

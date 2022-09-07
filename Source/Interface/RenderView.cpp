@@ -9,8 +9,6 @@
 #include <UT/UT_Vector4.h>
 
 
-ImagePlaneDef Plane_ = {"C", IMG_FLOAT, IMG_RGBA};
-
 RenderView::RenderView(UT_Vector2i ImageRes, UT_Vector2i TileRes) {
     TileResX = TileRes.x();
     TileResY = TileRes.y();
@@ -20,8 +18,8 @@ RenderView::RenderView(UT_Vector2i ImageRes, UT_Vector2i TileRes) {
 
 void *RenderView::makeTile() {
     int pixels = TileResX * TileResY;
-    int words = pixels * IMGvectorSize(Plane_.ColorModel);
-    int bytes = words * IMGbyteSize(Plane_.Format);
+    int words = pixels * IMGvectorSize(imagePlane.ColorModel);
+    int bytes = words * IMGbyteSize(imagePlane.Format);
 
     void *tileData = malloc(bytes);
 
@@ -38,7 +36,7 @@ void *RenderView::makeTile() {
         c++;
     }
 
-    *((char *)ptr) += words * IMGbyteSize(Plane_.Format);
+    *((char *)ptr) += words * IMGbyteSize(imagePlane.Format);
 
     return tileData;
 }
@@ -49,7 +47,7 @@ void *RenderView::makeTile() {
 void RenderView::sendPlaneDefinitions(IMG_TileDevice *dev, const UT_String &host, const UT_String &port) {
 //    IMG_TileOptionList oplist;
     auto finfo = new IMG_TileOptions(); //Todo: memory leaking ... remove this when window is destroyed
-    finfo->setPlaneInfo("Render View", Plane_.Name, 0, Plane_.Format, Plane_.ColorModel);
+    finfo->setPlaneInfo("Render View", imagePlane.Name, 0, imagePlane.Format, imagePlane.ColorModel);
 //    finfo->setFormatOption("sockethost",host);
 //    finfo->setFormatOption("socketport",port);
 //    oplist.append(std::move(finfo));
@@ -89,16 +87,19 @@ void RenderView::writeTile(IMG_TileDevice *dev, void *tdata, int tx0, int tx1, i
     dev->flush();
 }
 
-void RenderView::PushTile(const RenderView::ImageMatrix &tile, int tx0, int tx1, int ty0, int ty1) {
+void RenderView::PushTile(const ImageMatrix &tile, int tx0, int tx1, int ty0, int ty1) {
     writeTile(Device,makeTile(tile),tx0,tx1,ty0,ty1);
 }
 
-void *RenderView::makeTile(ImageMatrix img) {
+void *RenderView::makeTile(const ImageMatrix &img) {
     int pixels = TileResX * TileResY;
-    int words = pixels * IMGvectorSize(Plane_.ColorModel);
-    int bytes = words * IMGbyteSize(Plane_.Format);
+    int words = pixels * IMGvectorSize(imagePlane.ColorModel);
+    int bytes = words * IMGbyteSize(imagePlane.Format);
 
     void *tileData = malloc(bytes);
+
+//    std::cout << img[0][0].x() << std::endl;
+
 
     float*ptr = (float *)tileData;
     for(int y = 0; y < TileResY; ++y){
@@ -106,11 +107,14 @@ void *RenderView::makeTile(ImageMatrix img) {
             *ptr++ = img[y][x].x();
             *ptr++ = img[y][x].y();
             *ptr++ = img[y][x].z();
-            *ptr++ = 0;
-//            *ptr++ = img[x][y].w();
+            *ptr++ = img[y][x].w();
+//            *ptr++ = 0;
+//            *ptr++ = 0;
+//            *ptr++ = 0;
+//            *ptr++ = 0;
         }
     }
-
-    *((char *)ptr) += words * IMGbyteSize(Plane_.Format);
+//
+    *((char *)ptr) += words * IMGbyteSize(imagePlane.Format);
     return tileData;
 }

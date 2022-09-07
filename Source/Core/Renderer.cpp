@@ -1,37 +1,38 @@
 //
 // Created by Vojtěch Pröschl on 05.09.2022.
 //
-
 #include "Renderer.hpp"
+
+#include <SOP/SOP_Node.h>
+#include <GU/GU_Detail.h>
 
 Renderer::Renderer(RenderSettings settings, SOP_Node * geo) : Settings(settings) {
     Geo = geo;
 }
 
-ImageMatrix Renderer::RenderImage(int frame) {
-    ImageMatrix image;
-    int pixelCount = Settings.Cam.ImageResolution.x()*Settings.Cam.ImageResolution.y();
-    int pixelNow = 0;
+RenderSettings::RenderSettings(Camera cam, int fps) : Cam(cam) {
+    FPS = fps;
+}
 
-    //Todo: Create better implementation that would support parallelism
-    for(int px = 0; px < Settings.Cam.ImageResolution.x(); ++px){
+ImageMatrix Renderer::RenderTile(fpreal time, int tx0, int tx1, int ty0, int ty1) {
+    ImageMatrix image;
+//    LoadFrame(time);
+//    std::cout << ty0 << ":" << ty1 << std::endl;
+    for(int y = ty0; y <= ty1; ++y){
         image.push_back({});
-        for(int py = 0; py < Settings.Cam.ImageResolution.y(); ++py){
-            std::cout << "Rendering pixel: " << pixelNow << " of " << pixelCount << std::endl;
-            image[px].push_back(RenderPixel({px,py},frame));
-            pixelNow++;
+//        std::cout << y << std::endl;
+        for(int x = tx0; x <= tx1; ++x){
+            image.back().push_back(RenderPixel({x,y}));
         }
     }
+
+//    std::cout << image.size() << std::endl;
+
     return image;
 }
 
-std::vector<ImageMatrix> Renderer::RenderAnimation(UT_Vector2i framerange) {
-    std::vector<ImageMatrix> animation;
-    for(int i = framerange.x(); i < framerange.y(); ++i){
-        animation.push_back(RenderImage(i));
-    }
-}
-
-RenderSettings::RenderSettings(Camera cam, int fps) : Cam(cam) {
-    FPS = fps;
+void Renderer::LoadFrame(fpreal time) {
+    OP_Context context(time);
+    GU_DetailHandle * temp = static_cast<GU_DetailHandle *>(Geo->getCookedData(context));
+    intersect = new GU_RayIntersect(temp->gdp());
 }
