@@ -13,21 +13,32 @@ RendererInterface::RendererInterface(RendererNode *rendererNode) {
 }
 
 void RendererInterface::RenderFramerange() {
+
+
     //Todo: Render frame range
 }
 
 void RendererInterface::RenderFrame() {
     renderView.Open();
 
-    UT_Vector2i tileCount{camera->ImageResolution.x()/16,camera->ImageResolution.y()/16};
+    UT_Vector2i tileCount{camera->ImageResolution.x()/tileSize.x(),camera->ImageResolution.y()/tileSize.y()};
+
+
 
     renderer->LoadFrame(0);
 
     for(int tx = 0; tx < tileCount.x(); ++tx){
         for(int ty = 0; ty < tileCount.y(); ++ty){
-            auto tile = renderer->RenderTile(0,tx * 16, tx * 16 + 15, ty * 16, ty * 16 + 15);
-            renderView.PushTile(tile,tx*16,tx*16+15,ty*16,ty*16+15);
-//            std::cout << tile.size() << std::endl;
+            auto tx0 = tx * tileSize.x();
+            auto tx1 = tx0 + tileSize.x() - 1;
+            auto ty0 = ty * tileSize.y();
+            auto ty1 = ty0 + tileSize.y() - 1;
+//            ImageMatrix tile;
+//            for(int i = 0; i < 5; ++i){
+//                tile = tile + renderer->RenderTile(0,tx0,tx1,ty0,ty1);
+//            }
+            auto tile = renderer->RenderTile(0,tx0,tx1,ty0,ty1);
+            renderView.PushTile(tile,tx0,tx1,ty0,ty1);
         }
     }
 }

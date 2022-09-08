@@ -8,6 +8,7 @@
 #include "../Core/SceneComponents/Camera.hpp"
 #include "../Core/WhittedRayTracer/WhittedRayTracer.hpp"
 #include "../Interface/RendererInterface.hpp"
+#include "../Core/Utility/SampleGenerators.hpp"
 
 #include <vector>
 #include <OP/OP_Director.h>
@@ -55,6 +56,10 @@ int RenderFrame(void *data, int index, fpreal64 time, const PRM_Template *tplate
 
 int RenderFrameRange(void *data, int index, fpreal64 time, const PRM_Template *tplate){
     std::cout << "Not implemented yet!" << std::endl;
+    SampleGenerator gen = UniformGenerator(10);
+    std::cout << gen.Generate01D2() << std::endl;
+    std::cout << gen.Generate01D2() << std::endl;
+
 }
 
 static auto callBack = {PRM_Callback(RenderFrame),PRM_Callback(RenderFrameRange)};

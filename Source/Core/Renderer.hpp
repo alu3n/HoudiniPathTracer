@@ -25,14 +25,11 @@ struct RenderSettings{
 
 class Renderer{
 public:
-    Renderer(RenderSettings settings, SOP_Node * geo); //Todo: Change input
-//    virtual ImageMatrix RenderImage(int frame);
-    virtual ImageMatrix RenderTile(fpreal time, int tx0, int tx1, int ty0, int ty1);
-//    virtual std::vector<ImageMatrix> RenderAnimation(UT_Vector2i framerange);
-    virtual void LoadFrame(fpreal time);
+    Renderer(RenderSettings settings, SOP_Node * geo);
+    virtual ImageMatrix RenderTile(fpreal time, int tx0, int tx1, int ty0, int ty1) = 0;
+    virtual void LoadFrame(fpreal time) = 0;
 protected:
     virtual UT_Vector4F RenderPixel(UT_Vector2i pixelCoords) = 0;
-    GU_RayIntersect * intersect;
     RenderSettings Settings;
     SOP_Node * Geo;
 

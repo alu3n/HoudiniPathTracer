@@ -27,6 +27,8 @@ GU_Ray Camera::GenerateRay(UT_Vector2i PixelCoords) {
         throw std::invalid_argument("Pixel must be in a range supported by the camera!");
     }
 
+    PixelCoords.y() = ImageResolution.y() - PixelCoords.y();
+
     auto sample = generator.Generate01D2();
 
     //Todo: Add other sampling methods ... this is just generating ray in the center of the pixel

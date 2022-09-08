@@ -5,15 +5,23 @@
 #include "SampleGenerators.hpp"
 
 fpreal SampleGenerator::Generate01D1() {
-    return 0.5;
+    return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 }
 
 UT_Vector2F SampleGenerator::Generate01D2() {
-    return {0.5,0.5};
+    //Todo: Create better solution
+    return {
+        static_cast <float> (rand()) / static_cast <float> (RAND_MAX),
+        static_cast <float> (rand()) / static_cast <float> (RAND_MAX)
+    };
 }
 
 UT_Vector3F SampleGenerator::Generate01D3() {
-    return {0.5,0.5,0.5};
+    return {
+        static_cast <float> (rand()) / static_cast <float> (RAND_MAX),
+        static_cast <float> (rand()) / static_cast <float> (RAND_MAX),
+        static_cast <float> (rand()) / static_cast <float> (RAND_MAX)
+    };
 }
 
 UniformGenerator::UniformGenerator(float seed) {
