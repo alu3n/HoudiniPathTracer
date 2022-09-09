@@ -12,53 +12,36 @@
 #include <GA/GA_Types.h>
 #include <PRM/PRM_Include.h>
 
-//ImageMatrix Renderer::RenderTile(fpreal time, int tx0, int tx1, int ty0, int ty1) {
-//    ImageMatrix image;
-////    LoadFrame(time);
-////    std::cout << ty0 << ":" << ty1 << std::endl;
-//    for(int y = ty0; y <= ty1; ++y){
-//        image.push_back({});
-////        std::cout << y << std::endl;
-//        for(int x = tx0; x <= tx1; ++x){
-//            image.back().push_back(RenderPixel({x,y}));
-//        }
-//    }
-//
-////    std::cout << image.size() << std::endl;
-//
-//    return image;
-//}
 
-//void Renderer::LoadFrame(fpreal time) {
+//void WhittedRayTracer::LoadFrame(fpreal time) {
 //    OP_Context context(time);
 //    GU_DetailHandle * temp = static_cast<GU_DetailHandle *>(Geo->getCookedData(context));
 //    intersect = new GU_RayIntersect(temp->gdp());
+//    color = GA_ROHandleV3(temp->gdp(),GA_ATTRIB_PRIMITIVE,"Cd");
+//    normal = GA_ROHandleV3(temp->gdp(),GA_ATTRIB_VERTEX,"N");
+//    gdp = temp->gdp();
 //}
 
+//int sampleCount = 5;
 
-void WhittedRayTracer::LoadFrame(fpreal time) {
-    OP_Context context(time);
-    GU_DetailHandle * temp = static_cast<GU_DetailHandle *>(Geo->getCookedData(context));
-    intersect = new GU_RayIntersect(temp->gdp());
-    color = GA_ROHandleV3(temp->gdp(),GA_ATTRIB_PRIMITIVE,"Cd");
-    normal = GA_ROHandleV3(temp->gdp(),GA_ATTRIB_VERTEX,"N");
-    gdp = temp->gdp();
+void WhittedRayTracer::Load(Camera *camera, const std::vector<Light> &lights, fpreal time) {
+    RenderEngine::Load(camera,lights,time);
+    intersect = new GU_RayIntersect(gdh->gdp());
 }
 
-int sampleCount = 5;
-
-ImageMatrix WhittedRayTracer::RenderTile(fpreal time, int tx0, int tx1, int ty0, int ty1) {
+ImageMatrix WhittedRayTracer::RenderTile(int sampleCount, int tx0, int tx1, int ty0, int ty1) {
     ImageMatrix image;
+
+    float coeff = 1.0/sampleCount;
 
     for(int y = ty0; y <= ty1; ++y){
         image.push_back({});
         for(int x = tx0; x <= tx1; ++x){
             UT_Vector4F color{0,0,0,0};
             for(int i = 0; i < sampleCount; ++i){
-                color += 0.1*RenderPixel({x,y});
+                color += RenderPixel({x,y});
             }
-//            image.back().push_back(0.1*color);
-            image.back().push_back(color);
+            image.back().push_back(coeff*color);
         }
     }
 
@@ -66,31 +49,20 @@ ImageMatrix WhittedRayTracer::RenderTile(fpreal time, int tx0, int tx1, int ty0,
 }
 
 
-UT_Vector3F WhittedRayTracer::ComputeNormal(const GU_RayInfo &rayInfo) {
-    UT_Vector3F rtrval = {0,0,0};
-    UT_Array<GA_Offset> vtxOffsets;
-    UT_Array<float> weights;
-    rayInfo.myPrim->computeInteriorPointWeights(vtxOffsets,weights,rayInfo.myU,rayInfo.myV,rayInfo.myW);
-
-    for(int i = 0; i < vtxOffsets.size(); ++i){
-        rtrval += weights[i] * normal.get(vtxOffsets[i]);
-    }
-
-    return rtrval;
-}
-
 UT_Vector4F WhittedRayTracer::RenderPixel(UT_Vector2i pixelCoords) {
     GU_RayInfo info;
     info.init();
-    auto ray = Settings.Cam.GenerateRay(pixelCoords);
+
+    auto ray = camera->GenerateRay(pixelCoords);
     int count = intersect->sendRay(ray.org,ray.dir,info);
     if(count == 0){
         return {0,0,0,1};
     }
 
-    auto nrml = ComputeNormal(info);
+    auto N = IntersectionVertexNormal(info);
+    auto Cd = IntersectionPointColor(info);
 
-    return Shade(ray.dir, nrml,ray.org+info.myT*ray.dir,5);
+    return Shade(ray,info,N,Cd,5);
 }
 
 //Todo: Place this function outside the camera class... I wasn't able to find norm function
@@ -99,12 +71,19 @@ UT_Vector3F normalize(UT_Vector3F vec){
     return (1/scale)*vec;
 }
 
-float reflectivity = 1;
+float reflectivity = 0.5;
 
-UT_Vector4F WhittedRayTracer::Shade(const UT_Vector3F &dir, const UT_Vector3F &N, const UT_Vector3F &intPos,
-                                    int Recursion) {
-    float lambert;
-    UT_Vector4F rtrvec;
+
+UT_Vector4F WhittedRayTracer::Shade(const GU_Ray &ray, const GU_RayInfo &info,UT_Vector3F N,UT_Vector3F Cd, int recursionDepth){
+    float lambert = 0;
+
+    UT_Vector4F rtrvec(0,0,0,0);
+    auto intPos = ray.org + info.myT * ray.dir;
+//    auto N = IntersectionVertexNormal(info);
+
+//    std::cout << N << std::endl;
+
+//    auto N = info.myNml;
 
     for(int i = 0; i < 3; ++i){
         auto lightNonNormalized = PointLightPosition[i] - intPos;
@@ -113,25 +92,29 @@ UT_Vector4F WhittedRayTracer::Shade(const UT_Vector3F &dir, const UT_Vector3F &N
         lambert += (val < 0) ? 0 : val;
     }
 
-    rtrvec = {lambert,lambert,lambert,0};
+//    auto Cd = IntersectionPointColor(info);
+//    rtrvec = {lambert,lambert,lambert,0};
+    rtrvec = {Cd.x()*lambert,Cd.y()*lambert,Cd.z()*lambert,0};
+//    return rtrvec;
 
-    if(Recursion > 1){
-//        std::cout
-        auto reflectionDirection = dir - 2*dot(dir,N)*N;
-        GU_RayInfo info;
-        info.init();
-        int count = intersect->sendRay(intPos+0.00001*reflectionDirection,reflectionDirection,info);
+    if(recursionDepth > 1){
+        auto reflectionDirection = ray.dir - 2*dot(ray.dir,N)*N;
+        GU_RayInfo reflectionInfo;
+        reflectionInfo.init();
+        int count = intersect->sendRay(intPos+0.001*reflectionDirection,reflectionDirection,reflectionInfo);
         if(count != 0){
-            auto refNormal = ComputeNormal(info);
-            rtrvec = (0.5 + 0.5*(1-reflectivity))*rtrvec + (0.5*reflectivity)* Shade(reflectionDirection,refNormal,intPos+info.myT*reflectionDirection,Recursion-1);
+            auto refNormal = IntersectionVertexNormal(info);
+            auto refCd = IntersectionPointColor(info);
+            GU_Ray refRay = {intPos,reflectionDirection};
+            rtrvec = (0.5 + 0.5*(1-reflectivity))*rtrvec + (0.5*reflectivity)* Shade(refRay,reflectionInfo,refNormal,refCd,recursionDepth-1);
         }
     }
 
-
-//    auto lambert = dot(dir,N);
-//    std::cout << lambert << std::endl;
-
     return rtrvec;
+}
+
+WhittedRayTracer::WhittedRayTracer(SOP_Node *geo) : RenderEngine(geo) {
+
 }
 
 //UT_Vector4F WhittedRayTracer::Shade(GU_RayInfo &info, GU_Ray & ray, int recursionDepth) {
@@ -194,6 +177,6 @@ UT_Vector4F WhittedRayTracer::Shade(const UT_Vector3F &dir, const UT_Vector3F &N
 //}
 
 
-WhittedRayTracer::WhittedRayTracer(RenderSettings settings, SOP_Node *geo) : Renderer(settings, geo) {
-
-}
+//WhittedRayTracer::WhittedRayTracer(oldRenderSettings settings, SOP_Node *geo) : oldRenderer(settings, geo) {
+//
+//}

@@ -1,16 +1,16 @@
 //
 // Created by Vojtěch Pröschl on 05.09.2022.
 //
-#include "Renderer.hpp"
+#include "oldRenderer.hpp"
 
 #include <SOP/SOP_Node.h>
 #include <GU/GU_Detail.h>
 
-Renderer::Renderer(RenderSettings settings, SOP_Node * geo) : Settings(settings) {
+oldRenderer::oldRenderer(oldRenderSettings settings, SOP_Node * geo) : Settings(settings) {
     Geo = geo;
 }
 
-RenderSettings::RenderSettings(Camera cam, int fps) : Cam(cam) {
+oldRenderSettings::oldRenderSettings(Camera cam, int fps) : Cam(cam) {
     FPS = fps;
 }
 

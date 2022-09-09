@@ -11,7 +11,8 @@
 
 #include "../HoudiniHook/RendererNode.hpp"
 #include "RenderView.hpp"
-#include "../Core/Renderer.hpp"
+//#include "../Core/oldRenderer.hpp"
+#include "../Core/RenderEngine.hpp"
 #include "../Core/SceneComponents/Camera.hpp"
 #include <SOP/SOP_Node.h>
 
@@ -24,9 +25,9 @@ public:
 private:
     RenderView renderView;
     RendererNode * rendererNode;
-    Renderer * renderer;
+    RenderEngine * renderEngine;
     Camera * camera;
-    RenderSettings * settings;
+//    oldRenderSettings * settings;
     SOP_Node * geometry;
 
     //render properties
@@ -34,7 +35,7 @@ private:
     UT_Vector2i tileSize;
     UT_Vector2i frameRange;
     int fps;
-    int renderEngine;
+    int renderEngineSelection;
 };
 
 

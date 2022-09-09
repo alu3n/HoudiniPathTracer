@@ -15,7 +15,8 @@ set( library_name HoudiniPathTracer )
 
 add_library( ${library_name} SHARED
     Core/SceneComponents/Camera.cpp
-    Core/Renderer.cpp
+#    Core/oldRenderer.cpp
+    Core/RenderEngine.cpp
     Core/WhittedRayTracer/WhittedRayTracer.cpp
     Core/Utility/SampleGenerators.cpp
     Interface/RenderView.cpp

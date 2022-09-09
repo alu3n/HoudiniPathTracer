@@ -5,7 +5,7 @@
 #include "DebugNode.hpp"
 #include "../Core/SceneComponents/Camera.hpp"
 
-#include "../Core/Renderer.hpp"
+#include "../Core/oldRenderer.hpp"
 #include "../Core/WhittedRayTracer/WhittedRayTracer.hpp"
 
 #include <OBJ/OBJ_Camera.h>
@@ -46,7 +46,7 @@ OP_ERROR DebugNode::cookMySop(OP_Context &context) {
 //
 //    Camera camera(cameraNode,context);
 //
-//    RenderSettings settings(camera,24);
+//    oldRenderSettings settings(camera,24);
 //
 //    WhittedRayTracer rayTracer(settings,sopNode);
 //

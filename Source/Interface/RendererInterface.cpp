@@ -25,7 +25,7 @@ void RendererInterface::RenderFrame() {
 
 
 
-    renderer->LoadFrame(0);
+    renderEngine->Load(camera,{},0);
 
     for(int tx = 0; tx < tileCount.x(); ++tx){
         for(int ty = 0; ty < tileCount.y(); ++ty){
@@ -37,7 +37,8 @@ void RendererInterface::RenderFrame() {
 //            for(int i = 0; i < 5; ++i){
 //                tile = tile + renderer->RenderTile(0,tx0,tx1,ty0,ty1);
 //            }
-            auto tile = renderer->RenderTile(0,tx0,tx1,ty0,ty1);
+            //Todo: Insert sample count
+            auto tile = renderEngine->RenderTile(20,tx0,tx1,ty0,ty1);
             renderView.PushTile(tile,tx0,tx1,ty0,ty1);
         }
     }
@@ -68,8 +69,8 @@ void RendererInterface::LoadData() {
 
     camera = new Camera(cameraNode,context);
 
-    settings = new RenderSettings(*camera,fps);
-
-    renderer = new WhittedRayTracer(*settings,geometryNode);
+//    settings = new oldRenderSettings(*camera, fps);
+    renderEngine = new WhittedRayTracer(geometryNode);
+//    renderer = new WhittedRayTracer(*settings,geometryNode);
     renderView = RenderView(camera->ImageResolution,tileSize);
 }
