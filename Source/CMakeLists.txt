@@ -17,8 +17,10 @@ add_library( ${library_name} SHARED
     Core/SceneComponents/Camera.cpp
 #    Core/oldRenderer.cpp
     Core/RenderEngine.cpp
+    Core/SceneComponents/Light.cpp
     Core/WhittedRayTracer/WhittedRayTracer.cpp
     Core/Utility/SampleGenerators.cpp
+    Core/Utility/Math.cpp
     Interface/RenderView.cpp
     Interface/RendererInterface.cpp
     HoudiniHook/DebugNode.cpp

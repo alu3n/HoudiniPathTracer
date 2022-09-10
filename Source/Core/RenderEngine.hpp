@@ -10,6 +10,7 @@
 
 #include <SOP/SOP_Node.h>
 #include <GU/GU_RayIntersect.h>
+#include <vector>
 #include <array>
 
 
@@ -22,7 +23,7 @@ using ImageMatrix = std::vector<std::vector<UT_Vector4F>>;
 class RenderEngine{
 public:
     RenderEngine(SOP_Node * geometry);
-    virtual void Load(Camera * camera, const std::vector<Light> & lights, fpreal time);
+    virtual void Load(Camera * camera, const std::vector<Light*> & lights, fpreal time);
     virtual ImageMatrix RenderTile(int sampleCount, int tx0, int tx1, int ty0, int ty1) = 0;
 protected:
     //region Created during initialization
@@ -40,6 +41,7 @@ protected:
     GA_RWHandleV3 * HandleVertexNormal;
 
     Camera * camera;
+    std::vector<Light *> lights;
 
     void LoadPointColor();
     void LoadVertexNormal();

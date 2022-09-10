@@ -4,6 +4,7 @@
 
 #include "RendererInterface.hpp"
 #include "../Core/WhittedRayTracer/WhittedRayTracer.hpp"
+#include "../Core/SceneComponents/Light.hpp"
 
 //#include <UT_Vector2>
 #include <OP/OP_Director.h>
@@ -23,9 +24,13 @@ void RendererInterface::RenderFrame() {
 
     UT_Vector2i tileCount{camera->ImageResolution.x()/tileSize.x(),camera->ImageResolution.y()/tileSize.y()};
 
+    auto light = new ConstantPointLight({0,2.99,0},5);
+
+    auto areaLight1 = new ConstantRectangularAreaLight({3,4,0},{1.8,0,0},{4,4},20);
+    auto areaLight2 = new ConstantRectangularAreaLight({0,4,0},{0,0,0},{4,4},20);
 
 
-    renderEngine->Load(camera,{},0);
+    renderEngine->Load(camera,{areaLight1},0);
 
     for(int tx = 0; tx < tileCount.x(); ++tx){
         for(int ty = 0; ty < tileCount.y(); ++ty){
@@ -33,12 +38,8 @@ void RendererInterface::RenderFrame() {
             auto tx1 = tx0 + tileSize.x() - 1;
             auto ty0 = ty * tileSize.y();
             auto ty1 = ty0 + tileSize.y() - 1;
-//            ImageMatrix tile;
-//            for(int i = 0; i < 5; ++i){
-//                tile = tile + renderer->RenderTile(0,tx0,tx1,ty0,ty1);
-//            }
             //Todo: Insert sample count
-            auto tile = renderEngine->RenderTile(20,tx0,tx1,ty0,ty1);
+            auto tile = renderEngine->RenderTile(sampleCount,tx0,tx1,ty0,ty1);
             renderView.PushTile(tile,tx0,tx1,ty0,ty1);
         }
     }

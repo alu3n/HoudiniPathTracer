@@ -3,6 +3,7 @@
 //
 
 #include "WhittedRayTracer.hpp"
+#include "../Utility/Math.hpp"
 
 #include <SOP/SOP_Node.h>
 #include <GU/GU_Detail.h>
@@ -24,7 +25,7 @@
 
 //int sampleCount = 5;
 
-void WhittedRayTracer::Load(Camera *camera, const std::vector<Light> &lights, fpreal time) {
+void WhittedRayTracer::Load(Camera *camera, const std::vector<Light*> &lights, fpreal time) {
     RenderEngine::Load(camera,lights,time);
     intersect = new GU_RayIntersect(gdh->gdp());
 }
@@ -71,31 +72,46 @@ UT_Vector3F normalize(UT_Vector3F vec){
     return (1/scale)*vec;
 }
 
-float reflectivity = 0.5;
-
+float reflectivity = 0.4;
+float phongCoeff = 100;
+float ks = 100;
+float kd = 0.7;
 
 UT_Vector4F WhittedRayTracer::Shade(const GU_Ray &ray, const GU_RayInfo &info,UT_Vector3F N,UT_Vector3F Cd, int recursionDepth){
     float lambert = 0;
+    float phng = 0;
 
     UT_Vector4F rtrvec(0,0,0,0);
     auto intPos = ray.org + info.myT * ray.dir;
-//    auto N = IntersectionVertexNormal(info);
 
-//    std::cout << N << std::endl;
+    for(auto && light : lights){
+        auto sample = light->GenerateSample();
+        auto L = sample.myPosition - intPos;
+        auto illuminationDirection = normalize(L);
 
-//    auto N = info.myNml;
+        GU_RayInfo shadowInfo;
+        shadowInfo.init();
 
-    for(int i = 0; i < 3; ++i){
-        auto lightNonNormalized = PointLightPosition[i] - intPos;
-        auto illuminationDirection = normalize(lightNonNormalized);
-        auto val = dot(N, illuminationDirection);
-        lambert += (val < 0) ? 0 : val;
+        if(intersect->sendRay(intPos+0.001*illuminationDirection,illuminationDirection,shadowInfo) > 0){
+            if(shadowInfo.myT < 1){
+                continue;
+            }
+        }
+
+        auto lightDistance = myNorm(L);
+        auto coeff = 1/(lightDistance*lightDistance);
+
+        auto h = (1.0/myNorm(illuminationDirection+ray.dir))*(illuminationDirection+ray.dir);
+
+        auto phong = coeff * sample.myIntensity * pow(myMax(0,dot(N,h)),phongCoeff);
+
+
+        auto val = coeff*sample.myIntensity*myMax(dot(N, illuminationDirection),0);
+        lambert += kd*val;
+        phng = ks*phong;
     }
 
-//    auto Cd = IntersectionPointColor(info);
-//    rtrvec = {lambert,lambert,lambert,0};
-    rtrvec = {Cd.x()*lambert,Cd.y()*lambert,Cd.z()*lambert,0};
-//    return rtrvec;
+    rtrvec = {Cd.x()*lambert+phng,Cd.y()*lambert+phng,Cd.z()*lambert+phng,0};
 
     if(recursionDepth > 1){
         auto reflectionDirection = ray.dir - 2*dot(ray.dir,N)*N;
@@ -116,67 +132,3 @@ UT_Vector4F WhittedRayTracer::Shade(const GU_Ray &ray, const GU_RayInfo &info,UT
 WhittedRayTracer::WhittedRayTracer(SOP_Node *geo) : RenderEngine(geo) {
 
 }
-
-//UT_Vector4F WhittedRayTracer::Shade(GU_RayInfo &info, GU_Ray & ray, int recursionDepth) {
-////    if(!info.myTValid){
-////        return {0,0,0,1};
-////    }
-//
-//
-//
-////    auto t = (*info.myHitList)(0).t;//->array();
-//
-//
-//
-//    return {0,0,0,0};
-//
-//    auto first = (*info.myHitList)(0);//[0]
-//
-////    if(!info.myTValid) return {0,0,0,1};
-//
-//    UT_Vector3F normal;
-//    first.prim->evaluateNormalVector(normal,first.u,first.v,first.w);
-//    std::cout << normal << info.myNml << std::endl;
-//    //    info.myPrim->evalua
-//
-//    auto intPos = ray.org + info.myTmax*ray.dir;
-//
-////    info.myPrim.offset();
-////    info.myPrim->evaluateNormalVector()
-//
-//    float lambert = 0;
-//
-//    for(int i = 0; i < 3; ++i){
-//        auto lightNonNormalized = PointLightPosition[i] - intPos;
-//        auto illuminationDirection = normalize(lightNonNormalized);
-//        lambert += dot(normal, illuminationDirection);
-//    }
-//
-//
-//
-//    UT_Vector3F geoColor = color.get(info.myPrim.offset());
-////    UT_Vector3F geoColor = {1,1,1};
-//
-//
-//    UT_Vector4F illumination = {lambert*geoColor.x(),lambert*geoColor.y(),lambert*geoColor.z(),0};
-//
-////    if(info.myTValid && recursionDepth > 0){
-//////        ray.dir *= (-1);
-////        UT_Vector3F recursiveDir = ray.dir - 2*dot(ray.dir,info.myNml)*info.myNml;
-////        GU_RayInfo recursiveInfo;
-////        GU_Ray recursiveRay{intPos+recursiveDir*0.0001,recursiveDir};
-////
-////        intersect->sendRay(recursiveRay.org,recursiveDir,recursiveInfo);
-////
-//////        return Shade(recursiveInfo,recursiveRay,recursionDepth-1);
-////        illumination *= 0.5 + (reflectivity * 0.5);
-////        illumination += (0.5 * reflectivity) * Shade(recursiveInfo,recursiveRay,recursionDepth-1);
-////    }
-//
-//    return illumination;
-//}
-
-
-//WhittedRayTracer::WhittedRayTracer(oldRenderSettings settings, SOP_Node *geo) : oldRenderer(settings, geo) {
-//
-//}

@@ -19,7 +19,7 @@ class WhittedRayTracer : public RenderEngine{
 public:
     WhittedRayTracer(SOP_Node * geo);
     ImageMatrix RenderTile(int sampleCount, int tx0, int tx1, int ty0, int ty1) override;
-    void Load(Camera * camera, const std::vector<Light> & lights, fpreal time) override;
+    void Load(Camera * camera, const std::vector<Light*> & lights, fpreal time) override;
 protected:
     UT_Vector4F RenderPixel(UT_Vector2i pixelCoords);
 //    UT_Vector4F Shade(GU_RayInfo & info, GU_Ray & ray, int recursionDepth);

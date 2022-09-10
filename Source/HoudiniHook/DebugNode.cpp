@@ -5,7 +5,7 @@
 #include "DebugNode.hpp"
 #include "../Core/SceneComponents/Camera.hpp"
 
-#include "../Core/oldRenderer.hpp"
+//#include "../Core/oldRenderer.hpp"
 #include "../Core/WhittedRayTracer/WhittedRayTracer.hpp"
 
 #include <OBJ/OBJ_Camera.h>

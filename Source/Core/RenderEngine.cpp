@@ -13,10 +13,12 @@ RenderEngine::RenderEngine(SOP_Node *geometry) {
     GeometryNode = geometry;
 }
 
-void RenderEngine::Load(Camera * camera, const std::vector<Light> &lights, fpreal time) {
+void RenderEngine::Load(Camera * camera, const std::vector<Light*> &lights, fpreal time) {
     OP_Context context(time);
 
     this->camera = camera;
+    this->lights = lights;
+
     gdh = static_cast<GU_DetailHandle *>(GeometryNode->getCookedData(context));
 
     LoadPointColor();
