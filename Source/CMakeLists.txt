@@ -23,6 +23,9 @@ add_library( ${library_name} SHARED
     Core/Utility/Math.cpp
     Interface/RenderView.cpp
     Interface/RendererInterface.cpp
+    HoudiniHook/Utility.cpp
+    HoudiniHook/LightNode.cpp
+    HoudiniHook/CameraNode.cpp
     HoudiniHook/DebugNode.cpp
     HoudiniHook/Hook.cpp
     HoudiniHook/RendererNode.cpp

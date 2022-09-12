@@ -13,7 +13,7 @@ fpreal myNorm(UT_Vector3F vec){
 }
 
 UT_Vector3F myNormalize(UT_Vector3F vec){
-    return myNorm(vec)*vec;
+    return (1.0/myNorm(vec))*vec;
 }
 
 fpreal myMax(fpreal A, fpreal B){

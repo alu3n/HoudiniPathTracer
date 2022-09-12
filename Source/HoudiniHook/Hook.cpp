@@ -1,5 +1,7 @@
 #include "RendererNode.hpp"
 #include "DebugNode.hpp"
+#include "LightNode.hpp"
+#include "CameraNode.hpp"
 
 #include <SOP/SOP_Node.h>
 #include <OP/OP_OperatorTable.h>
@@ -32,4 +34,31 @@ void newSopOperator(OP_OperatorTable *table){
             nullptr,
             OP_FLAG_GENERATOR
     ));
+}
+
+void newObjectOperator(OP_OperatorTable *table){
+
+    auto light = new OP_Operator(
+                "nprg045_light",
+                "NPRG045 Light",
+                LightNode::BuildOPNode,
+                LightNode::buildTemplatePair(),
+                LightNode::theChildTableName,
+                0,
+                1
+            );
+
+
+    auto camera = new OP_Operator(
+            "nprg045_camera",
+            "NPRG045 Camera",
+            CameraNode::BuildOPNode,
+            CameraNode::buildTemplatePair(),
+            CameraNode::theChildTableName,
+            0,
+            1
+    );
+
+    table->addOperator(light);
+    table->addOperator(camera);
 }

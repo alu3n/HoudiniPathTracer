@@ -14,17 +14,6 @@
 #include <PRM/PRM_Include.h>
 
 
-//void WhittedRayTracer::LoadFrame(fpreal time) {
-//    OP_Context context(time);
-//    GU_DetailHandle * temp = static_cast<GU_DetailHandle *>(Geo->getCookedData(context));
-//    intersect = new GU_RayIntersect(temp->gdp());
-//    color = GA_ROHandleV3(temp->gdp(),GA_ATTRIB_PRIMITIVE,"Cd");
-//    normal = GA_ROHandleV3(temp->gdp(),GA_ATTRIB_VERTEX,"N");
-//    gdp = temp->gdp();
-//}
-
-//int sampleCount = 5;
-
 void WhittedRayTracer::Load(Camera *camera, const std::vector<Light*> &lights, fpreal time) {
     RenderEngine::Load(camera,lights,time);
     intersect = new GU_RayIntersect(gdh->gdp());

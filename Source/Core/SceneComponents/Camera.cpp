@@ -4,6 +4,7 @@
 
 
 #include "Camera.hpp"
+#include "../Utility/Math.hpp"
 
 #include <iostream>
 #include <exception>
@@ -23,23 +24,35 @@ Camera::Camera(OBJ_Camera *cam,OP_Context & context) {
 }
 
 GU_Ray Camera::GenerateRay(UT_Vector2i PixelCoords) {
-    if (PixelCoords.x() < 0 || PixelCoords.x() >= ImageResolution.x() || PixelCoords.y() < 0 || PixelCoords.y() >= ImageResolution.y()) {
-        throw std::invalid_argument("Pixel must be in a range supported by the camera!");
-    }
-
+//    if (PixelCoords.x() < 0 || PixelCoords.x() >= ImageResolution.x() || PixelCoords.y() < 0 || PixelCoords.y() >= ImageResolution.y()) {
+//        throw std::invalid_argument("Pixel must be in a range supported by the camera!");
+//    }
+//
     PixelCoords.y() = ImageResolution.y() - PixelCoords.y();
+//
+//    auto sample = generator.Generate01D2();
+//
+//    auto positionOnSensor = CornerPosition + (sample.x()+PixelCoords.x()) * XIncrement + (sample.y()+PixelCoords.y()) * YIncrement;
+//    auto directionVector = Origin - CornerPosition;
+//
+//    UT_Vector3F dir3 = {directionVector.x(),directionVector.y(),directionVector.z()};
+//
+//    UT_Vector3F dir = myNormalize(dir3);
+//    UT_Vector3F org = UT_Vector3F(positionOnSensor.x(),positionOnSensor.y(),positionOnSensor.z());
+//    return {org,dir};
 
     auto sample = generator.Generate01D2();
 
-    //Todo: Add other sampling methods ... this is just generating ray in the center of the pixel
-    auto positionOnSensor = CornerPosition + (sample.x()+PixelCoords.x()) * XIncrement + (sample.y()+PixelCoords.y()) * YIncrement;
-    auto directionVector = positionOnSensor - Origin;
+    auto sensorPos = (PixelCoords.x() + sample.x())*XIncrement + (PixelCoords.y() + sample.y())*YIncrement + CornerPosition;
+    auto directionVector = sensorPos - Origin;
 
-    auto dir4 = normalize(directionVector);
+    UT_Vector3F dir3 = {directionVector.x(),directionVector.y(),directionVector.z()};
 
+    UT_Vector3F org = {sensorPos.x(),sensorPos.y(),sensorPos.z()};
+    UT_Vector3F dir = myNormalize(dir3);
 
-    UT_Vector3F dir = UT_Vector3F(dir4.x(),dir4.y(),dir4.z());
-    UT_Vector3F org = UT_Vector3F(positionOnSensor.x(),positionOnSensor.y(),positionOnSensor.z());
+//    std::cout << dir << std::endl;
+
     return {org,dir};
 }
 
@@ -56,18 +69,26 @@ void Camera::LoadCamera(OP_Context &context) {
             CameraNode->evalInt("res", 1, time)
     );
 
+    auto worldTransform = CameraNode->getPreTransform();
+//    auto transform = CameraNode->
+
     FocalLength = CameraNode->evalFloat("focal", 0, time) / 1000.0; //mm -> m
     Aperture = CameraNode->evalFloat("aperture", 0, time) / 1000.0; //mm -> m
 
-    UT_Matrix4D worldTransform;
+//    UT_Matrix4D worldTransform;
 
     CameraNode->getLocalToWorldTransform(context,worldTransform);
 
-    std::cout << worldTransform << std::endl;
-
     XIncrement = UT_Vector4F(Aperture / ImageResolution.x(), 0, 0, 0)*worldTransform;
     YIncrement = UT_Vector4F(0, -XIncrement.x(), 0, 0)*worldTransform;
-    CornerPosition = UT_Vector4F(-Aperture / 2, XIncrement.x() * ImageResolution.y() / 2, -FocalLength, 1)*worldTransform;
+    ZIncrement = UT_Vector4F(0, 0, -FocalLength,0)*worldTransform;
     Origin = UT_Vector4F(0, 0, 0, 1)*worldTransform;
+
+    CornerPosition = Origin - (ImageResolution.x()/2)*XIncrement - (ImageResolution.y()/2)*YIncrement + ZIncrement;
+    std::cout << "Corner position: "<< CornerPosition << std::endl;
+    std::cout << "Origin: "<< Origin << std::endl;
+    std::cout << "X: " << XIncrement << " : " << myNorm({XIncrement.x(),XIncrement.y(),XIncrement.z()})<< std::endl;
+    std::cout << "Y: " << YIncrement << " : " << myNorm({YIncrement.x(),YIncrement.y(),YIncrement.z()})<< std::endl;
+    std::cout << "Z: " << ZIncrement << " : " << myNorm({ZIncrement.x(),ZIncrement.y(),ZIncrement.z()})<< std::endl;
 }
 

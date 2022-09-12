@@ -41,6 +41,7 @@ private:
     UT_Vector4F CornerPosition; //Negative X, positive Y, negative Z
     UT_Vector4F XIncrement; //Increment to get corner of next pixel in X direction
     UT_Vector4F YIncrement; //Increment to get corner of next pixel in Y direction
+    UT_Vector4F ZIncrement;
     UT_Vector4F Origin;
 };
 
