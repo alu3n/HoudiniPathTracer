@@ -20,3 +20,7 @@ fpreal myMax(fpreal A, fpreal B){
     if(A > B) return A;
     return B;
 }
+
+UT_Vector3F perfectReflection(UT_Vector3F d, UT_Vector3F N){
+    return d - 2 * dot(d,N)*N;
+}

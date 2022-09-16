@@ -68,18 +68,9 @@ void RenderView::Open() {
     void *tileData = makeTile();
     for (int ty = 0; ty < ImageResY; ty+=TileResY) {
         for (int tx = 0; tx < ImageResX; tx+=TileResX) {
-//            std::cout << SYSmin(tx+TileResX, ImageResX)-1 << std::endl;
             writeTile(Device,tileData,tx, SYSmin(tx+TileResX, ImageResX)-1,ty,SYSmin(ty+TileResY,ImageResY)-1);
-//            break;
         }
-//        break;
     }
-//    std::cout << "Finished writing" << std::endl;
-//    Device->flush();
-
-//    free(tileData); //Todo: What does this do?
-
-//    return 0;
 }
 
 void RenderView::writeTile(IMG_TileDevice *dev, void *tdata, int tx0, int tx1, int ty0, int ty1) {

@@ -26,7 +26,7 @@ void RendererInterface::RenderFrame() {
 
     auto light = new ConstantPointLight({0,2.99,0},5);
 
-    auto areaLight1 = new ConstantRectangularAreaLight({3,4,0},{1.8,0,0},{4,4},20);
+    auto areaLight1 = new ConstantRectangularAreaLight({0,2.99,0},{0,0,0},{4,4},20);
     auto areaLight2 = new ConstantRectangularAreaLight({0,4,0},{0,0,0},{4,4},20);
 
 

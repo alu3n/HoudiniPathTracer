@@ -18,6 +18,7 @@ add_library( ${library_name} SHARED
 #    Core/oldRenderer.cpp
     Core/RenderEngine.cpp
     Core/SceneComponents/Light.cpp
+        Core/BRDF/old_PrincipledShader.cpp
     Core/WhittedRayTracer/WhittedRayTracer.cpp
     Core/Utility/SampleGenerators.cpp
     Core/Utility/Math.cpp

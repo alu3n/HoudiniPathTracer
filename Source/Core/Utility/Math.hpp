@@ -14,4 +14,6 @@ UT_Vector3F myNormalize(UT_Vector3F vec);
 
 fpreal myMax(fpreal A, fpreal B);
 
+UT_Vector3F perfectReflection(UT_Vector3F d, UT_Vector3F N);
+
 #endif //NPRG045_MATH_HPP
