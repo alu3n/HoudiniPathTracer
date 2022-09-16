@@ -7,11 +7,12 @@
 
 #include "../../Scene/Headers/Scene.hpp"
 #include "Utility.hpp"
+#include <map>
 
 class Renderer{
 public:
-    virtual void LoadScene(const Scene & scene);
-    virtual void ImproveTile(ImageTile & tile,int sampleCount);
+//    virtual void LoadScene(const Scene & scene);
+    virtual void ImproveTile(ImageTile & tile,int sampleCount) = 0;
 protected:
     Scene scene;
 };

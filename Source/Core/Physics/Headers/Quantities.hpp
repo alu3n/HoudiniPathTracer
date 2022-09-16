@@ -7,22 +7,26 @@
 
 #include <array>
 
+/* TODO:
+ * - [ ] Implement addition, multiplication etc.
+ */
+
 enum class PhysicalQuantity{
     Radiosity, //Will be used for light sources
-    Radiance
+    Radiance,
+    Energy
 };
 
 template<PhysicalQuantity>
 struct Quantity{
-    float amount;
+    float amount = 0;
 };
 
-template<PhysicalQuantity Q>
 struct Color{
-    Quantity<Q> R;
-    Quantity<Q> G;
-    Quantity<Q> B;
-    float alpha;
+    Quantity<PhysicalQuantity::Energy> R;
+    Quantity<PhysicalQuantity::Energy> G;
+    Quantity<PhysicalQuantity::Energy> B;
+    float alpha = 0;
 };
 
 #endif //NPRG045_UNITS_HPP

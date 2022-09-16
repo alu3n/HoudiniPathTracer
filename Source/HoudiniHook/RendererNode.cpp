@@ -2,13 +2,15 @@
 // Created by Vojtěch Pröschl on 04.09.2022.
 //
 
-#include "../Interface/RenderView.hpp"
+//#include "../Interface/Headers/oldRenderView.hpp"
 #include "RendererNode.hpp"
-#include "../Core/PathTracer/PathTracer.hpp"
-#include "../Core/SceneComponents/Camera.hpp"
-#include "../Core/WhittedRayTracer/WhittedRayTracer.hpp"
-#include "../Interface/RendererInterface.hpp"
-#include "../Core/Utility/SampleGenerators.hpp"
+//#include "../Core/PathTracer/PathTracer.hpp"
+//#include "../Core/SceneComponents/Camera.hpp"
+//#include "../Core/WhittedRayTracer/WhittedRayTracer.hpp"
+//#include "../Interface/Headers/oldRendererInterface.hpp"
+//#include "../Core/Utility/SampleGenerators.hpp"
+
+#include "../Interface/Headers/RenderInterface.hpp"
 
 #include <vector>
 #include <OP/OP_Director.h>
@@ -49,16 +51,18 @@ static PRM_Default defGeometry = {0,""};
 static PRM_Default defGeneral {0,""};
 
 int RenderFrame(void *data, int index, fpreal64 time, const PRM_Template *tplate){
-    RendererInterface rendererInterface((RendererNode *)data);
-    rendererInterface.LoadData();
-    rendererInterface.RenderFrame();
+//    oldRendererInterface rendererInterface((RendererNode *)data);
+//    rendererInterface.LoadData();
+//    rendererInterface.RenderFrame();
+    RenderInterface anInterface((RendererNode *)data);
+    anInterface.RenderFrame();
 }
 
 int RenderFrameRange(void *data, int index, fpreal64 time, const PRM_Template *tplate){
     std::cout << "Not implemented yet!" << std::endl;
-    SampleGenerator gen = UniformGenerator(10);
-    std::cout << gen.Generate01D2() << std::endl;
-    std::cout << gen.Generate01D2() << std::endl;
+//    SampleGenerator gen = UniformGenerator(10);
+//    std::cout << gen.Generate01D2() << std::endl;
+//    std::cout << gen.Generate01D2() << std::endl;
 
 }
 

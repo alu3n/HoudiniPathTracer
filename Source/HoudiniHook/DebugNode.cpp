@@ -3,10 +3,10 @@
 //
 
 #include "DebugNode.hpp"
-#include "../Core/SceneComponents/Camera.hpp"
+//#include "../Core/SceneComponents/Camera.hpp"
 
 //#include "../oldCore/oldRenderer.hpp"
-#include "../Core/WhittedRayTracer/WhittedRayTracer.hpp"
+//#include "../Core/WhittedRayTracer/WhittedRayTracer.hpp"
 
 #include <OBJ/OBJ_Camera.h>
 #include <OP/OP_Director.h>
