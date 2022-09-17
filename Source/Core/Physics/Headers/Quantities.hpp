@@ -29,4 +29,7 @@ struct Color{
     float alpha = 0;
 };
 
+Color operator+(const Color & C1, const Color & C2);
+Color operator*(float a,const Color & C);
+
 #endif //NPRG045_UNITS_HPP

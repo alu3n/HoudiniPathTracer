@@ -11,7 +11,7 @@
 
 class Renderer{
 public:
-//    virtual void LoadScene(const Scene & scene);
+    Renderer(Scene myScene) : scene(myScene){}
     virtual void ImproveTile(ImageTile & tile,int sampleCount) = 0;
 protected:
     Scene scene;

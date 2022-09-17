@@ -3,25 +3,64 @@
 //
 
 #include "../Headers/RenderInterface.hpp"
+#include "../../Core/Renderers/Headers/DistributedRaytracer.hpp"
+
+//#include "../../oldCore/Utility/SampleGenerators.hpp"
+
+#include <OBJ/OBJ_Camera.h>
+#include <OP/OP_Context.h>
+#include <OP/OP_Director.h>
+
+#include <chrono>
+#include <thread>
 
 RenderInterface::RenderInterface(RendererNode *node) {
     rendererNode = node;
 }
 
 void RenderInterface::RenderFrame() {
-    renderWindow.Open({640,640},{64,64});
+    UT_StringHolder cameraPath;
+    UT_StringHolder geometryPath;
 
-    ImageTile tile(ImageCoorinates(0,100,0,100));
+    rendererNode->evalString(cameraPath,"camera",0,0);
+    rendererNode->evalString(geometryPath,"geometry",0,0);
+
+    auto cameraNode = OPgetDirector()->getOBJNode(cameraPath)->castToOBJCamera();
+    auto geometryNode = OPgetDirector()->getSOPNode(geometryPath);
+
+    OP_Context context(0);
+
+    int ImageResX = cameraNode->evalInt("res",0,context.getTime());
+    int ImageResY = cameraNode->evalInt("res",1,context.getTime());
+    int TileResX = rendererNode->evalInt("tileSize",0,context.getTime());
+    int TileResY = rendererNode->evalInt("tileSize",1,context.getTime());
+
+    renderWindow.Open({ImageResX,ImageResY},{TileResX,TileResY});
 
 
-//    for(int i = 0; i < 256; ++i){
-//        for(int x = 0; x < 64; ++x){
-//            for(int y = 0; y < 64; ++y){
-//                tile.data[x][y].R.amount = 0.01 * i;
-//            }
-//        }
-        renderWindow.DisplayTile(tile);
-//    }
+    Camera cam(cameraNode,context);
+    Geometry geo(geometryNode,context);
+
+    ConstantRectangularAreaLight * light0 = new ConstantRectangularAreaLight({0,5,0},{0,0,0},{1,1},20);
+
+    Scene scene({light0},cam,geo);
+
+    DistributedRaytracer Renderer = DistributedRaytracer(scene);
+
+
+
+    Image img(ImageResX,ImageResY,TileResX,TileResY);
+
+    //Todo: Prevent crashing due to overload of image buffer
+
+    for(int i = 0; i < 10; ++i){
+        for(auto && tile : img.data){
+            Renderer.ImproveTile(tile,10);
+            renderWindow.DisplayTile(tile);
+            std::this_thread::sleep_for(std::chrono::nanoseconds(25));
+        }
+    }
+
 }
 
 void RenderInterface::RenderFramerange() {
