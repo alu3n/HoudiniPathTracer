@@ -9,6 +9,7 @@
 #include "../../Physics/Headers/Quantities.hpp"
 
 #include <vector>
+#include <UT/UT_Vector3.h>
 
 struct ImageCoordinates{
     ImageCoordinates(int tx0, int tx1, int ty0, int ty1);
@@ -30,6 +31,12 @@ struct ImageTile{
 struct Image{
     Image(int imageResX, int imageResY, int tileResX, int tileResY);
     std::vector<ImageTile> data{};
+};
+
+struct RaySample{
+    RaySample(UT_Vector3F dir, Color color);
+    UT_Vector3F direction;
+    Color color;
 };
 
 

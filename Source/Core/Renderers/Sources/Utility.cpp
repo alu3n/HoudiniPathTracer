@@ -4,6 +4,8 @@
 
 #include "../Headers/Utility.hpp"
 #include <iostream>
+#include <algorithm>
+#include <random>
 
 ImageCoordinates::ImageCoordinates(int tx0, int tx1, int ty0, int ty1) {
     this->tx0 = tx0;
@@ -83,5 +85,11 @@ Image::Image(int imageResX, int imageResY, int tileResX, int tileResY) {
         }
     }
 
-    //Todo: Shuffle data
+    auto rng = std::default_random_engine  {};
+    std::shuffle(data.begin(),data.end(),rng);asd
+}
+
+RaySample::RaySample(UT_Vector3F dir, Color color) {
+    this->color = color;
+    direction = dir;
 }

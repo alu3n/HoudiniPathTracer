@@ -41,9 +41,12 @@ void RenderInterface::RenderFrame() {
     Camera cam(cameraNode,context);
     Geometry geo(geometryNode,context);
 
-    ConstantRectangularAreaLight * light0 = new ConstantRectangularAreaLight({0,5,0},{0,0,0},{1,1},20);
+    ConstantRectangularAreaLight * light0 = new ConstantRectangularAreaLight({0,10,3},{0,0,0},{1,1},200);
+    ConstantRectangularAreaLight * light1 = new ConstantRectangularAreaLight({10,5,0},{0,0,0},{1,1},30);
+    ConstantRectangularAreaLight * light2 = new ConstantRectangularAreaLight({-10,5,0},{0,0,0},{1,1},30);
 
-    Scene scene({light0},cam,geo);
+
+    Scene scene({light0,light1,light2},cam,geo);
 
     DistributedRaytracer Renderer = DistributedRaytracer(scene);
 
@@ -53,11 +56,11 @@ void RenderInterface::RenderFrame() {
 
     //Todo: Prevent crashing due to overload of image buffer
 
-    for(int i = 0; i < 10; ++i){
+    for(int i = 0; i < 100; ++i){
         for(auto && tile : img.data){
-            Renderer.ImproveTile(tile,10);
+            Renderer.ImproveTile(tile,2);
             renderWindow.DisplayTile(tile);
-            std::this_thread::sleep_for(std::chrono::nanoseconds(25));
+//            std::this_thread::sleep_for(std::chrono::nanoseconds(25));
         }
     }
 

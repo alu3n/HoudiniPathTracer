@@ -1,0 +1,8 @@
+//
+// Created by Vojtěch Pröschl on 17.09.2022.
+//
+
+#ifndef NPRG045_PRINCIPLEDSHADER_HPP
+#define NPRG045_PRINCIPLEDSHADER_HPP
+
+#endif //NPRG045_PRINCIPLEDSHADER_HPP

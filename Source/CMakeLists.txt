@@ -15,6 +15,7 @@ set( library_name HoudiniPathTracer )
 
 add_library( ${library_name} SHARED
     Core/Mathematics/Sources/Sampling.cpp
+    Core/Mathematics/Sources/Coordinates.cpp
     Core/Physics/Sources/GeometricalOptics.cpp
     Core/Physics/Sources/Quantities.cpp
     Core/Renderers/Sources/DistributedRaytracer.cpp
@@ -24,6 +25,7 @@ add_library( ${library_name} SHARED
     Core/Scene/Sources/Geometry.cpp
     Core/Scene/Sources/Light.cpp
     Core/Scene/Sources/Scene.cpp
+    Core/Materials/Sources/LambertBRDF.cpp
 
     Interface/Sources/RenderInterface.cpp
     Interface/Sources/RenderWindow.cpp

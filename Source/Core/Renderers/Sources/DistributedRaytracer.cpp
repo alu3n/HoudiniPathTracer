@@ -5,6 +5,7 @@
 #include "../../Mathematics/Headers/Sampling.hpp"
 #include "../Headers/DistributedRaytracer.hpp"
 #include "../../Mathematics/Headers/Vectors.hpp"
+#include "../../Materials/Headers/LambertBRDF.hpp"
 
 DistributedRaytracer::DistributedRaytracer(Scene myScene) : Renderer(myScene) {
     intersect = new GU_RayIntersect(scene.geometry.gdh->gdp());
@@ -53,11 +54,20 @@ Color DistributedRaytracer::RenderPixel(UT_Vector2i coordinates) {
 
 }
 
-Color DistributedRaytracer::ComputeColor(const GU_Ray & ray, const GU_RayInfo & info, int depth){
+Color DistributedRaytracer::ComputeColor(const GU_Ray & ray, const GU_RayInfo & info, int depth) {
     auto P = ray.org + info.myT * ray.dir;
-    auto N = info.myNml;
+
+//    std::cout << N << std::endl;
+    auto N = scene.geometry.IntersectionVertexNormal(info);
+    auto Cd = scene.geometry.IntersectionPointColor(info);
+//    UT_Vector3F Cd = {1,1,1};
+
+    Color color{{Cd.x()},{Cd.y()},{Cd.z()},0};
+    LambertBRDF brdf{color};
 
     //Direct illumination
+
+    Color rtrval{{0},{0},{0},{0}};
 
     float totalLight{0};
 
@@ -75,8 +85,12 @@ Color DistributedRaytracer::ComputeColor(const GU_Ray & ray, const GU_RayInfo & 
         auto d = Norm<2>(sample.myPosition - P);
         auto mult = dot(L,N);
 
-        totalLight += (1.0/(d*d)) * sample.myIntensity * (mult > 0 ? mult : 0);
+        auto radiosity = (1.0/(d*d)) * sample.myIntensity * (mult > 0 ? mult : 0);
+        auto evalBrdf = brdf.Evaluate(ray.dir,L);
+        rtrval.R.amount += radiosity * evalBrdf.R.amount;
+        rtrval.G.amount += radiosity * evalBrdf.G.amount;
+        rtrval.B.amount += radiosity * evalBrdf.B.amount;
     }
 
-    return {{totalLight},{totalLight},{totalLight},0};
+    return rtrval;
 }

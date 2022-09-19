@@ -22,7 +22,7 @@ private:
 
     void LoadPointColor();
     void LoadVertexNormal();
-    void LoadVertexPointNum();
+//    void LoadVertexPointNum();
 };
 
 #endif //NPRG045_GEOMETRY_HPP
