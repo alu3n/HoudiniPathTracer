@@ -24,7 +24,7 @@ void DistributedRaytracer::ImproveTile(ImageTile &tile, int sampleCount) {
     int tileSizeX = tile.viewCoords.tx1 - tile.viewCoords.tx0;
     int tileSizeY = tile.viewCoords.ty1 - tile.viewCoords.ty0;
 
-    for(int x = 0; x < tileSizeX; ++x){
+    for(int x = 0; x <= tileSizeX; ++x){
         for(int y = 0; y <= tileSizeY; ++y){
             Color buffer{};
             for(int i = 0; i < sampleCount; ++i){
@@ -54,6 +54,8 @@ Color DistributedRaytracer::RenderPixel(UT_Vector2i coordinates) {
 
 }
 
+float eliminationProbability = 0.25;
+
 Color DistributedRaytracer::ComputeColor(const GU_Ray & ray, const GU_RayInfo & info, int depth) {
     auto P = ray.org + info.myT * ray.dir;
 
@@ -70,6 +72,31 @@ Color DistributedRaytracer::ComputeColor(const GU_Ray & ray, const GU_RayInfo & 
     Color rtrval{{0},{0},{0},{0}};
 
     float totalLight{0};
+
+    if(SampleGenerator::Uniform01() > eliminationProbability){
+//        auto recursiveRay = brdf.Sample(ray.dir);
+
+        UT_Vector3F tangentVector;
+        N.arbitraryPerp(tangentVector);
+        UT_Vector3F perp = cross(tangentVector,N);
+
+        auto coeffs = SampleGenerator::CosineWeightedHemisphereSample();
+
+        auto recursiveRay = coeffs.x() * tangentVector + coeffs.y() * N + coeffs.z() * perp;
+
+        GU_RayInfo recursiveInfo;
+        recursiveInfo.init();
+
+        int count = intersect->sendRay(P+0.001*recursiveRay,recursiveRay,recursiveInfo);
+        if(count != 0){
+            auto tmp = ComputeColor({P,recursiveRay},recursiveInfo,0);
+            auto evalBrdf = brdf.Evaluate(ray.dir,recursiveRay);
+            tmp.R.amount *= evalBrdf.R.amount;
+            tmp.G.amount *= evalBrdf.G.amount;
+            tmp.B.amount *= evalBrdf.B.amount;
+            return tmp;
+        }
+    }
 
     for(auto && light : scene.lights){
         auto sample = light->GenerateSample();

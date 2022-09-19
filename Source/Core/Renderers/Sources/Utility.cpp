@@ -86,7 +86,7 @@ Image::Image(int imageResX, int imageResY, int tileResX, int tileResY) {
     }
 
     auto rng = std::default_random_engine  {};
-    std::shuffle(data.begin(),data.end(),rng);asd
+    std::shuffle(data.begin(),data.end(),rng);
 }
 
 RaySample::RaySample(UT_Vector3F dir, Color color) {

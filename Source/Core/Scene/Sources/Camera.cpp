@@ -14,6 +14,8 @@ Camera::Camera(OBJ_Camera *cam, OP_Context &context) {
 GU_Ray Camera::GenerateRay(UT_Vector2i PixelCoords) {
     auto sample = generator.Generate01F2();
 
+//    std::cout << YIncrement << std::endl;
+
     auto sensorPos = (PixelCoords.x() + sample.x())*XIncrement + (PixelCoords.y() + sample.y())*YIncrement + CornerPosition;
     auto directionVector = sensorPos - Origin;
 
@@ -33,7 +35,7 @@ void Camera::LoadCamera(OP_Context &context) {
             CameraNode->evalInt("res", 1, time)
     );
 
-    auto worldTransform = CameraNode->getPreTransform();
+    UT_Matrix4F worldTransform{0};// = CameraNode->getPreTransform();
 
     FocalLength = CameraNode->evalFloat("focal", 0, time) / 1000.0; //mm -> m
     Aperture = CameraNode->evalFloat("aperture", 0, time) / 1000.0; //mm -> m
@@ -41,7 +43,7 @@ void Camera::LoadCamera(OP_Context &context) {
     CameraNode->getLocalToWorldTransform(context,worldTransform);
 
     XIncrement = UT_Vector4F(Aperture / ImageResolution.x(), 0, 0, 0)*worldTransform;
-    YIncrement = UT_Vector4F(0, XIncrement.x(), 0, 0)*worldTransform;
+    YIncrement = UT_Vector4F(0, Aperture / ImageResolution.x(), 0, 0)*worldTransform;
     ZIncrement = UT_Vector4F(0, 0, -FocalLength,0)*worldTransform;
     Origin = UT_Vector4F(0, 0, 0, 1)*worldTransform;
 
