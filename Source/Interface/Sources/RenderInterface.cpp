@@ -3,7 +3,9 @@
 //
 
 #include "../Headers/RenderInterface.hpp"
-#include "../../Core/Renderers/Headers/DistributedRaytracer.hpp"
+#include "../../Core/Renderers/Headers/PhysicallyBasedRenderer.hpp"
+#include "../../Core/Renderers/Headers/OldDistributedRaytracer.hpp"
+//#include "../../Core/Renderers/Headers/OldPathTracer.hpp"
 
 //#include "../../oldCore/Utility/SampleGenerators.hpp"
 
@@ -35,32 +37,38 @@ void RenderInterface::RenderFrame() {
     int TileResX = rendererNode->evalInt("tileSize",0,context.getTime());
     int TileResY = rendererNode->evalInt("tileSize",1,context.getTime());
 
+    std::cout << "TESTING" << std::endl;
+
     renderWindow.Open({ImageResX,ImageResY},{TileResX,TileResY});
 
 
     Camera cam(cameraNode,context);
     Geometry geo(geometryNode,context);
-
-    ConstantRectangularAreaLight * light0 = new ConstantRectangularAreaLight({0,2.99,0},{0,0,0},{1,1},5);
-//    ConstantRectangularAreaLight * light1 = new ConstantRectangularAreaLight({10,5,0},{0,0,0},{1,1},30);
-//    ConstantRectangularAreaLight * light2 = new ConstantRectangularAreaLight({-10,5,0},{0,0,0},{1,1},30);
+//
 
 
+    ConstantRectangularLight * light0 = new ConstantRectangularLight({0,2.99,0},{0,0,0},{1,1},{5});
+
+//    ConstantRectangularAreaLight * light0 = new ConstantRectangularAreaLight({0,2.99,0},{0,0,0},{1,1},5);
+//    ConstantRectangularLight * light1 = new ConstantRectangularLight({10,5,0},{0,0,0},{1,1},{30});
+//    ConstantRectangularLight * light2 = new ConstantRectangularLight({-10,5,0},{0,0,0},{1,1},{30});
+//
+//    std::cout << "TESTING" << std::endl;
+//
     Scene scene({light0},cam,geo);
-
-    DistributedRaytracer Renderer = DistributedRaytracer(scene);
-
-
-
+//
+    PhysicallyBasedRenderer Renderer = PhysicallyBasedRenderer(scene);
+//
     Image img(ImageResX,ImageResY,TileResX,TileResY);
-
-    //Todo: Prevent crashing due to overload of image buffer
-
-    for(int i = 0; i < 10; ++i){
+//
+//    //Todo: Prevent crashing due to overload of image buffer
+//
+//
+    for(int i = 0; i < 50; ++i){
         for(auto && tile : img.data){
-            Renderer.ImproveTile(tile,4);
+            Renderer.ImproveTile(tile,5);
             renderWindow.DisplayTile(tile);
-            std::this_thread::sleep_for(std::chrono::nanoseconds(25));
+//            std::this_thread::sleep_for(std::chrono::nanoseconds(25));
         }
     }
 

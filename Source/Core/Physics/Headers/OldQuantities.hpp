@@ -22,14 +22,14 @@ struct Quantity{
     float amount = 0;
 };
 
-struct Color{
-    Quantity<PhysicalQuantity::Energy> R;
-    Quantity<PhysicalQuantity::Energy> G;
-    Quantity<PhysicalQuantity::Energy> B;
-    float alpha = 0;
-};
+//struct Color{
+//    Quantity<PhysicalQuantity::Energy> R;
+//    Quantity<PhysicalQuantity::Energy> G;
+//    Quantity<PhysicalQuantity::Energy> B;
+//    float alpha = 0;
+//};
 
-Color operator+(const Color & C1, const Color & C2);
-Color operator*(float a,const Color & C);
+//Color operator+(const Color & C1, const Color & C2);
+//Color operator*(float a,const Color & C);
 
 #endif //NPRG045_UNITS_HPP

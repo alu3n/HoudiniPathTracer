@@ -1,19 +1,17 @@
 //
-// Created by Vojtěch Pröschl on 16.09.2022.
+// Created by Vojtěch Pröschl on 07.11.2022.
 //
 
+#include "../Headers/OldPathTracer.hpp"
 #include "../../Mathematics/Headers/Sampling.hpp"
-#include "../Headers/DistributedRaytracer.hpp"
 #include "../../Mathematics/Headers/Vectors.hpp"
 #include "../../Materials/Headers/LambertBRDF.hpp"
 
-DistributedRaytracer::DistributedRaytracer(Scene myScene) : Renderer(myScene) {
+OldPathTracer::OldPathTracer(Scene myScene) : OldRenderer(myScene){
     intersect = new GU_RayIntersect(scene.geometry.gdh->gdp());
 }
 
-void DistributedRaytracer::ImproveTile(ImageTile &tile, int sampleCount) {
-    Generator gen{};
-
+void OldPathTracer::ImproveTile(ImageTile &tile, int sampleCount) {
     float previousWeight = tile.sampleCount == 0 ? 0.0 : ((float)tile.sampleCount) / (sampleCount + tile.sampleCount);
     float currentWeight = 1 - previousWeight;
     float sampleMultiplier = 1.0/sampleCount;
@@ -35,10 +33,16 @@ void DistributedRaytracer::ImproveTile(ImageTile &tile, int sampleCount) {
     }
 }
 
-constexpr size_t recursionDepth = 10;
+float OldPathTracer::EliminationProbability(int depth) {
+    if(depth >= maxRecursionDepth){
+        return 1.0;
+    }
+    else{
+        return 1.0 - 2.0/(1.0+depth);
+    }
+}
 
-Color DistributedRaytracer::RenderPixel(UT_Vector2i coordinates) {
-//    return {{0},{1},{0},0};
+Color OldPathTracer::RenderPixel(UT_Vector2i coordinates) {
     auto ray = scene.camera.GenerateRay(coordinates);
 
     GU_RayInfo info;
@@ -49,33 +53,21 @@ Color DistributedRaytracer::RenderPixel(UT_Vector2i coordinates) {
         return {{0},{0},{0},1};
     }
     else{
-        return ComputeColor(ray,info,recursionDepth);
+        return ComputeIllumination(ray,info,0);
     }
-
 }
 
-float eliminationProbability = 0.25;
+Color OldPathTracer::ComputeIllumination(const GU_Ray & ray, const GU_RayInfo & info, int depth) {
+    Color colorBuffer{{0},{0},{0},0};
 
-Color DistributedRaytracer::ComputeColor(const GU_Ray & ray, const GU_RayInfo & info, int depth) {
     auto P = ray.org + info.myT * ray.dir;
-
-//    std::cout << N << std::endl;
     auto N = scene.geometry.IntersectionVertexNormal(info);
     auto Cd = scene.geometry.IntersectionPointColor(info);
-//    UT_Vector3F Cd = {1,1,1};
 
     Color color{{Cd.x()},{Cd.y()},{Cd.z()},0};
     LambertBRDF brdf{color};
 
-    //Direct illumination
-
-    Color rtrval{{0},{0},{0},{0}};
-
-    float totalLight{0};
-
-    if(SampleGenerator::Uniform01() > eliminationProbability){
-//        auto recursiveRay = brdf.Sample(ray.dir);
-
+    if(SampleGenerator::Uniform01() > EliminationProbability(depth)){
         UT_Vector3F tangentVector;
         N.arbitraryPerp(tangentVector);
         UT_Vector3F perp = cross(tangentVector,N);
@@ -88,16 +80,23 @@ Color DistributedRaytracer::ComputeColor(const GU_Ray & ray, const GU_RayInfo & 
         recursiveInfo.init();
 
         int count = intersect->sendRay(P+0.001*recursiveRay,recursiveRay,recursiveInfo);
+
+
+
         if(count != 0){
-            auto tmp = ComputeColor({P,recursiveRay},recursiveInfo,0);
+            auto tmp = ComputeIllumination({P,recursiveRay},recursiveInfo,depth++);
+
             auto evalBrdf = brdf.Evaluate(ray.dir,recursiveRay);
-            tmp.R.amount *= evalBrdf.R.amount;
-            tmp.G.amount *= evalBrdf.G.amount;
-            tmp.B.amount *= evalBrdf.B.amount;
-            return tmp;
+            colorBuffer.R.amount = tmp.R.amount * evalBrdf.R.amount;
+            colorBuffer.G.amount = tmp.G.amount * evalBrdf.G.amount;
+            colorBuffer.B.amount = tmp.B.amount * evalBrdf.B.amount;
+
+            return colorBuffer;
         }
+
     }
 
+    //Compute local color
     for(auto && light : scene.lights){
         auto sample = light->GenerateSample();
         auto L = Normalize<2>(sample.myPosition - P);
@@ -114,10 +113,9 @@ Color DistributedRaytracer::ComputeColor(const GU_Ray & ray, const GU_RayInfo & 
 
         auto radiosity = (1.0/(d*d)) * sample.myIntensity * (mult > 0 ? mult : 0);
         auto evalBrdf = brdf.Evaluate(ray.dir,L);
-        rtrval.R.amount += radiosity * evalBrdf.R.amount;
-        rtrval.G.amount += radiosity * evalBrdf.G.amount;
-        rtrval.B.amount += radiosity * evalBrdf.B.amount;
+        colorBuffer.R.amount += radiosity * evalBrdf.R.amount;
+        colorBuffer.G.amount += radiosity * evalBrdf.G.amount;
+        colorBuffer.B.amount += radiosity * evalBrdf.B.amount;
     }
-
-    return rtrval;
+    return colorBuffer;
 }

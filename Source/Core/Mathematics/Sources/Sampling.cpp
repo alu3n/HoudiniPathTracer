@@ -8,6 +8,12 @@ float Generator::Generate01F1() {
     return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 }
 
+int Generator::GenerateInRange(int min, int max) {
+    auto rand = this->Generate01F1();
+    rand*=(max-min);
+    return ((int)rand)+min;
+}
+
 UT_Vector2F Generator::Generate01F2() {
     return {Generate01F1(),Generate01F1()};
 }

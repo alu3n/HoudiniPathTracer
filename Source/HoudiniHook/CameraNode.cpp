@@ -17,6 +17,7 @@ OP_Node *CameraNode::BuildOPNode(OP_Network *net, const char *name, OP_Operator 
 }
 
 
+
 static PRM_Name prmNames[]{
         PRM_Name{"resolution","Resolution"},
         PRM_Name{"aperature","Aperature"},

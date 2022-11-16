@@ -20,6 +20,7 @@
 #include <IMG/IMG_TileRead.h>
 //RendererNode * local;
 
+
 //Names of the node interface elements
 static PRM_Name prmNames[]{
     PRM_Name{"sampleCount", "Sample Count"},
@@ -28,13 +29,14 @@ static PRM_Name prmNames[]{
     PRM_Name{"frameRange", "Frame Range"},
     PRM_Name{"renderEngine", "Render Engine"},
     PRM_Name{"camera","Camera"},
-    PRM_Name{"light","Light"},
+    PRM_Name{"light","OldLight"},
     PRM_Name{"geometry","Geometry"},
     PRM_Name{"renderFrameRange", "Render Frame Range"},
     PRM_Name{"renderCurrentFrame", "Render Current Frame"}
 };
 
-static PRM_Default defSampleCount = {0};
+static PRM_Default defSampleCount = {50};
+//static PRM_Default de
 static PRM_Default defTileSize[] = {16,16};
 static PRM_Default defFps = {24};
 static PRM_Default defFrameRange[] = {{0},{240}};

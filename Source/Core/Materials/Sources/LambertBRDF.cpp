@@ -8,7 +8,7 @@ float LambertBRDF::PDF(UT_Vector3F V, UT_Vector3F sample) {
 
 }
 
-RaySample LambertBRDF::Sample(UT_Vector3F V) {
+UT_Vector3F LambertBRDF::Sample(UT_Vector3F V) {
     
 }
 

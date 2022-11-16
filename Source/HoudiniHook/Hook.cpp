@@ -13,7 +13,7 @@
 void newDriverOperator(OP_OperatorTable *table){
     table->addOperator(new OP_Operator(
             "nprg045_renderer",
-            "NPRG045 Renderer",
+            "NPRG045 OldRenderer",
             RendererNode::BuildOPNode,
             RendererNode::BuildPRMTemplate(),
             0,
@@ -40,7 +40,7 @@ void newObjectOperator(OP_OperatorTable *table){
 
     auto light = new OP_Operator(
                 "nprg045_light",
-                "NPRG045 Light",
+                "NPRG045 OldLight",
                 LightNode::BuildOPNode,
                 LightNode::buildTemplatePair(),
                 LightNode::theChildTableName,

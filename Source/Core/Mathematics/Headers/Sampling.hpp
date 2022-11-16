@@ -18,6 +18,7 @@ public:
     virtual float Generate01F1();
     virtual UT_Vector2F Generate01F2();
     virtual UT_Vector3F Generate01F3();
+    virtual int GenerateInRange(int min, int max);
 };
 
 class SampleGenerator{

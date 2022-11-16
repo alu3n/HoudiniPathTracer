@@ -43,10 +43,10 @@ void *RenderWindow::ConvertTile(const ImageTile &tile) {
     for(int y = 0; y <= ry; ++y){
         for(int x = 0; x <= rx; ++x){
             auto pixel = tile.data[x][y];
-            *ptr++ = pixel.R.amount;
-            *ptr++ = pixel.G.amount;
-            *ptr++ = pixel.B.amount;
-            *ptr++ = pixel.alpha;
+            *ptr++ = pixel.r;
+            *ptr++ = pixel.g;
+            *ptr++ = pixel.b;
+            *ptr++ = pixel.a;
         }
     }
 

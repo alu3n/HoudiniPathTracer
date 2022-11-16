@@ -3,23 +3,12 @@
 //
 
 
+//#include "../Headers/OldLight.hpp"
 #include "../Headers/Light.hpp"
 #include "UT/UT_Matrix3.h"
 
-Light::Light(UT_Vector3F position) {
-    Position = position;
-}
-
-ConstantPointLight::ConstantPointLight(UT_Vector3F position, fpreal intensity) : Light(position){
-    Intensity = intensity;
-}
-
-LightSample ConstantPointLight::GenerateSample() {
-    return {Position,Intensity};
-}
-
-ConstantRectangularAreaLight::ConstantRectangularAreaLight(UT_Vector3F position, UT_Vector3F orientation,
-                                                           UT_Vector2F size, fpreal intensity) : Light(position) {
+ConstantRectangularLight::ConstantRectangularLight(UT_Vector3F position, UT_Vector3F orientation, UT_Vector2F size,
+                                                   Radiance radiance) : constantRadiance(radiance){
     dirX = UT_Vector3F(size.x(),0,0);
     dirY = UT_Vector3F(0,size.y(),0);
 
@@ -29,13 +18,12 @@ ConstantRectangularAreaLight::ConstantRectangularAreaLight(UT_Vector3F position,
     dirX = dirX*T;
     dirY = dirY*T;
 
-    Position = position - 0.5*dirX - 0.5*dirY;
-
-    this->intensity = intensity;
+    this->position = position - 0.5*dirX - 0.5*dirY;
 }
 
-LightSample ConstantRectangularAreaLight::GenerateSample() {
+LightSample ConstantRectangularLight::GenerateSample(UT_Vector3F targetPosition) {
     auto sample = generator.Generate01F2();
-    auto pos = Position + sample.x()*dirX + sample.y()*dirY;
-    return {pos,intensity};
+    auto onLightPosition = position + sample.x()*dirX + sample.y()*dirY;
+    auto directionTargetToLight = onLightPosition - targetPosition;
+    return {onLightPosition,directionTargetToLight,constantRadiance};
 }

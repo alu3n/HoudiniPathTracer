@@ -5,7 +5,7 @@
 #ifndef NPRG045_RENDERWINDOW_HPP
 #define NPRG045_RENDERWINDOW_HPP
 
-#include "../../Core/Renderers/Headers/Utility.hpp"
+#include "../../Core/Renderers/Headers/ImageRepresentation.hpp"
 
 #include <UT/UT_Vector2.h>
 #include <IMG/IMG_TileDevice.h>
