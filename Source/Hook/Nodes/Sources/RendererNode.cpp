@@ -2,9 +2,9 @@
 // Created by Vojtěch Pröschl on 04.09.2022.
 //
 
-#include "RendererNode.hpp"
+#include "../Headers/RendererNode.hpp"
 
-#include "../Interface/Headers/RenderInterface.hpp"
+#include "../../Render/Headers/RenderInterface.hpp"
 
 #include <vector>
 #include <OP/OP_Director.h>
@@ -27,12 +27,12 @@ static PRM_Name prmNames[]{
     PRM_Name{"tileSize", "Tile Size"},
     PRM_Name{"fps", "FPS"},
     PRM_Name{"frameRange", "Frame Range"},
-    PRM_Name{"renderEngine", "Render Engine"},
+    PRM_Name{"renderEngine", "Other Engine"},
     PRM_Name{"camera","Camera"},
     PRM_Name{"light","OldLight"},
     PRM_Name{"geometry","Geometry"},
-    PRM_Name{"renderFrameRange", "Render Frame Range"},
-    PRM_Name{"renderCurrentFrame", "Render Current Frame"}
+    PRM_Name{"renderFrameRange", "Other Frame Range"},
+    PRM_Name{"renderCurrentFrame", "Other Current Frame"}
 };
 
 static PRM_Default defSampleCount = {50};

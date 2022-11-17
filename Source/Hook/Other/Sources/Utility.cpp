@@ -2,7 +2,7 @@
 // Created by Vojtěch Pröschl on 12.09.2022.
 //
 
-#include "Utility.hpp"
+#include "../Headers/Utility.hpp"
 
 void copyParmWithInvisible(PRM_Template &source, PRM_Template &destination){
     PRM_Name * newName;

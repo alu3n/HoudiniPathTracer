@@ -2,8 +2,8 @@
 // Created by Vojtěch Pröschl on 12.09.2022.
 //
 
-#include "CameraNode.hpp"
-#include "Utility.hpp"
+#include "../Headers/CameraNode.hpp"
+#include "../../Other/Headers/Utility.hpp"
 #include <math.h>
 //#include <UT/UT_DSOVersion.h>
 #include <UT/UT_DMatrix3.h>

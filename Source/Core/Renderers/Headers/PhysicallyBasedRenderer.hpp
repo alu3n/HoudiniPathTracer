@@ -9,6 +9,8 @@
 #include "../../Physics/Headers/Radiometry.hpp"
 #include "../../Scene/Headers/Light.hpp"
 #include "ImageRepresentation.hpp"
+#include "../../Materials/Headers/Texture.hpp"
+#include "../../Materials/Headers/BRDF.hpp"
 
 
 class PhysicallyBasedRenderer : public Renderer{
@@ -23,6 +25,8 @@ private:
     RGBRadiance ComputeIndirectIllumination(GU_RayInfo info, GU_Ray observer, int depth);
     RGBRadiance ComputeDirectIllumination(GU_RayInfo info, GU_Ray observer);
     float EliminationProbability(int depth);
+    std::vector<Texture *> textures;
+    PBBRDF brdf;
 };
 
 #endif //NPRG045_PHYSICALLYBASEDRENDERER_HPP

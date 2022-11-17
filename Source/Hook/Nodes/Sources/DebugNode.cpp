@@ -2,7 +2,7 @@
 // Created by Vojtěch Pröschl on 04.09.2022.
 //
 
-#include "DebugNode.hpp"
+#include "../Headers/DebugNode.hpp"
 //#include "../Core/SceneComponents/Camera.hpp"
 
 //#include "../oldCore/oldRenderer.hpp"

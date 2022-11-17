@@ -5,7 +5,7 @@
 #ifndef NPRG045_RENDERWINDOW_HPP
 #define NPRG045_RENDERWINDOW_HPP
 
-#include "../../Core/Renderers/Headers/ImageRepresentation.hpp"
+#include "../../../Core/Renderers/Headers/ImageRepresentation.hpp"
 
 #include <UT/UT_Vector2.h>
 #include <IMG/IMG_TileDevice.h>
@@ -17,7 +17,7 @@
 constexpr std::string_view DeviceName = "ip";
 constexpr std::string_view HostName = "host";
 constexpr std::string_view Port = "port";
-constexpr std::string_view Filename = "Render Output";
+constexpr std::string_view Filename = "Other Output";
 
 struct ImagePlaneDefinition {
     const char *Name;

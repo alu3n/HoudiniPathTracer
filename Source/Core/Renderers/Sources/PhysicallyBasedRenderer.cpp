@@ -11,6 +11,13 @@ constexpr int eliminationDepth = 20;
 
 PhysicallyBasedRenderer::PhysicallyBasedRenderer(Scene myScene) : Renderer(myScene){
     intersect = new GU_RayIntersect(scene.geometry.gdh->gdp());
+//    textures.push_back(new ConstantTexture({{1,1,1},0,0,0}));
+//    textures.push_back(new ConstantTexture({{1,1,1},0.2,0,0}));
+//    textures.push_back(new ConstantTexture({{1,1,1},0.4,0,0}));
+//    textures.push_back(new ConstantTexture({{1,1,1},0.6,0,0}));
+//    textures.push_back(new ConstantTexture({{1,1,1},0.8,0,0}));
+//    textures.push_back(new ConstantTexture({{1,1,1},1,0,0}));
+    std::cout << "1/3" << std::endl;
 }
 
 float PhysicallyBasedRenderer::EliminationProbability(int depth){
@@ -77,19 +84,24 @@ RGBRadiance PhysicallyBasedRenderer::ComputeIndirectIllumination(GU_RayInfo info
     if(gen.Generate01F1() < EliminationProbability(depth)) return {0,0,0};
 
     auto normal = scene.geometry.IntersectionVertexNormal(info);
-    auto normalInSpherical = CartesianToSpherical(normal);
-    auto azimuth = gen.Generate01F1()*2*M_PI;
-    auto zenith = gen.Generate01F1()*M_PI-0.5*M_PI;
-    auto nextPath = SphericalCoords(azimuth,zenith);
-    nextPath.zenith += normalInSpherical.zenith;
-    nextPath.azimuth += normalInSpherical.azimuth;
-    auto randomPath = SphericalToCartesian(nextPath);
-
-    auto perfectPath = observer.dir - (dot(normal,observer.dir)*normal)*2;
-    auto nextPathCartesian = Normalize<2>(interpolationCoeff*randomPath + (1-interpolationCoeff)*perfectPath);
-
-    //TODO: Use BRDF here to modify amount of light reflected in the viewers direction
-
+//    auto normalInSpherical = CartesianToSpherical(normal);
+//    auto azimuth = gen.Generate01F1()*2*M_PI;
+//    auto zenith = gen.Generate01F1()*M_PI-0.5*M_PI;
+//    auto nextPath = SphericalCoords(azimuth,zenith);
+//    nextPath.zenith += normalInSpherical.zenith;
+//    nextPath.azimuth += normalInSpherical.azimuth;
+//    auto randomPath = SphericalToCartesian(nextPath);
+//
+//    auto perfectPath = observer.dir - (dot(normal,observer.dir)*normal)*2;
+//    auto nextPathCartesian = Normalize<2>(interpolationCoeff*randomPath + (1-interpolationCoeff)*perfectPath);
+//
+//    TODO: Use BRDF here to modify amount of light reflected in the viewers direction
+//
+    std::cout << "1/3" << std::endl;
+    brdf.Load(textures[0],observer.org);
+    std::cout << "2/3" << std::endl;
+    auto nextPathCartesian = brdf.GenerateSample(observer.dir, normal);
+    std::cout << "3/3" << std::endl;
     auto next = GU_Ray(observer.org+observer.dir*info.myT+nextPathCartesian*0.01,nextPathCartesian);
 
 

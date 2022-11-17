@@ -2,8 +2,8 @@
 // Created by Vojtěch Pröschl on 12.09.2022.
 //
 
-#include "LightNode.hpp"
-#include "Utility.hpp"
+#include "../Headers/LightNode.hpp"
+#include "../../Other/Headers/Utility.hpp"
 
 //#include <UT/UT_DSOVersion.h>
 #include <OP/OP_Director.h>

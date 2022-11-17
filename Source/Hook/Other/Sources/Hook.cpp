@@ -1,7 +1,7 @@
-#include "RendererNode.hpp"
-#include "DebugNode.hpp"
-#include "LightNode.hpp"
-#include "CameraNode.hpp"
+#include "../../Nodes/Headers/RendererNode.hpp"
+#include "../../Nodes/Headers/DebugNode.hpp"
+#include "../../Nodes/Headers/LightNode.hpp"
+#include "../../Nodes/Headers/CameraNode.hpp"
 
 #include <SOP/SOP_Node.h>
 #include <OP/OP_OperatorTable.h>

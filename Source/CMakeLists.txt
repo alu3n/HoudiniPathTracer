@@ -17,35 +17,38 @@ set( library_name HoudiniPathTracer )
 #Todo: Break the project into multiple libraries to avoid linking problems
 
 add_library( ${library_name} SHARED
-    Core/Mathematics/Sources/Sampling.cpp
-    Core/Mathematics/Sources/Coordinates.cpp
+        Core/Mathematics/source/Sampling.cpp
+        Core/Mathematics/source/Coordinates.cpp
     Core/Physics/Sources/GeometricalOptics.cpp
     Core/Physics/Sources
 
-        #    Core/Physics/Sources/OldQuantities.cpp
+        #    Core/Physics/source/OldQuantities.cpp
 
-#    Core/Renderers/Sources/OldDistributedRaytracer.cpp
-#    Core/Renderers/Sources/OldPathTracer.cpp
-#    Core/Renderers/Sources/OldRenderer.cpp
+#    Core/Renderers/source/OldDistributedRaytracer.cpp
+#    Core/Renderers/source/OldPathTracer.cpp
+#    Core/Renderers/source/OldRenderer.cpp
     Core/Renderers/Sources/ImageRepresentation.cpp
     Core/Renderers/Sources/PhysicallyBasedRenderer.cpp
 
+    Interface/Sources/RenderInterface.cpp
+    Interface/Sources/RenderWindow.cpp
+
+#    Core/Materials/source/LambertBRDF.cpp
+
+    Core/Materials/Sources/BRDF.cpp
+        Core/Materials/Sources/Texture.cpp
 
     Core/Scene/Sources/Camera.cpp
     Core/Scene/Sources/Geometry.cpp
     Core/Scene/Sources/Light.cpp
     Core/Scene/Sources/Scene.cpp
-#    Core/Materials/Sources/LambertBRDF.cpp
 
-    Interface/Sources/RenderInterface.cpp
-    Interface/Sources/RenderWindow.cpp
-
-    HoudiniHook/Utility.cpp
-    HoudiniHook/LightNode.cpp
-    HoudiniHook/CameraNode.cpp
-    HoudiniHook/DebugNode.cpp
-    HoudiniHook/Hook.cpp
-    HoudiniHook/RendererNode.cpp
+        Hook/Other/Sources/Utility.cpp
+        Hook/Nodes/Sources/LightNode.cpp
+        Hook/Nodes/Sources/CameraNode.cpp
+        Hook/Nodes/Sources/DebugNode.cpp
+        Hook/Other/Sources/Hook.cpp
+        Hook/Nodes/Sources/RendererNode.cpp
 )
 
 target_link_libraries( ${library_name} Houdini )
