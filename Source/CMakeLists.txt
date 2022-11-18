@@ -17,38 +17,41 @@ set( library_name HoudiniPathTracer )
 #Todo: Break the project into multiple libraries to avoid linking problems
 
 add_library( ${library_name} SHARED
-        Core/Mathematics/source/Sampling.cpp
-        Core/Mathematics/source/Coordinates.cpp
-    Core/Physics/Sources/GeometricalOptics.cpp
-    Core/Physics/Sources
+    Core/Mathematics/sources/Sampling.cpp
+    Core/Mathematics/sources/Coordinates.cpp
+    Core/Mathematics/sources/LinearAlgebra.cpp
 
-        #    Core/Physics/source/OldQuantities.cpp
+    Core/Physics/sources/Optics.cpp
 
-#    Core/Renderers/source/OldDistributedRaytracer.cpp
-#    Core/Renderers/source/OldPathTracer.cpp
-#    Core/Renderers/source/OldRenderer.cpp
-    Core/Renderers/Sources/ImageRepresentation.cpp
-    Core/Renderers/Sources/PhysicallyBasedRenderer.cpp
+    Core/Materials/sources/PB_BxDF.cpp
 
-    Interface/Sources/RenderInterface.cpp
-    Interface/Sources/RenderWindow.cpp
+#    Core/Physics/sources/OldQuantities.cpp
 
-#    Core/Materials/source/LambertBRDF.cpp
+#    Core/Renderers/sources/OldDistributedRaytracer.cpp
+#    Core/Renderers/sources/OldPathTracer.cpp
+#    Core/Renderers/sources/OldRenderer.cpp
+        Core/Renderers/sources/ImageRepresentation.cpp
+        Core/Renderers/sources/PhysicallyBasedRenderer.cpp
 
-    Core/Materials/Sources/BRDF.cpp
-        Core/Materials/Sources/Texture.cpp
+        Hook/Other/sources/RenderInterface.cpp
+        Hook/Other/sources/RenderWindow.cpp
 
-    Core/Scene/Sources/Camera.cpp
-    Core/Scene/Sources/Geometry.cpp
-    Core/Scene/Sources/Light.cpp
-    Core/Scene/Sources/Scene.cpp
+#    Core/Materials/sources/LambertBRDF.cpp
 
-        Hook/Other/Sources/Utility.cpp
-        Hook/Nodes/Sources/LightNode.cpp
-        Hook/Nodes/Sources/CameraNode.cpp
-        Hook/Nodes/Sources/DebugNode.cpp
-        Hook/Other/Sources/Hook.cpp
-        Hook/Nodes/Sources/RendererNode.cpp
+        Core/Materials/sources/BxDF.cpp
+        Core/Materials/sources/Texture.cpp
+
+        Core/Scene/sources/Camera.cpp
+        Core/Scene/sources/Geometry.cpp
+        Core/Scene/sources/Light.cpp
+        Core/Scene/sources/Scene.cpp
+
+        Hook/Other/sources/Utility.cpp
+        Hook/Nodes/sources/LightNode.cpp
+        Hook/Nodes/sources/CameraNode.cpp
+        Hook/Nodes/sources/DebugNode.cpp
+        Hook/Other/sources/Hook.cpp
+        Hook/Nodes/sources/RendererNode.cpp
 )
 
 target_link_libraries( ${library_name} Houdini )
