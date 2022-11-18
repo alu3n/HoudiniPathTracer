@@ -10,7 +10,7 @@ float Generator::GenerateF01() {
 
 int Generator::GenerateIRange(int min, int max) {
     auto rand = Generator::GenerateF01();
-    rand*=(max-min);
+    rand*=(max-min+1);
     return ((int)rand)+min;
 }
 

@@ -12,7 +12,12 @@ constexpr int eliminationDepth = 20;
 
 PhysicallyBasedRenderer::PhysicallyBasedRenderer(Scene myScene) : Renderer(myScene){
     intersect = new GU_RayIntersect(scene.geometry.gdh->gdp());
+    textures.push_back(new ConstantTexture({{1,1,1},{1.4,1.4,1.4},0,0.2,1}));
     textures.push_back(new ConstantTexture({{1,1,1},{1.4,1.4,1.4},0.2,0.2,1}));
+    textures.push_back(new ConstantTexture({{1,1,1},{1.4,1.4,1.4},0.4,0.2,1}));
+    textures.push_back(new ConstantTexture({{1,1,1},{1.4,1.4,1.4},0.6,0.2,1}));
+    textures.push_back(new ConstantTexture({{1,1,1},{1.4,1.4,1.4},0.8,0.2,1}));
+    textures.push_back(new ConstantTexture({{1,1,1},{1.4,1.4,1.4},1,0.2,1}));
 }
 
 float PhysicallyBasedRenderer::EliminationProbability(int depth){
@@ -82,7 +87,10 @@ RGBRadiance PhysicallyBasedRenderer::ComputeIndirectIllumination(GU_RayInfo info
     if(Generator::GenerateF01() < EliminationProbability(depth)) return {0,0,0};
 
     auto normal = scene.geometry.IntersectionVertexNormal(info);
-    bsdf.Load(textures[0],observer.org);
+    auto shader = scene.geometry.IntersectionPointShader(info);
+//    std::cout << shader << std::endl;
+
+    bsdf.Load(textures[shader],observer.org);
     auto nextPathCartesian = bsdf.brdf->GenerateSample(observer.dir, normal);
 
     auto next = GU_Ray(observer.org+observer.dir*info.myT+nextPathCartesian*0.01,nextPathCartesian);
@@ -92,7 +100,7 @@ RGBRadiance PhysicallyBasedRenderer::ComputeIndirectIllumination(GU_RayInfo info
 
 RGBRadiance PhysicallyBasedRenderer::ComputeDirectIllumination(GU_RayInfo info, GU_Ray observer) {
     auto chosenLight = Generator::GenerateIRange(0,scene.lights.size()-1);
-
+//    std::cout << chosenLight << std::endl;
     auto intersectionPos = info.myT*observer.dir+observer.org;
     auto lightSample = scene.lights[chosenLight]->GenerateSample(intersectionPos);
 
