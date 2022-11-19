@@ -30,8 +30,8 @@ public:
     RenderWindow() = default;
     void DisplayTile(const ImageTile & tile);
     void Open(UT_Vector2i imageResolution, UT_Vector2i tileResolution);
-private:
     IMG_TileDevice *Device;
+private:
 //    void WriteTile(const ImageTile & tile);
 //    void SendDeviceDefinitions(IMG_TileDevice *device, const UT_String & host, const UT_String & port);
     void * ConvertTile(const ImageTile & tile);

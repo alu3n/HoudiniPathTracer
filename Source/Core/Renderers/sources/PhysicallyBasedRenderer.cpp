@@ -12,12 +12,14 @@ constexpr int eliminationDepth = 20;
 
 PhysicallyBasedRenderer::PhysicallyBasedRenderer(Scene myScene) : Renderer(myScene){
     intersect = new GU_RayIntersect(scene.geometry.gdh->gdp());
-    textures.push_back(new ConstantTexture({{1,1,1},{1.4,1.4,1.4},0,0.2,1}));
-    textures.push_back(new ConstantTexture({{1,1,1},{1.4,1.4,1.4},0.2,0.2,1}));
-    textures.push_back(new ConstantTexture({{1,1,1},{1.4,1.4,1.4},0.4,0.2,1}));
-    textures.push_back(new ConstantTexture({{1,1,1},{1.4,1.4,1.4},0.6,0.2,1}));
-    textures.push_back(new ConstantTexture({{1,1,1},{1.4,1.4,1.4},0.8,0.2,1}));
-    textures.push_back(new ConstantTexture({{1,1,1},{1.4,1.4,1.4},1,0.2,1}));
+//    auto txt0 = new ConstantTexture({{1,1,1},{1.4,1.4,1.4},0.0,0.0,0.0});
+
+    textures.push_back(new ConstantTexture({{1,1,1},{1.4,1.4,1.4},0.0,0.0,0.0}));
+    textures.push_back(new ConstantTexture({{1,1,1},{1.4,1.4,1.4},0.0,0.0,0.2}));
+    textures.push_back(new ConstantTexture({{1,1,1},{1.4,1.4,1.4},0.0,0.0,0.4}));
+    textures.push_back(new ConstantTexture({{1,1,1},{1.4,1.4,1.4},0.0,0.0,0.6}));
+    textures.push_back(new ConstantTexture({{1,1,1},{1.4,1.4,1.4},0.0,0.0,0.8}));
+    textures.push_back(new ConstantTexture({{1,1,1},{1.4,1.4,1.4},0.0,0.0,1.0}));
 }
 
 float PhysicallyBasedRenderer::EliminationProbability(int depth){
@@ -41,6 +43,7 @@ void PhysicallyBasedRenderer::ImproveTile(ImageTile &tile, int sampleCount) {
 
     for(int x = 0; x <= tileSizeX; ++x){
         for(int y = 0; y <= tileSizeY; ++y){
+//            tile.data[x][y] = tileColor;
             Color buffer{0,0,0,0};
             for(int i = 0; i < sampleCount; ++i){
                 buffer = buffer + ComputePixel({tile.viewCoords.tx0 + x,tile.viewCoords.ty0 + y});
@@ -77,6 +80,7 @@ RGBRadiance PhysicallyBasedRenderer::ComputeIllumination(GU_Ray observer, int de
     total[0].amount *= color.x();
     total[1].amount *= color.y();
     total[2].amount *= color.z();
+
     return total;
 }
 
@@ -95,7 +99,9 @@ RGBRadiance PhysicallyBasedRenderer::ComputeIndirectIllumination(GU_RayInfo info
 
     auto next = GU_Ray(observer.org+observer.dir*info.myT+nextPathCartesian*0.01,nextPathCartesian);
 
-    return ComputeIllumination(next,++depth);
+    auto mult = bsdf.brdf->Evaluate(observer.dir,next.dir,normal);
+    auto temp = ComputeIllumination(next,++depth);
+    return {temp[0].amount*mult[0],temp[1].amount*mult[1],temp[2].amount*mult[2]};
 }
 
 RGBRadiance PhysicallyBasedRenderer::ComputeDirectIllumination(GU_RayInfo info, GU_Ray observer) {
@@ -119,7 +125,10 @@ RGBRadiance PhysicallyBasedRenderer::ComputeDirectIllumination(GU_RayInfo info, 
     //TODO: Use BRDF here to modify amount of light reflected in the viewers direction
     auto radiance = lightSample.amount*dot(normal,lightDirNormalized)/(distance*distance);
     //Todo: add colored lights in future
-    return {radiance, radiance, radiance};
+
+    auto mult = bsdf.brdf->Evaluate(observer.dir,lightDirNormalized,normal);
+
+    return {radiance*mult[0], radiance*mult[1], radiance*mult[2]};
 }
 
 

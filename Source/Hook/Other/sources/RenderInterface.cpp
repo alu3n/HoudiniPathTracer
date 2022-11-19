@@ -41,7 +41,9 @@ void RenderInterface::RenderFrame() {
     int CycleCount = rendererNode->evalInt("cycleCount",0,0);
     int SamplesPerCycle = rendererNode->evalInt("samplesPerCycle",0,0);
 
+    std::cout << "Opening window" << std::endl;
     renderWindow.Open({ImageResX,ImageResY},{TileResX,TileResY});
+    std::cout << "Opening done" << std::endl;
 
     Camera cam(cameraNode,context);
     Geometry geo(geometryNode,context);
@@ -95,13 +97,16 @@ void RenderInterface::RenderFrame() {
     PhysicallyBasedRenderer Renderer = PhysicallyBasedRenderer(scene);
     Image img(ImageResX,ImageResY,TileResX,TileResY);
 
+    renderWindow.Device->terminateOnConnectionLost(false);
     for(int i = 0; i < CycleCount; ++i){
         for(auto && tile : img.data){
             Renderer.ImproveTile(tile,SamplesPerCycle);
             renderWindow.DisplayTile(tile);
-            std::this_thread::sleep_for(std::chrono::nanoseconds(20));
+//            std::this_thread::sleep_for(std::chrono::nanoseconds(20));
         }
     }
+    renderWindow.Device->close();
+
 
 }
 

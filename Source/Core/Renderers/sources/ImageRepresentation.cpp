@@ -87,7 +87,7 @@ Image::Image(int imageResX, int imageResY, int tileResX, int tileResY) {
 
     for(int x = 0; x < fullTilesX; ++x){
         for(int y = 0; y < fullTilesY; ++y){
-            data.push_back(ImageTile{{x * tileResX, (x + 1) * tileResX, y * tileResY, (y + 1) * tileResY},id});
+            data.push_back(ImageTile{{x * tileResX, (x + 1) * tileResX-1, y * tileResY, (y + 1) * tileResY-1},id});
             ++id;
         }
     }
@@ -101,7 +101,7 @@ Image::Image(int imageResX, int imageResY, int tileResX, int tileResY) {
         int rx1 = tileResX - 1;
         int ry1 = tileResY - 1;
 
-        data.push_back({{cx0,cx1,cy0,cy1},{cx0,rx1,cy0,ry1},id});
+        data.push_back({{cx0+1,cx1,cy0+1,cy1},{cx0+1,rx1,cy0+1,ry1},id});
         ++id;
     }
     if(imageResX % tileResX != 0){
@@ -113,7 +113,7 @@ Image::Image(int imageResX, int imageResY, int tileResX, int tileResY) {
         for(int y = 0; y < fullTilesY; ++y){
             int cy0 = y*tileResY;
             int cy1 = cy0 + tileResY - 1;
-            data.push_back({{cx0,cx1,cy0,cy1},{cx0,rx1,cy0,cy1},id});
+            data.push_back({{cx0+1,cx1,cy0+1,cy1},{cx0+1,rx1,cy0+1,cy1},id});
             ++id;
         }
     }
@@ -126,7 +126,7 @@ Image::Image(int imageResX, int imageResY, int tileResX, int tileResY) {
         for(int x = 0; x < fullTilesX; ++x){
             int cx0 = x*tileResX;
             int cx1 = cx0 + tileResX - 1;
-            data.push_back({{cx0,cx1,cy0,cy1},{cx0,cx1,cy0,ry1},id});
+            data.push_back({{cx0+1,cx1,cy0+1,cy1},{cx0+1,cx1,cy0+1,ry1},id});
             ++id;
         }
     }

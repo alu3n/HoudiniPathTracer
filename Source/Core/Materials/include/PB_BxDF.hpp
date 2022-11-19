@@ -8,12 +8,12 @@
 #include "BxDF.hpp"
 
 class PB_BRDF : public BRDF{
-    std::array<float,3> Evaluate(UT_Vector3F incomming, UT_Vector3F outgoing) override;
+    std::array<float,3> Evaluate(UT_Vector3F incomming, UT_Vector3F outgoing,  UT_Vector3F normal) override;
     UT_Vector3F GenerateSample(UT_Vector3F incomming, UT_Vector3F normal) override;
 };
 
 class PB_BTDF : public BTDF{
-    std::array<float,3> Evaluate(UT_Vector3F incomming, UT_Vector3F outgoing) override;
+    std::array<float,3> Evaluate(UT_Vector3F incomming, UT_Vector3F outgoing,  UT_Vector3F normal) override;
     UT_Vector3F GenerateSample(UT_Vector3F incomming, UT_Vector3F normal) override;
 };
 

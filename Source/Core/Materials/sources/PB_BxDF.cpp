@@ -4,8 +4,19 @@
 
 #include "../include/PB_BxDF.hpp"
 
-std::array<float, 3> PB_BRDF::Evaluate(UT_Vector3F incomming, UT_Vector3F outgoing) {
-    return {1,1,1};
+UT_Vector3F PerfectReflection(UT_Vector3F incomming, UT_Vector3F normal){
+    return incomming - (dot(normal,incomming)*normal)*2;
+}
+
+//float phongExp = 20;
+
+std::array<float, 3> PB_BRDF::Evaluate(UT_Vector3F incomming, UT_Vector3F outgoing, UT_Vector3F normal) {
+    auto perfectPath = PerfectReflection(incomming,normal);
+
+    float phongExp = data.Roughness < 0.001 ? 1000 : 1/data.Roughness;
+
+    float multiplier = pow(dot(outgoing,perfectPath),phongExp)*data.Metalic + (1-data.Metalic);
+    return {multiplier,multiplier,multiplier};
 }
 
 UT_Vector3F PB_BRDF::GenerateSample(UT_Vector3F incomming, UT_Vector3F normal) {
@@ -16,12 +27,13 @@ UT_Vector3F PB_BRDF::GenerateSample(UT_Vector3F incomming, UT_Vector3F normal) {
     nextPath.zenith += normalInSpherical.zenith;
     nextPath.azimuth += normalInSpherical.azimuth;
     auto randomPath = SphericalToCartesian(nextPath);
-    auto perfectPath = incomming - (dot(normal,incomming)*normal)*2;
 
-    return data.Roughness * randomPath + (1-data.Roughness) * perfectPath;
+    return data.Roughness * randomPath + (1-data.Roughness) * PerfectReflection(incomming,normal);
 }
 
-std::array<float, 3> PB_BTDF::Evaluate(UT_Vector3F incomming, UT_Vector3F outgoing) {
+std::array<float, 3> PB_BTDF::Evaluate(UT_Vector3F incomming, UT_Vector3F outgoing, UT_Vector3F normal) {
+
+
     return {1,1,1};
 }
 
