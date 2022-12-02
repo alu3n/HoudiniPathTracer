@@ -11,11 +11,10 @@
 
 
 struct TextureData{
-    std::array<float,3> Albedo;
-    std::array<float,3> IOR;
+    std::array<float,3> DiffuseColor;
+    float IOR;
     float Roughness;
     float Transparency;
-    float Metalic;
 };
 
 class Texture{
@@ -29,6 +28,12 @@ public:
     ConstantTexture(TextureData data);
 private:
     TextureData data;
+};
+
+class ProceduralTexture : public Texture{
+public:
+    virtual TextureData Evaluate(UT_Vector3F position) override;
+//    ConstantTexture(TextureData data);
 };
 
 #endif //NPRG045_PROCEDURAL_HPP

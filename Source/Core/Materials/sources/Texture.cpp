@@ -11,3 +11,9 @@ TextureData ConstantTexture::Evaluate(UT_Vector3F position) {
 ConstantTexture::ConstantTexture(TextureData data) : data(data) {
 
 }
+
+TextureData ProceduralTexture::Evaluate(UT_Vector3F position) {
+    auto data = TextureData{{1,1,1},1.5,0.5,0};
+    return data;
+//    data.DiffuseColor = {abs(sin(position.x()*10)),abs(sin(position.y()*10)),abs(sin(position.z()*10))};
+}

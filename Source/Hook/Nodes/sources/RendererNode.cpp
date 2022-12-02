@@ -3,7 +3,7 @@
 //
 
 #include "../include/RendererNode.hpp"
-
+#include <thread>
 //#include "../../Render/include/RenderInterface.hpp"
 #include "../../Other/include/RenderInterface.hpp"
 
@@ -46,14 +46,25 @@ static PRM_Name prmNames[]{
     PRM_Name{"l3Size","Light 3 Size"}, //15
     PRM_Name{"l3Intensity","Light 3 Intensity"}, //16
 
-    PRM_Name{"renderCurrentFrame", "Render Current Frame"} //17
+    PRM_Name{"renderCurrentFrame", "Render Current Frame"}, //17
+    PRM_Name{"light", "Light"} //18
 };
 
 
-int RenderFrame(void *data, int index, fpreal64 time, const PRM_Template *tplate){
+void foo(void *data){
     RenderInterface anInterface((RendererNode *)data);
+    anInterface.RenderFrame();
+}
+
+int RenderFrame(void *data, int index, fpreal64 time, const PRM_Template *tplate){
+//    RenderInterface anInterface((RendererNode *)data);
     try{
-        anInterface.RenderFrame();
+//        anInterface.RenderFrame();
+
+        std::thread th1(foo,data);
+        th1.detach();
+
+        std::cout << "cosyk" << std::endl;
     }
     catch(...){
 
@@ -91,6 +102,8 @@ static PRM_Default defLight3Intensity = {10};
 
 static PRM_Default defGeneral {0,""};
 
+static PRM_Default defLight = {0,""};
+
 PRM_Template static prmTemplates[]{
     PRM_Template{PRM_INT,2,&prmNames[0],defTileSize},
     PRM_Template{PRM_INT,1,&prmNames[1],&defCycleCount},
@@ -114,19 +127,9 @@ PRM_Template static prmTemplates[]{
     PRM_Template{PRM_FLT,2,&prmNames[15],defLight3Size},
     PRM_Template{PRM_FLT,1,&prmNames[16],&defLight3Intensity},
 
-    PRM_Template{PRM_CALLBACK,1,&prmNames[17],&defGeneral,0,0,PRM_Callback(RenderFrame)}
+    PRM_Template{PRM_CALLBACK,1,&prmNames[17],&defGeneral,0,0,PRM_Callback(RenderFrame)},
 
-
-//    PRM_Template{PRM_INT,1,&prmNames[0],&defSampleCount},
-//    PRM_Template{PRM_INT,2,&prmNames[1],defTileSize},
-//    PRM_Template{PRM_INT,1,&prmNames[2],&defFps},
-//    PRM_Template{PRM_INT,2,&prmNames[3],defFrameRange},
-//    PRM_Template{PRM_INT,1,&prmNames[4],&defRenderEngine},
-//    PRM_Template{PRM_STRING,PRM_TYPE_DYNAMIC_PATH,1,&prmNames[5],&defCamera},
-//    PRM_Template{PRM_STRING,PRM_TYPE_DYNAMIC_PATH,1,&prmNames[6],&defLight},
-//    PRM_Template{PRM_STRING,PRM_TYPE_DYNAMIC_PATH,1,&prmNames[7],&defGeometry},
-//    PRM_Template{PRM_CALLBACK,1,&prmNames[8],&defGeneral,0,0,PRM_Callback(RenderFrameRange)},
-//    PRM_Template{PRM_CALLBACK,1,&prmNames[9],&defGeneral,0,0,PRM_Callback(RenderFrame)}
+    PRM_Template{PRM_STRING,PRM_TYPE_DYNAMIC_PATH,1,&prmNames[18],&defLight}
 };
 
 OP_Node *RendererNode::BuildOPNode(OP_Network *net, const char *name, OP_Operator *op) {
@@ -143,6 +146,7 @@ PRM_Template *RendererNode::BuildPRMTemplate() {
 RendererNode::RendererNode(OP_Network *net, const char *name, OP_Operator *op) : ROP_Node(net, name, op) {
 
 }
+
 
 RendererNode::~RendererNode(){
 

@@ -13,11 +13,15 @@ UT_Vector3F PerfectReflection(UT_Vector3F incomming, UT_Vector3F normal){
 std::array<float, 3> PB_BRDF::Evaluate(UT_Vector3F incomming, UT_Vector3F outgoing, UT_Vector3F normal) {
     auto perfectPath = PerfectReflection(incomming,normal);
 
-    float phongExp = data.Roughness < 0.001 ? 1000 : 1/data.Roughness;
+    float phongExp = data.Roughness < 0.01 ? 100 : 1/data.Roughness;
 
-    float multiplier = pow(dot(outgoing,perfectPath),phongExp)*data.Metalic + (1-data.Metalic);
+    float multiplier = dot(outgoing,perfectPath);
     return {multiplier,multiplier,multiplier};
+
+
+    return {1,1,1};
 }
+
 
 UT_Vector3F PB_BRDF::GenerateSample(UT_Vector3F incomming, UT_Vector3F normal) {
     auto normalInSpherical = CartesianToSpherical(normal);

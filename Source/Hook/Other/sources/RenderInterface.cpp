@@ -4,6 +4,7 @@
 
 #include "../include/RenderInterface.hpp"
 #include "../../../Core/Renderers/include/PhysicallyBasedRenderer.hpp"
+#include <UT/UT_NetPacket.h>
 //#include "../../Core/Renderers/include/PhysicallyBasedRenderer.hpp"
 //#include "../../Core/Renderers/include/OldDistributedRaytracer.hpp"
 //#include "../../Core/Renderers/include/OldPathTracer.hpp"
@@ -21,15 +22,20 @@ RenderInterface::RenderInterface(RendererNode *node) {
     rendererNode = node;
 }
 
+//Todo: Avoid crashing when wrong node provided
+
 void RenderInterface::RenderFrame() {
     UT_StringHolder cameraPath;
     UT_StringHolder geometryPath;
+    UT_StringHolder lightPath;
 
     rendererNode->evalString(cameraPath,"camera",0,0);
     rendererNode->evalString(geometryPath,"geometry",0,0);
+    rendererNode->evalString(lightPath,"light",0,0);
 
     auto cameraNode = OPgetDirector()->getOBJNode(cameraPath)->castToOBJCamera();
     auto geometryNode = OPgetDirector()->getSOPNode(geometryPath);
+    auto lightNode = OPgetDirector()->getOBJNode(lightPath);
 
     OP_Context context(0);
 
@@ -48,18 +54,31 @@ void RenderInterface::RenderFrame() {
     Camera cam(cameraNode,context);
     Geometry geo(geometryNode,context);
 
-    float L1PX = rendererNode->evalFloat("l1Position",0,0);
-    float L1PY = rendererNode->evalFloat("l1Position",1,0);
-    float L1PZ = rendererNode->evalFloat("l1Position",2,0);
+    float L1PX = lightNode->evalFloat("t",0,0);
+    float L1PY = lightNode->evalFloat("t",1,0);
+    float L1PZ = lightNode->evalFloat("t",2,0);
 
-    float L1RX = rendererNode->evalFloat("l1Rotation",0,0);
-    float L1RY = rendererNode->evalFloat("l1Rotation",1,0);
-    float L1RZ = rendererNode->evalFloat("l1Rotation",2,0);
+    float L1RX = lightNode->evalFloat("r",0,0);
+    float L1RY = lightNode->evalFloat("r",1,0);
+    float L1RZ = lightNode->evalFloat("r",2,0);
 
-    float L1SX = rendererNode->evalFloat("l1Size",0,0);
-    float L1SY = rendererNode->evalFloat("l1Size",1,0);
+    float L1SX = lightNode->evalFloat("areasize",0,0);
+    float L1SY = lightNode->evalFloat("areasize",1,0);
 
-    float L1I = rendererNode->evalFloat("l1Intensity",0,0);
+    float L1I = lightNode->evalFloat("light_intensity",0,0);
+
+//    float L1PX = rendererNode->evalFloat("l1Position",0,0);
+//    float L1PY = rendererNode->evalFloat("l1Position",1,0);
+//    float L1PZ = rendererNode->evalFloat("l1Position",2,0);
+//
+//    float L1RX = rendererNode->evalFloat("l1Rotation",0,0);
+//    float L1RY = rendererNode->evalFloat("l1Rotation",1,0);
+//    float L1RZ = rendererNode->evalFloat("l1Rotation",2,0);
+//
+//    float L1SX = rendererNode->evalFloat("l1Size",0,0);
+//    float L1SY = rendererNode->evalFloat("l1Size",1,0);
+//
+//    float L1I = rendererNode->evalFloat("l1Intensity",0,0);
 
     ConstantRectangularLight * light1 = new ConstantRectangularLight({L1PX,L1PY,L1PZ},{L1RX,L1RY,L1RZ},{L1SX,L1SY},{L1I});
 
@@ -93,18 +112,19 @@ void RenderInterface::RenderFrame() {
 
     ConstantRectangularLight * light3 = new ConstantRectangularLight({L3PX,L3PY,L3PZ},{L3RX,L3RY,L3RZ},{L3SX,L3SY},{L3I});
 
-    Scene scene({light1,light2,light3},cam,geo);
+    Scene scene({light1},cam,geo);
     PhysicallyBasedRenderer Renderer = PhysicallyBasedRenderer(scene);
     Image img(ImageResX,ImageResY,TileResX,TileResY);
 
     renderWindow.Device->terminateOnConnectionLost(false);
+
     for(int i = 0; i < CycleCount; ++i){
         for(auto && tile : img.data){
             Renderer.ImproveTile(tile,SamplesPerCycle);
             renderWindow.DisplayTile(tile);
-//            std::this_thread::sleep_for(std::chrono::nanoseconds(20));
         }
     }
+
     renderWindow.Device->close();
 
 

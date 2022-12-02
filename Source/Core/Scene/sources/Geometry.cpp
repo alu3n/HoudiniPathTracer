@@ -38,7 +38,7 @@ int Geometry::IntersectionPointShader(const GU_RayInfo &info) {
     UT_Array<GA_Offset> vertexOffsets;
     UT_Array<float> vertexWeights;
     info.myPrim->computeInteriorPointWeights(vertexOffsets,vertexWeights,info.myU,info.myV,info.myW);
-    return HandlePointShader->get(gdh->gdpNC()->vertexPoint(vertexOffsets[0]));
+    return (int)HandlePointShader->get(gdh->gdpNC()->vertexPoint(vertexOffsets[0]));
 }
 
 

@@ -30,6 +30,7 @@ using Radiance = RadiometricQuantity<RadiometricQuantities::Radiance>;
 using RGBRadiance = std::array<Radiance,3>;
 
 
+
 template<RadiometricQuantities Q>
 RadiometricQuantity<Q> operator+(RadiometricQuantity<Q> A, RadiometricQuantity<Q> B){
     return RadiometricQuantity<Q>(A.amount + B.amount);
@@ -79,6 +80,14 @@ RadiometricQuantity<Q> operator*(RadiometricQuantity<Q> A, RadiometricQuantity<Q
 RGBRadiance operator+(const RGBRadiance & C1, const RGBRadiance & C2);
 RGBRadiance operator-(const RGBRadiance & C1, const RGBRadiance & C2);
 RGBRadiance operator*(float a, const RGBRadiance &C);
+
+//RGBRadiance  operator+(RGBRadiance A, RGBRadiance B){
+//    auto temp = A;
+//    temp[0] = A[0] + B[0];
+//    temp[1] = A[1] + B[1];
+//    temp[2] = A[2] + B[2];
+//    return A;
+//}
 
 //RGBRadiance construct(float r, float g, float b);
 

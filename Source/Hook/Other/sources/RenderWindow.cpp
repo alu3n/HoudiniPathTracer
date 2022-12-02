@@ -35,9 +35,7 @@ void *RenderWindow::ConvertTile(const ImageTile &tile) {
     int wordCount = pixelCount * IMGvectorSize(imagePlaneDefinition.ColorModel);
     int byteCount = wordCount * IMGbyteSize(imagePlaneDefinition.Format);
 
-//    void* Foo = ::operator new(N);
-    void *tileData = malloc(byteCount*4);
-//    char *ptr = (char *)tileData;
+    void *tileData = malloc(byteCount*8);
     float *ptr = (float *)tileData;
 
     for(int y = 0; y <= ry; ++y){
@@ -49,8 +47,8 @@ void *RenderWindow::ConvertTile(const ImageTile &tile) {
             *ptr++ = pixel.a;
         }
     }
-//
-//    *((char *)ptr) += wordCount * IMGbyteSize(imagePlaneDefinition.Format);
+
+
 
     return tileData;
 }
