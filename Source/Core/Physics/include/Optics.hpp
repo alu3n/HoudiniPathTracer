@@ -12,7 +12,8 @@
 
 #include <UT/UT_Vector.h>
 
-float ReflectionCoefficient(UT_Vector3F incomming, UT_Vector3F normal, float IOR1, float IOR2);
+//This tells us how much light is reflected
+float ReflectionCoefficient(UT_Vector3F vectorToSource, UT_Vector3F normal, float travelingFromIOR, float travelingToIOR);
 
 
 #endif //NPRG045_GEOMETRICALOPTICS_HPP

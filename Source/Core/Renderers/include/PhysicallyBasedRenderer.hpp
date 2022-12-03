@@ -23,9 +23,11 @@ private:
     Generator gen{};
     GU_RayIntersect * intersect;
     Color ComputePixel(UT_Vector2i coordinates);
-    RGBRadiance ComputeIllumination(GU_Ray observer, int depth, float IOR);
-    std::tuple<RGBRadiance,float> ComputeIndirectIllumination(GU_RayInfo info, GU_Ray observer, int depth, float IOR);
-    std::tuple<RGBRadiance,float> ComputeDirectIllumination(GU_RayInfo info, GU_Ray observer, float IOR);
+    RGBRadiance ComputeIllumination(GU_Ray observer, int depth);
+    std::tuple<RGBRadiance,float> ComputeIndirectIllumination(GU_RayInfo info, GU_Ray observer, int depth);
+    std::tuple<RGBRadiance,float> ComputeDirectIllumination(GU_RayInfo info, GU_Ray observer);
+    RGBRadiance ComputeRefraction(GU_RayInfo, GU_Ray observer, int depth);
+    TextureData GetTextureData(GU_RayInfo,UT_Vector3F);
     float EliminationProbability(int depth);
     std::vector<Texture *> textures;
     std::unique_ptr<Texture> DefaultTexture;

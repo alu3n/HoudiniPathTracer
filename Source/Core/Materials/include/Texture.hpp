@@ -15,6 +15,7 @@ struct TextureData{
     float IOR;
     float Roughness;
     float Transparency;
+    bool OverrideColor = false;
 };
 
 class Texture{
