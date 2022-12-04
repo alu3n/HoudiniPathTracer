@@ -12,6 +12,12 @@ Camera::Camera(OBJ_Camera *cam, OP_Context &context) {
     generator = Generator();
 }
 
+
+//constexpr float lensDistance = 0.05;
+constexpr float focusPlaneDistance = 9.5;
+constexpr float aperatureRadius = 0.5;
+
+
 GU_Ray Camera::GenerateRay(UT_Vector2i PixelCoords) {
     auto sample = Generator::GenerateF01<2>();
 
@@ -25,7 +31,31 @@ GU_Ray Camera::GenerateRay(UT_Vector2i PixelCoords) {
     UT_Vector3F org = {sensorPos.x(),sensorPos.y(),sensorPos.z()};
     UT_Vector3F dir = Normalize(dir3);
 
-    return {org,dir};
+
+    UT_Vector3F planeNormal = {ZIncrement.x(),ZIncrement.y(),ZIncrement.z()};
+    planeNormal = Normalize(planeNormal);
+    auto pointOnFocusPlane = org + focusPlaneDistance*planeNormal;
+    float d = -dot(pointOnFocusPlane,planeNormal);
+
+    auto t = -(dot(org,planeNormal)+d)/dot(dir,planeNormal);
+    auto P = org + t*dir;
+//    std::cout << Norm(dir) << std::endl;
+//    std::cout << t << std::endl;
+
+    UT_Vector3F XIncr = {XIncrement.x(),XIncrement.y(),XIncrement.z()};
+    XIncr = Normalize(XIncr);
+
+    UT_Vector3F YIncr = {YIncrement.x(),YIncrement.y(),ZIncrement.z()};
+    YIncr = Normalize(YIncr);
+
+    UT_Vector3F Orig = {Origin.x(),Origin.y(),Origin.z()};
+
+    auto aperaturePos = Orig + generator.GenerateF01()*aperatureRadius*XIncr + generator.GenerateF01()*aperatureRadius*YIncr;
+    auto newDir = P - aperaturePos;
+    newDir = Normalize(newDir);
+
+
+    return {aperaturePos,newDir};
 }
 
 void Camera::LoadCamera(OP_Context &context) {

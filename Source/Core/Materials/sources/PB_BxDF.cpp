@@ -63,16 +63,17 @@ std::array<float, 3> PB_BRDF::Evaluate(UT_Vector3F VectorPointingToObserver, UT_
 
 
 UT_Vector3F PB_BRDF::GenerateSample(UT_Vector3F incomming, UT_Vector3F normal) {
-//    auto normalInSpherical = CartesianToSpherical(normal);
+    auto normalInSpherical = CartesianToSpherical(normal);
     auto azimuth = Generator::GenerateF01()*2*M_PI;
     auto zenith = Generator::GenerateF01()*M_PI-0.5*M_PI;
     auto nextPath = SphericalCoords(azimuth,zenith);
-//    nextPath.zenith += normalInSpherical.zenith;
-//    nextPath.azimuth += normalInSpherical.azimuth;
+    nextPath.zenith += normalInSpherical.zenith;
+    nextPath.azimuth += normalInSpherical.azimuth;
     auto randomPath = SphericalToCartesian(nextPath);
-//
-//    return data.Roughness * randomPath + (1-data.Roughness) * PerfectReflection(incomming,normal);
+
+//    return Normalize(data.Roughness * randomPath + (1-data.Roughness) * PerfectReflection(incomming,normal));
     return randomPath;
+//    return PerfectReflection(incomming,normal);
 }
 
 std::array<float, 3> PB_BTDF::Evaluate(UT_Vector3F incomming, UT_Vector3F outgoing, UT_Vector3F normal) {

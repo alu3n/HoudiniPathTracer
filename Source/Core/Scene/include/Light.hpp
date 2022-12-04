@@ -11,9 +11,10 @@
 using Radiance = RadiometricQuantity<RadiometricQuantities::Radiance>;
 
 struct LightSample{
-    UT_Vector3F position;
-    UT_Vector3F directionTargetToLight;
-    Radiance amount;
+    UT_Vector3F lightPos;
+    UT_Vector3F lightDir;
+    float lightDistance;
+    float intensity;
 };
 
 class Light{
@@ -23,10 +24,10 @@ public:
 
 class ConstantRectangularLight : public Light {
 public:
-    ConstantRectangularLight(UT_Vector3F position, UT_Vector3F orientation, UT_Vector2F size, Radiance radiance);
+    ConstantRectangularLight(UT_Vector3F position, UT_Vector3F orientation, UT_Vector2F size, float constantIntensity);
     LightSample GenerateSample(UT_Vector3F targetPosition) override;
 private:
-    Radiance constantRadiance;
+    float ConstantIntensity;
     UT_Vector3F dirX;
     UT_Vector3F dirY;
     Generator generator{};
