@@ -30,16 +30,12 @@ private:
     RGBRadiance ComputeDirectIllumination(const TextureData & textureData, UT_Vector3F normalDir, UT_Vector3F observationDir, UT_Vector3F intersectionPos);
     float Shadow(UT_Vector3F intersectionPosition, UT_Vector3F lightDir, float lightDistance);
 
-//    std::tuple<RGBRadiance,float> ComputeIndirectIllumination(GU_RayInfo info, GU_Ray observer, int depth);
-//    std::tuple<RGBRadiance,float> ComputeDirectIllumination(GU_RayInfo info, GU_Ray observer);
-//    RGBRadiance ComputeRefraction(GU_RayInfo, GU_Ray observer, int depth);
-//    TextureData GetTextureData(GU_RayInfo,UT_Vector3F);
-
     float EliminationProbability(int depth);
     bool ShouldEliminate(int depth);
     std::vector<Texture *> Textures;
     std::unique_ptr<Texture> DefaultTexture;
-    PB_BSDF BSDF;
+    BSDF bsdf;
+//    PB_BSDF BSDF;
 };
 
 #endif //NPRG045_PHYSICALLYBASEDRENDERER_HPP

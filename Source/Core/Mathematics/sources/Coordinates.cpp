@@ -28,14 +28,18 @@ SphericalCoords::SphericalCoords(float azimuth, float zenith) {
 }
 
 PolarCoordinates CartesianToPolar(UT_Vector2F coords){
-
+//    std::cout << ""
 }
 
 SphericalCoords CartesianToSpherical(UT_Vector3F coords){
-//    return {
-//        Norm<2>(coords),
-//        atan(coords.x()/coords.y())
-//    };
+//    if(coords.y() == 0) std::cout << "ACHTUNG!!!" << std::endl;
+//    std::cout << "C to S" << std::endl;
+    float cy = coords.y() == 0 ? 0.00001 : coords.y();
+//    return {0,0};
+    return {
+        Norm(coords),
+        atan(coords.x()/cy)
+    };
 }
 
 UT_Vector2F PolarToCartesian(PolarCoordinates coords){

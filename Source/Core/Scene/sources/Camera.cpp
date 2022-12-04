@@ -19,9 +19,10 @@ constexpr float aperatureRadius = 0.5;
 
 
 GU_Ray Camera::GenerateRay(UT_Vector2i PixelCoords) {
+    //Todo: Clean up the variable names :)
+
     auto sample = Generator::GenerateF01<2>();
 
-//    std::cout << YIncrement << std::endl;
 
     auto sensorPos = (PixelCoords.x() + sample[0])*XIncrement + (PixelCoords.y() + sample[1])*YIncrement + CornerPosition;
     auto directionVector = sensorPos - Origin;
@@ -39,8 +40,6 @@ GU_Ray Camera::GenerateRay(UT_Vector2i PixelCoords) {
 
     auto t = -(dot(org,planeNormal)+d)/dot(dir,planeNormal);
     auto P = org + t*dir;
-//    std::cout << Norm(dir) << std::endl;
-//    std::cout << t << std::endl;
 
     UT_Vector3F XIncr = {XIncrement.x(),XIncrement.y(),XIncrement.z()};
     XIncr = Normalize(XIncr);
@@ -53,8 +52,7 @@ GU_Ray Camera::GenerateRay(UT_Vector2i PixelCoords) {
     auto aperaturePos = Orig + generator.GenerateF01()*aperatureRadius*XIncr + generator.GenerateF01()*aperatureRadius*YIncr;
     auto newDir = P - aperaturePos;
     newDir = Normalize(newDir);
-
-
+    
     return {aperaturePos,newDir};
 }
 
@@ -66,7 +64,7 @@ void Camera::LoadCamera(OP_Context &context) {
             CameraNode->evalInt("res", 1, time)
     );
 
-    UT_Matrix4F worldTransform{0};// = CameraNode->getPreTransform();
+    UT_Matrix4F worldTransform{0};
 
     FocalLength = CameraNode->evalFloat("focal", 0, time) / 1000.0; //mm -> m
     Aperture = CameraNode->evalFloat("aperture", 0, time) / 1000.0; //mm -> m
