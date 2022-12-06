@@ -26,18 +26,11 @@ add_library( ${library_name} SHARED
 
     Core/Materials/sources/PB_BxDF.cpp
 
-#    Core/Physics/sources/OldQuantities.cpp
-
-#    Core/Renderers/sources/OldDistributedRaytracer.cpp
-#    Core/Renderers/sources/OldPathTracer.cpp
-#    Core/Renderers/sources/OldRenderer.cpp
     Core/Renderers/sources/ImageRepresentation.cpp
     Core/Renderers/sources/PhysicallyBasedRenderer.cpp
 
     Hook/Other/sources/RenderInterface.cpp
     Hook/Other/sources/RenderWindow.cpp
-
-#    Core/Materials/sources/LambertBRDF.cpp
 
     Core/Materials/sources/BxDF.cpp
     Core/Materials/sources/Texture.cpp
@@ -48,9 +41,6 @@ add_library( ${library_name} SHARED
     Core/Scene/sources/Scene.cpp
 
     Hook/Other/sources/Utility.cpp
-    Hook/Nodes/sources/LightNode.cpp
-    Hook/Nodes/sources/CameraNode.cpp
-    Hook/Nodes/sources/DebugNode.cpp
     Hook/Other/sources/Hook.cpp
     Hook/Nodes/sources/RendererNode.cpp
 )

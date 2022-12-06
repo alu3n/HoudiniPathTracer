@@ -2,118 +2,67 @@
 // Created by Vojtěch Pröschl on 16.09.2022.
 //
 
-#include "../include/RenderInterface.hpp"
-#include "../../../Core/Renderers/include/PhysicallyBasedRenderer.hpp"
+#include <limits>
 #include <UT/UT_NetPacket.h>
-//#include "../../Core/Renderers/include/PhysicallyBasedRenderer.hpp"
-//#include "../../Core/Renderers/include/OldDistributedRaytracer.hpp"
-//#include "../../Core/Renderers/include/OldPathTracer.hpp"
-
-//#include "../../oldCore/Utility/SampleGenerators.hpp"
-
-#include <OBJ/OBJ_Camera.h>
-#include <OP/OP_Context.h>
 #include <OP/OP_Director.h>
-
+#include <OBJ/OBJ_Light.h>
+#include <exception>
 #include <chrono>
 #include <thread>
+
+#include "../include/RenderInterface.hpp"
+#include "../../../Core/Renderers/include/PhysicallyBasedRenderer.hpp"
+
+
+
+constexpr float currentTime = 0;
+
+
+//Light boundaries
+constexpr float minLightIntensity = 0;
+constexpr float maxLightIntensity = std::numeric_limits<float>::max();
+constexpr float minLightArea = 0;
+constexpr float maxLightArea = std::numeric_limits<float>::max();
+constexpr float minLightColor = 0;
+constexpr float maxLightColor = 1;
+
+//Camera boundaries
+constexpr float minFStop = 0.001;
+constexpr float maxFStop = std::numeric_limits<float>::max();
+
+
+//Renderer boundaries
+
+
+
+
+
+//constexpr float min
+
+
+//Render boundaries
+
+
+
+
+
 
 RenderInterface::RenderInterface(RendererNode *node) {
     rendererNode = node;
 }
 
+//bound function
+float B(float val, float min, float max){
+    auto rtrval = min > val ? min : val;
+    return rtrval > max ? max : rtrval;
+}
+
 //Todo: Avoid crashing when wrong node provided
 
-void RenderInterface::RenderFrame() {
-    UT_StringHolder cameraPath;
-    UT_StringHolder geometryPath;
-    UT_StringHolder lightPath;
+void RenderInterface::Render() {
 
-    rendererNode->evalString(cameraPath,"camera",0,0);
-    rendererNode->evalString(geometryPath,"geometry",0,0);
-    rendererNode->evalString(lightPath,"light",0,0);
-
-    auto cameraNode = OPgetDirector()->getOBJNode(cameraPath)->castToOBJCamera();
-    auto geometryNode = OPgetDirector()->getSOPNode(geometryPath);
-    auto lightNode = OPgetDirector()->getOBJNode(lightPath);
-
-    OP_Context context(0);
-
-    int ImageResX = cameraNode->evalInt("res",0,context.getTime());
-    int ImageResY = cameraNode->evalInt("res",1,context.getTime());
-    int TileResX = rendererNode->evalInt("tileSize",0,context.getTime());
-    int TileResY = rendererNode->evalInt("tileSize",1,context.getTime());
-
-    int CycleCount = rendererNode->evalInt("cycleCount",0,0);
-    int SamplesPerCycle = rendererNode->evalInt("samplesPerCycle",0,0);
-
-    std::cout << "Opening window" << std::endl;
     renderWindow.Open({ImageResX,ImageResY},{TileResX,TileResY});
-    std::cout << "Opening done" << std::endl;
-
-    Camera cam(cameraNode,context);
-    Geometry geo(geometryNode,context);
-
-    float L1PX = lightNode->evalFloat("t",0,0);
-    float L1PY = lightNode->evalFloat("t",1,0);
-    float L1PZ = lightNode->evalFloat("t",2,0);
-
-    float L1RX = lightNode->evalFloat("r",0,0);
-    float L1RY = lightNode->evalFloat("r",1,0);
-    float L1RZ = lightNode->evalFloat("r",2,0);
-
-    float L1SX = lightNode->evalFloat("areasize",0,0);
-    float L1SY = lightNode->evalFloat("areasize",1,0);
-
-    float L1I = lightNode->evalFloat("light_intensity",0,0);
-
-//    float L1PX = rendererNode->evalFloat("l1Position",0,0);
-//    float L1PY = rendererNode->evalFloat("l1Position",1,0);
-//    float L1PZ = rendererNode->evalFloat("l1Position",2,0);
-//
-//    float L1RX = rendererNode->evalFloat("l1Rotation",0,0);
-//    float L1RY = rendererNode->evalFloat("l1Rotation",1,0);
-//    float L1RZ = rendererNode->evalFloat("l1Rotation",2,0);
-//
-//    float L1SX = rendererNode->evalFloat("l1Size",0,0);
-//    float L1SY = rendererNode->evalFloat("l1Size",1,0);
-//
-//    float L1I = rendererNode->evalFloat("l1Intensity",0,0);
-
-    ConstantRectangularLight * light1 = new ConstantRectangularLight({L1PX,L1PY,L1PZ},{L1RX,L1RY,L1RZ},{L1SX,L1SY},{L1I});
-
-    float L2PX = rendererNode->evalFloat("l2Position",0,0);
-    float L2PY = rendererNode->evalFloat("l2Position",1,0);
-    float L2PZ = rendererNode->evalFloat("l2Position",2,0);
-
-    float L2RX = rendererNode->evalFloat("l2Rotation",0,0);
-    float L2RY = rendererNode->evalFloat("l2Rotation",1,0);
-    float L2RZ = rendererNode->evalFloat("l2Rotation",2,0);
-
-    float L2SX = rendererNode->evalFloat("l2Size",0,0);
-    float L2SY = rendererNode->evalFloat("l2Size",1,0);
-
-    float L2I = rendererNode->evalFloat("l2Intensity",0,0);
-
-    ConstantRectangularLight * light2 = new ConstantRectangularLight({L2PX,L2PY,L2PZ},{L2RX,L2RY,L2RZ},{L2SX,L2SY},{L2I});
-
-    float L3PX = rendererNode->evalFloat("l3Position",0,0);
-    float L3PY = rendererNode->evalFloat("l3Position",1,0);
-    float L3PZ = rendererNode->evalFloat("l3Position",2,0);
-
-    float L3RX = rendererNode->evalFloat("l3Rotation",0,0);
-    float L3RY = rendererNode->evalFloat("l3Rotation",1,0);
-    float L3RZ = rendererNode->evalFloat("l3Rotation",2,0);
-
-    float L3SX = rendererNode->evalFloat("l3Size",0,0);
-    float L3SY = rendererNode->evalFloat("l3Size",1,0);
-
-    float L3I = rendererNode->evalFloat("l3Intensity",0,0);
-
-    ConstantRectangularLight * light3 = new ConstantRectangularLight({L3PX,L3PY,L3PZ},{L3RX,L3RY,L3RZ},{L3SX,L3SY},{L3I});
-
-    Scene scene({light1},cam,geo);
-    PhysicallyBasedRenderer Renderer = PhysicallyBasedRenderer(scene);
+    PhysicallyBasedRenderer Renderer = PhysicallyBasedRenderer(*scene.get());
     Image img(ImageResX,ImageResY,TileResX,TileResY);
 
     renderWindow.Device->terminateOnConnectionLost(false);
@@ -126,10 +75,130 @@ void RenderInterface::RenderFrame() {
     }
 
     renderWindow.Device->close();
-
-
 }
 
-void RenderInterface::RenderFramerange() {
-    renderWindow.Open({640,640},{64,64});
+void RenderInterface::RenderFrame() {
+    std::cout << "Started Loading" << std::endl;
+
+    OP_Context context(0);
+    LoadData(context);
+
+    if(!LoadFailed){
+        std::cout << "Starting render" << std::endl;
+        auto start = std::chrono::steady_clock::now();
+        Render();
+        std::cout << "Render done in " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() << "ms" << std::endl;
+    }
+    else{
+        std::cout << "Error while loading data!" << std::endl;
+    }
+}
+
+//Throw exception when unable to load the light
+Light* RenderInterface::LoadLight(UT_String lightPath,OP_Context context) {
+    if(OPgetDirector()->findNode(lightPath) == NULL) throw "non existent node";
+//    auto lightNode = OPgetDirector()->getOBJNode(lightPath)->castToOBJLight();
+    auto lightNode = OPgetDirector()->getOBJNode(lightPath);
+    if(!lightNode) throw "wrong node";
+
+    float PX = lightNode->evalFloat("t",0,0);
+    float PY = lightNode->evalFloat("t",1,0);
+    float PZ = lightNode->evalFloat("t",2,0);
+
+    float RX = lightNode->evalFloat("r",0,0);
+    float RY = lightNode->evalFloat("r",1,0);
+    float RZ = lightNode->evalFloat("r",2,0);
+
+    float SX = lightNode->evalFloat("areasize",0,0);
+    float SY = lightNode->evalFloat("areasize",1,0);
+
+    float I = lightNode->evalFloat("light_intensity",0,0);
+
+    float CR = lightNode->evalFloat("light_color",0,0);
+    float CG = lightNode->evalFloat("light_color",1,0);
+    float CB = lightNode->evalFloat("light_color",2,0);
+
+    std::cout << SX << " " << SY << std::endl;
+
+    ConstantRectangularLight * light = new ConstantRectangularLight(
+        {PX,PY,PZ},
+        {RX,RY,RZ},
+        {SX,SY},
+        I,
+        {CR,CG,CB}
+    );
+
+    return light;
+}
+
+//Throw exception when unable to load the geometry
+Geometry RenderInterface::LoadGeometry(UT_String geometryPath, OP_Context context) {
+    try{
+        if(OPgetDirector()->findNode(geometryPath) == NULL) throw "non existent node";
+        auto geometryNode = OPgetDirector()->getSOPNode(geometryPath);
+        if(!geometryNode) throw "wrong node";
+
+        return Geometry(geometryNode,context);
+    }
+    catch(...){
+        std::cout << "Geometry EXP" << std::endl;
+        LoadFailed = true;
+    }
+}
+
+//Throw exception when unable to load the camera
+Camera RenderInterface::LoadCamera(UT_String cameraPath, OP_Context context) {
+    try{
+        if(OPgetDirector()->findNode(cameraPath) == NULL) throw "non existent node";
+        auto cameraNode = OPgetDirector()->getOBJNode(cameraPath)->castToOBJCamera();
+        if(!cameraNode) throw "wrong node";
+
+        ImageResX = cameraNode->evalInt("res",0,0);
+        ImageResY = cameraNode->evalInt("res",1,0);
+
+        return Camera(cameraNode,context);
+    }
+    catch(...){
+        std::cout << "Camera EXP" << std::endl;
+        LoadFailed = true;
+    }
+}
+
+Lights RenderInterface::LoadLights(OP_Context context) {
+    int numLights = rendererNode->evalInt("lights",0, context.getTime());
+    Lights lights;
+
+    for(int i = 1; i <= numLights; i++){
+        UT_String lightName;
+        rendererNode->evalStringInst("light",&i,lightName, 0, context.getTime());
+        try{
+            lights.push_back(LoadLight(lightName,context));
+        }
+        catch(...){
+            std::cout << "Light EXP" << std::endl;
+        }
+    }
+
+    if(lights.empty()) LoadFailed = true;
+    return lights;
+}
+
+void RenderInterface::LoadData(OP_Context context) {
+    float t = context.getTime();
+
+    TileResX = rendererNode->evalInt("tileSize", 0, t);
+    TileResY = rendererNode->evalInt("tileSize", 1, t);
+    CycleCount = rendererNode->evalInt("cycleCount", 0, t);
+    SamplesPerCycle = rendererNode->evalInt("samplesPerCycle", 0, t);
+
+    UT_String cameraPath;
+    UT_String geometryPath;
+    rendererNode->evalString(cameraPath, "camera", 0, t);
+    rendererNode->evalString(geometryPath, "geometry", 0, t);
+
+    auto camera = LoadCamera(cameraPath,context);
+    auto geometry = LoadGeometry(geometryPath,context);
+    auto lights = LoadLights(context);
+
+    if(!LoadFailed) scene = std::make_unique<Scene>(lights,camera,geometry);
 }

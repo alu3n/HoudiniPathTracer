@@ -14,13 +14,11 @@ Camera::Camera(OBJ_Camera *cam, OP_Context &context) {
 
 
 //constexpr float lensDistance = 0.05;
-constexpr float focusPlaneDistance = 9.5;
-constexpr float aperatureRadius = 0.5;
+//constexpr float focusPlaneDistance = 9.5;
+//constexpr float aperatureRadius = 0.15;
 
 
 GU_Ray Camera::GenerateRay(UT_Vector2i PixelCoords) {
-    //Todo: Clean up the variable names :)
-
     auto sample = Generator::GenerateF01<2>();
 
 
@@ -35,7 +33,7 @@ GU_Ray Camera::GenerateRay(UT_Vector2i PixelCoords) {
 
     UT_Vector3F planeNormal = {ZIncrement.x(),ZIncrement.y(),ZIncrement.z()};
     planeNormal = Normalize(planeNormal);
-    auto pointOnFocusPlane = org + focusPlaneDistance*planeNormal;
+    auto pointOnFocusPlane = org + focus*planeNormal;
     float d = -dot(pointOnFocusPlane,planeNormal);
 
     auto t = -(dot(org,planeNormal)+d)/dot(dir,planeNormal);
@@ -49,10 +47,10 @@ GU_Ray Camera::GenerateRay(UT_Vector2i PixelCoords) {
 
     UT_Vector3F Orig = {Origin.x(),Origin.y(),Origin.z()};
 
-    auto aperaturePos = Orig + generator.GenerateF01()*aperatureRadius*XIncr + generator.GenerateF01()*aperatureRadius*YIncr;
+    auto aperaturePos = Orig + generator.GenerateF01()*fstop*XIncr + generator.GenerateF01()*fstop*YIncr;
     auto newDir = P - aperaturePos;
     newDir = Normalize(newDir);
-    
+
     return {aperaturePos,newDir};
 }
 
@@ -68,6 +66,8 @@ void Camera::LoadCamera(OP_Context &context) {
 
     FocalLength = CameraNode->evalFloat("focal", 0, time) / 1000.0; //mm -> m
     Aperture = CameraNode->evalFloat("aperture", 0, time) / 1000.0; //mm -> m
+    fstop = 1/CameraNode->evalFloat("fstop",0,time);
+    focus = CameraNode->evalFloat("focus",0,time);
 
     CameraNode->getLocalToWorldTransform(context,worldTransform);
 

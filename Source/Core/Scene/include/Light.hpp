@@ -15,6 +15,7 @@ struct LightSample{
     UT_Vector3F lightDir;
     float lightDistance;
     float intensity;
+    RGBRadiance color;
 };
 
 class Light{
@@ -24,10 +25,11 @@ public:
 
 class ConstantRectangularLight : public Light {
 public:
-    ConstantRectangularLight(UT_Vector3F position, UT_Vector3F orientation, UT_Vector2F size, float constantIntensity);
+    ConstantRectangularLight(UT_Vector3F position, UT_Vector3F orientation, UT_Vector2F size, float constantIntensity, RGBRadiance);
     LightSample GenerateSample(UT_Vector3F targetPosition) override;
 private:
     float ConstantIntensity;
+    RGBRadiance color;
     UT_Vector3F dirX;
     UT_Vector3F dirY;
     Generator generator{};

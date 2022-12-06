@@ -23,6 +23,8 @@ private:
 
     float FocalLength{0};
     float Aperture{0};
+    float fstop{0};
+    float focus{0};
 
     Generator generator;
 

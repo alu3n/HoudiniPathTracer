@@ -20,4 +20,6 @@ struct Scene{
     Geometry geometry;
 };
 
+
+
 #endif //NPRG045_SCENE_HPP
