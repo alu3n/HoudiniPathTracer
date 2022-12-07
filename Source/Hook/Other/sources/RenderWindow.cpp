@@ -7,12 +7,12 @@
 #include <iostream>
 
 void RenderWindow::DisplayTile(const ImageTile &tile) {
-    Device->writeTile(ConvertTile(tile),tile.viewCoords.tx0,tile.viewCoords.tx1,tile.viewCoords.ty0,tile.viewCoords.ty1);
+    void *tdata = ConvertTile(tile);
+    Device->writeTile(tdata,tile.viewCoords.tx0,tile.viewCoords.tx1,tile.viewCoords.ty0,tile.viewCoords.ty1);
+    free(tdata);
 }
 
 void RenderWindow::Open(UT_Vector2i imageResolution, UT_Vector2i tileResolution) {
-//    std::cout << "COSYK" << std::endl;
-
     Device = IMG_TileDevice::newDevice(DeviceName.data());
 
     auto info = new IMG_TileOptions;
@@ -20,8 +20,10 @@ void RenderWindow::Open(UT_Vector2i imageResolution, UT_Vector2i tileResolution)
     info->setPlaneInfo(Filename.data(),imagePlaneDefinition.Name,0,imagePlaneDefinition.Format,imagePlaneDefinition.ColorModel);
 
     if(!Device->open(*info,imageResolution.x(),imageResolution.y(),tileResolution.x(),tileResolution.y(),1.0)){
-        std::cout << "There was a problem with opening render view!" << std::endl;
+        std::cout << "There was an problem while opening render view!" << std::endl;
     }
+
+
 
 }
 

@@ -6,6 +6,7 @@
 #include <UT/UT_NetPacket.h>
 #include <OP/OP_Director.h>
 #include <OBJ/OBJ_Light.h>
+#include <UT/UT_Exit.h>
 #include <exception>
 #include <chrono>
 #include <thread>
@@ -65,12 +66,17 @@ void RenderInterface::Render() {
     PhysicallyBasedRenderer Renderer = PhysicallyBasedRenderer(*scene.get());
     Image img(ImageResX,ImageResY,TileResX,TileResY);
 
-    renderWindow.Device->terminateOnConnectionLost(false);
+//    renderWindow.Device->terminateOnConnectionLost(true);
+//    renderWindow.Device->close(false);
+
+//    UT_Exit::exit(UT_Exit::EXIT_OK);
 
     for(int i = 0; i < CycleCount; ++i){
         for(auto && tile : img.data){
             Renderer.ImproveTile(tile,SamplesPerCycle);
+//            renderWindow.Open({ImageResX,ImageResY},{TileResX,TileResY});
             renderWindow.DisplayTile(tile);
+//            renderWindow.Device->close();
         }
     }
 

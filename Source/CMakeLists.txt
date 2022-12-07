@@ -34,6 +34,7 @@ add_library( ${library_name} SHARED
 
     Core/Materials/sources/BxDF.cpp
     Core/Materials/sources/Texture.cpp
+    Core/Materials/sources/MaterialLibrary.cpp
 
     Core/Scene/sources/Camera.cpp
     Core/Scene/sources/Geometry.cpp

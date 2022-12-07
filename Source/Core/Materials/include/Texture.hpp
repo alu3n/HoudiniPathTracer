@@ -27,7 +27,7 @@ class ConstantTexture : public Texture{
 public:
     virtual TextureData Evaluate(UT_Vector3F position) override;
     ConstantTexture(TextureData data);
-private:
+protected:
     TextureData data;
 };
 
