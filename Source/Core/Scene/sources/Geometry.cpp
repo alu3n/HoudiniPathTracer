@@ -2,12 +2,13 @@
 // Created by Vojtěch Pröschl on 17.09.2022.
 //
 
-#include "../include/Geometry.hpp"
 
 #include <GU/GU_Detail.h>
 #include <GU/GU_DetailHandle.h>
-
 #include <iostream>
+
+#include "../include/Geometry.hpp"
+#include "../../Mathematics/include/LinearAlgebra.hpp"
 
 Geometry::Geometry(SOP_Node *geometryNode, OP_Context & context){
     gdh = static_cast<GU_DetailHandle *>(geometryNode->getCookedData(context));
@@ -15,6 +16,8 @@ Geometry::Geometry(SOP_Node *geometryNode, OP_Context & context){
     LoadPointColor();
     LoadVertexNormal();
     LoadShader();
+    LoadUsePointColor();
+
 }
 
 UT_Vector3F Geometry::IntersectionPointColor(const GU_RayInfo &info) {
@@ -27,7 +30,6 @@ UT_Vector3F Geometry::IntersectionPointColor(const GU_RayInfo &info) {
     for(int i = 0; i < vertexOffsets.size(); ++i){
         GA_Offset pointOffset = gdh->gdpNC()->vertexPoint(vertexOffsets[i]);
         auto clr = HandlePointColor->get(pointOffset);
-//        std::cout << vertexWeights[i] << std::endl;
         color += vertexWeights[i] * clr;
     }
 
@@ -39,6 +41,15 @@ int Geometry::IntersectionPointShader(const GU_RayInfo &info) {
     UT_Array<float> vertexWeights;
     info.myPrim->computeInteriorPointWeights(vertexOffsets,vertexWeights,info.myU,info.myV,info.myW);
     return (int)HandlePointShader->get(gdh->gdpNC()->vertexPoint(vertexOffsets[0]));
+}
+
+bool Geometry::UsePointColor(const GU_RayInfo &info) {
+    UT_Array<GA_Offset> vertexOffsets;
+    UT_Array<float> vertexWeights;
+    info.myPrim->computeInteriorPointWeights(vertexOffsets,vertexWeights,info.myU,info.myV,info.myW);
+    auto tmp = (int)HandleUsePointColor->get(gdh->gdpNC()->vertexPoint(vertexOffsets[0]));
+    if(tmp == 0) return false;
+    return true;
 }
 
 
@@ -53,8 +64,8 @@ UT_Vector3F Geometry::IntersectionVertexNormal(const GU_RayInfo &info) {
         auto nrml = HandleVertexNormal->get(vertexOffsets[i]);
         normal += vertexWeights[i]*nrml;
     }
-//    std::cout << normal << std::endl;
-    return normal;
+
+    return Normalize(normal);
 }
 
 void Geometry::LoadPointColor() {
@@ -69,9 +80,12 @@ void Geometry::LoadVertexNormal() {
 
 void Geometry::LoadShader() {
     gdh->gdpNC()->addFloatTuple(GA_ATTRIB_POINT,GA_SCOPE_PUBLIC,"shader",1);
-    HandlePointShader = new GA_RWHandleF(gdh->gdpNC(),GA_ATTRIB_POINT,"shader");
+    HandlePointShader = new GA_RWHandleI(gdh->gdpNC(),GA_ATTRIB_POINT,"shader");
 }
 
-//void Geometry::LoadVertexPointNum() {
-//    //Todo
-//}
+void Geometry::LoadUsePointColor() {
+    gdh->gdpNC()->addFloatTuple(GA_ATTRIB_POINT,GA_SCOPE_PUBLIC,"useCd",1);
+    HandleUsePointColor = new GA_RWHandleI(gdh->gdpNC(),GA_ATTRIB_POINT,"useCd");
+}
+
+

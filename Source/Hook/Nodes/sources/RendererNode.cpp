@@ -2,27 +2,18 @@
 // Created by Vojtěch Pröschl on 04.09.2022.
 //
 
-#include "../include/RendererNode.hpp"
 #include <thread>
-//#include "../../Render/include/RenderInterface.hpp"
 #include <PRM/PRM_Type.h>
 #include <PRM/PRM_Include.h>
-#include "../../Other/include/RenderInterface.hpp"
-
-#include <vector>
 #include <OP/OP_Director.h>
-#include <OBJ/OBJ_Camera.h>
 #include <OBJ/OBJ_Light.h>
 #include <AU/AU_Input.h>
 #include <UT/UT_BitArray.h>
 #include <IMG/IMG_File.h>
-#include <IMG/IMG_TileDevice.h>
-#include <IMG/IMG_TileOptions.h>
-#include <TIL/TIL_TileMPlay.h>
-#include <UT/UT_PtrArray.h>
 #include <IMG/IMG_TileRead.h>
-//RendererNode * local;
 
+#include "../include/RendererNode.hpp"
+#include "../../Other/include/RenderInterface.hpp"
 
 //Names of the node interface elements
 static PRM_Name prmNames[]{
@@ -34,17 +25,17 @@ static PRM_Name prmNames[]{
     PRM_Name{"camera","Camera"}, //4
     PRM_Name{"light", "Light"}, //5
     PRM_Name{"renderCurrentFrame", "Render Current Frame"}, //6
-    PRM_Name{"multiTest","Multi Test"},
-    PRM_Name{"s","s"}
+    PRM_Name{"multiTest","Multi Test"} //7
 };
 
 
 void foo(void *data){
-    RenderInterface anInterface((RendererNode *)data);
-    anInterface.RenderFrame();
+    RenderInterface Interface((RendererNode *)data);
+    Interface.RenderFrame(0);
 }
 
 int RenderFrame(void *data, int index, fpreal64 time, const PRM_Template *tplate){
+//    foo(data);
     try{
         std::thread th1(foo,data);
         th1.detach();
@@ -53,11 +44,6 @@ int RenderFrame(void *data, int index, fpreal64 time, const PRM_Template *tplate
 
     }
 }
-
-//int RenderFrameRange(void *data, int index, fpreal64 time, const PRM_Template *tplate){
-//    std::cout << "Not implemented yet!" << std::endl;
-//
-//}
 
 static auto callBack = {PRM_Callback(RenderFrame)};
 

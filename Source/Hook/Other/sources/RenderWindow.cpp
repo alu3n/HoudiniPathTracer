@@ -22,12 +22,7 @@ void RenderWindow::Open(UT_Vector2i imageResolution, UT_Vector2i tileResolution)
     if(!Device->open(*info,imageResolution.x(),imageResolution.y(),tileResolution.x(),tileResolution.y(),1.0)){
         std::cout << "There was an problem while opening render view!" << std::endl;
     }
-
-
-
 }
-
-
 
 void *RenderWindow::ConvertTile(const ImageTile &tile) {
     int rx = tile.viewCoords.tx1 - tile.viewCoords.tx0;

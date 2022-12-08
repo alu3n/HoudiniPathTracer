@@ -28,12 +28,12 @@ private:
     RGBRadiance ComputeReflection(const TextureData & textureData, UT_Vector3F normalDir, UT_Vector3F observationDir, UT_Vector3F intersectionPos, int depth);
     RGBRadiance ComputeRefraction(const TextureData & textureData, UT_Vector3F normalDir, UT_Vector3F observationDir, UT_Vector3F intersectionPos, int depth);
     RGBRadiance ComputeDirectIllumination(const TextureData & textureData, UT_Vector3F normalDir, UT_Vector3F observationDir, UT_Vector3F intersectionPos);
-    float Shadow(UT_Vector3F intersectionPosition, UT_Vector3F lightDir, float lightDistance);
+    bool Shadow(UT_Vector3F intersectionPosition, UT_Vector3F lightDir, float lightDistance);
 
     float EliminationProbability(int depth);
     bool ShouldEliminate(int depth);
-    std::vector<Texture *> Textures;
-    std::unique_ptr<Texture> DefaultTexture;
+    std::vector<Material *> Materials;
+    std::unique_ptr<Material> DefaultMaterial;
     BSDF bsdf;
 //    PB_BSDF BSDF;
 };

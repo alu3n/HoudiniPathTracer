@@ -16,7 +16,7 @@
 class RenderInterface{
 public:
     RenderInterface(RendererNode * node);
-    void RenderFrame();
+    void RenderFrame(fpreal time);
 //    void RenderFramerange();
 private:
     RendererNode * rendererNode;
@@ -34,6 +34,10 @@ private:
     void Render();
 
     std::unique_ptr<Scene> scene;
+
+    SOP_Node * geoNode;
+    bool geoExist{false};
+
     int ImageResX;
     int ImageResY;
     int TileResX;

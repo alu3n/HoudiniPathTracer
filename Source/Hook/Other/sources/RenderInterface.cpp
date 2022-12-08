@@ -80,13 +80,15 @@ void RenderInterface::Render() {
         }
     }
 
+    if(geoExist) geoNode->setHardLock(false);
+
     renderWindow.Device->close();
 }
 
-void RenderInterface::RenderFrame() {
+void RenderInterface::RenderFrame(fpreal time) {
     std::cout << "Started Loading" << std::endl;
 
-    OP_Context context(0);
+    OP_Context context(time);
     LoadData(context);
 
     if(!LoadFailed){
@@ -144,6 +146,10 @@ Geometry RenderInterface::LoadGeometry(UT_String geometryPath, OP_Context contex
         auto geometryNode = OPgetDirector()->getSOPNode(geometryPath);
         if(!geometryNode) throw "wrong node";
 
+        geoExist = true;
+        geoNode = geometryNode;
+        geoNode->setHardLock(true);
+
         return Geometry(geometryNode,context);
     }
     catch(...){
@@ -161,6 +167,7 @@ Camera RenderInterface::LoadCamera(UT_String cameraPath, OP_Context context) {
 
         ImageResX = cameraNode->evalInt("res",0,0);
         ImageResY = cameraNode->evalInt("res",1,0);
+
 
         return Camera(cameraNode,context);
     }

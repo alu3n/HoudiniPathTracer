@@ -7,44 +7,49 @@
 
 #include "Texture.hpp"
 
-class MaterialDefault : public ConstantTexture{
+class MaterialDefault : public ConstantMaterial{
 public:
     MaterialDefault();
 };
 
-class MaterialGlass : public ConstantTexture{
+class MaterialGlass : public ConstantMaterial{
 public:
     MaterialGlass();
 };
 
-class MaterialPianoBlack : public ConstantTexture{
+class MaterialPianoBlack : public ConstantMaterial{
 public:
     MaterialPianoBlack();
 };
 
-class MaterialPlastic : public ConstantTexture{
+class MaterialPlastic : public ConstantMaterial{
 public:
     MaterialPlastic();
 };
 
-class MaterialRubber : public ConstantTexture{
+class MaterialRubber : public ConstantMaterial{
 public:
     MaterialRubber();
 };
 
-class MaterialPorcelain : public ConstantTexture{
+class MaterialPorcelain : public ConstantMaterial{
 public:
     MaterialPorcelain();
 };
 
-class MaterialMarble : public ConstantTexture{
+class MaterialMarble : public ConstantMaterial{
 public:
     MaterialMarble();
 };
 
-class MaterialRock : public ConstantTexture{
+class MaterialRock : public ConstantMaterial{
 public:
     MaterialRock();
+};
+
+class ProceduralTiles : public Material{
+public:
+    TextureData Evaluate(UT_Vector3F position) override;
 };
 
 

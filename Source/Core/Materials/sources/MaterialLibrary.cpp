@@ -3,8 +3,9 @@
 //
 
 #include "../include/MaterialLibrary.hpp"
+#include "../../Mathematics/include/LinearAlgebra.hpp"
 
-MaterialMarble::MaterialMarble() : ConstantTexture({}){
+MaterialMarble::MaterialMarble() : ConstantMaterial({}){
     data.RefractionRoughness = 0.26;
     data.ReflectionRoughness = 0.26;
     data.Transparency = 0;
@@ -12,7 +13,7 @@ MaterialMarble::MaterialMarble() : ConstantTexture({}){
     data.DiffuseColor = {0.59,0.61,0.65};
 }
 
-MaterialRubber::MaterialRubber() : ConstantTexture({}){
+MaterialRubber::MaterialRubber() : ConstantMaterial({}){
     data.RefractionRoughness = 0.6;
     data.ReflectionRoughness = 0.6;
     data.Transparency = 0;
@@ -20,7 +21,7 @@ MaterialRubber::MaterialRubber() : ConstantTexture({}){
     data.DiffuseColor = {0.018,0.018,0.018};
 }
 
-MaterialPorcelain::MaterialPorcelain() : ConstantTexture({}){
+MaterialPorcelain::MaterialPorcelain() : ConstantMaterial({}){
     data.RefractionRoughness = 0;
     data.ReflectionRoughness = 0;
     data.Transparency = 0;
@@ -28,15 +29,15 @@ MaterialPorcelain::MaterialPorcelain() : ConstantTexture({}){
     data.DiffuseColor = {0.9,0.9,0.9};
 }
 
-MaterialGlass::MaterialGlass() : ConstantTexture({}) {
+MaterialGlass::MaterialGlass() : ConstantMaterial({}) {
     data.RefractionRoughness = 0;
     data.ReflectionRoughness = 0;
     data.Transparency = 1;
-    data.IOR = 1.5;
+    data.IOR = 3;
     data.DiffuseColor = {0.2,0.2,0.2};
 }
 
-MaterialDefault::MaterialDefault() : ConstantTexture({}) {
+MaterialDefault::MaterialDefault() : ConstantMaterial({}) {
     data.RefractionRoughness = 0.21;
     data.ReflectionRoughness = 0.21;
     data.Transparency = 0;
@@ -44,7 +45,7 @@ MaterialDefault::MaterialDefault() : ConstantTexture({}) {
     data.DiffuseColor = {255.0/152,255.0/155,255.0/167};
 }
 //Rename to piano lacquer
-MaterialPianoBlack::MaterialPianoBlack() : ConstantTexture({}) {
+MaterialPianoBlack::MaterialPianoBlack() : ConstantMaterial({}) {
     data.RefractionRoughness = 0.01;
     data.ReflectionRoughness = 0.01;
     data.Transparency = 0;
@@ -52,7 +53,7 @@ MaterialPianoBlack::MaterialPianoBlack() : ConstantTexture({}) {
     data.DiffuseColor = {0.002,0.002,0.002};
 }
 
-MaterialRock::MaterialRock() : ConstantTexture({}) {
+MaterialRock::MaterialRock() : ConstantMaterial({}) {
     data.RefractionRoughness = 1;
     data.ReflectionRoughness = 1;
     data.Transparency = 0;
@@ -60,10 +61,43 @@ MaterialRock::MaterialRock() : ConstantTexture({}) {
     data.DiffuseColor = {0.7,0.7,0.7};
 }
 
-MaterialPlastic::MaterialPlastic() : ConstantTexture({}){
+MaterialPlastic::MaterialPlastic() : ConstantMaterial({}){
     data.RefractionRoughness = 0.3;
     data.ReflectionRoughness = 0.3;
     data.Transparency = 0;
     data.IOR = 1.5;
     data.DiffuseColor = {0.755,0.560625,0.141185};
 }
+
+constexpr float period = 1;
+
+TextureData ProceduralTiles::Evaluate(UT_Vector3F position) {
+    float mult = M_PI*2*period;
+    float val = sin(position.x()*mult+0.9912938)*sin(position.y()*mult)*sin(position.z()*mult+1.378271);
+
+    std::array<float,3> Cd{0,0,0};
+
+    if(val > 0){
+        Cd[0] = 1;
+    }
+    else{
+        Cd[2] = 1;
+    }
+
+    return {Cd,0.3,0.3,0,1.5};
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
