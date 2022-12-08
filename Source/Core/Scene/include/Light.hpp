@@ -6,16 +6,15 @@
 #define NPRG045_LIGHT_HPP
 
 #include "../../Mathematics/include/Sampling.hpp"
-#include "../../Physics/include/Radiometry.hpp"
+#include "../../Physics/include/Units.hpp"
 
-using Radiance = RadiometricQuantity<RadiometricQuantities::Radiance>;
+//using Radiance = RadiometricQuantity<RadiometricQuantities::Radiance>;
 
 struct LightSample{
-    UT_Vector3F lightPos;
-    UT_Vector3F lightDir;
-    float lightDistance;
-    float intensity;
-    RGBRadiance color;
+    UT_Vector3F LightPos;
+    UT_Vector3F LightDir;
+    float LightDistance;
+    RGBEnergy Energy;
 };
 
 class Light{
@@ -25,14 +24,13 @@ public:
 
 class ConstantRectangularLight : public Light {
 public:
-    ConstantRectangularLight(UT_Vector3F position, UT_Vector3F orientation, UT_Vector2F size, float constantIntensity, RGBRadiance);
+    ConstantRectangularLight(UT_Vector3F position, UT_Vector3F orientation, UT_Vector2F size, float constantIntensity, RGBEnergy);
     LightSample GenerateSample(UT_Vector3F targetPosition) override;
 private:
     float ConstantIntensity;
-    RGBRadiance color;
+    RGBEnergy Color;
     UT_Vector3F dirX;
     UT_Vector3F dirY;
-    Generator generator{};
     UT_Vector3F position;
 };
 

@@ -8,7 +8,7 @@
 #include <tuple>
 
 #include "Renderer.hpp"
-#include "../../Physics/include/Radiometry.hpp"
+#include "../../Physics/include/Units.hpp"
 #include "../../Scene/include/Light.hpp"
 #include "ImageRepresentation.hpp"
 #include "../../Materials/include/Texture.hpp"
@@ -24,11 +24,11 @@ private:
     GU_RayIntersect * intersect;
     Color ComputePixel(UT_Vector2i coordinates);
     TextureData GetTextureData(GU_RayInfo info, UT_Vector3F position);
-    RGBRadiance ComputeIllumination(UT_Vector3F observationDir, UT_Vector3F observationPos, int depth);
-    RGBRadiance ComputeIntersectionIllumination(const TextureData & textureData, UT_Vector3F normalDir, UT_Vector3F observationDir, UT_Vector3F intersectionPos, int depth);
-    RGBRadiance ComputeReflection(const TextureData & textureData, UT_Vector3F normalDir, UT_Vector3F observationDir, UT_Vector3F intersectionPos, int depth);
-    RGBRadiance ComputeRefraction(const TextureData & textureData, UT_Vector3F normalDir, UT_Vector3F observationDir, UT_Vector3F intersectionPos, int depth);
-    RGBRadiance ComputeDirectIllumination(const TextureData & textureData, UT_Vector3F normalDir, UT_Vector3F observationDir, UT_Vector3F intersectionPos);
+    RGBEnergy ComputeIllumination(UT_Vector3F observationDir, UT_Vector3F observationPos, int depth);
+    RGBEnergy ComputeIntersectionIllumination(const TextureData & textureData, UT_Vector3F normalDir, UT_Vector3F observationDir, UT_Vector3F intersectionPos, int depth);
+    RGBEnergy ComputeReflection(const TextureData & textureData, UT_Vector3F normalDir, UT_Vector3F observationDir, UT_Vector3F intersectionPos, int depth);
+    RGBEnergy ComputeRefraction(const TextureData & textureData, UT_Vector3F normalDir, UT_Vector3F observationDir, UT_Vector3F intersectionPos, int depth);
+    RGBEnergy ComputeDirectIllumination(const TextureData & textureData, UT_Vector3F normalDir, UT_Vector3F observationDir, UT_Vector3F intersectionPos);
     bool Shadow(UT_Vector3F intersectionPosition, UT_Vector3F lightDir, float lightDistance);
 
     float EliminationProbability(int depth);

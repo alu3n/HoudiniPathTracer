@@ -7,7 +7,6 @@
 #include <PRM/PRM_Include.h>
 #include <OP/OP_Director.h>
 #include <OBJ/OBJ_Light.h>
-#include <AU/AU_Input.h>
 #include <UT/UT_BitArray.h>
 #include <IMG/IMG_File.h>
 #include <IMG/IMG_TileRead.h>
@@ -35,17 +34,11 @@ void foo(void *data){
 }
 
 int RenderFrame(void *data, int index, fpreal64 time, const PRM_Template *tplate){
-//    foo(data);
-    try{
-        std::thread th1(foo,data);
-        th1.detach();
-    }
-    catch(...){
-
-    }
+    std::thread th1(foo,data);
+    th1.detach();
 }
 
-static auto callBack = {PRM_Callback(RenderFrame)};
+//static auto callBack = {PRM_Callback(RenderFrame)};
 
 
 static PRM_Default defLight = {0,""};
@@ -59,10 +52,6 @@ static PRM_Default defGeometry = {0,""};
 
 static PRM_Default defGeneral {0,""};
 
-
-static PRM_Template testTemplates[] = {
-        PRM_Template{PRM_STRING,PRM_TYPE_DYNAMIC_PATH,0,&prmNames[5],&defLight}
-};
 
 static PRM_Name names[] = {
         PRM_Name("lights",  "Number of Lights"),

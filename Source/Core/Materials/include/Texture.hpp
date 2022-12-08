@@ -9,9 +9,11 @@
 #include <array>
 #include <UT/UT_Vector3.h>
 
+#include "../../Physics/include/Units.hpp"
 
 struct TextureData{
-    std::array<float,3> DiffuseColor;
+//    std::array<float,3> DiffuseColor;
+    RGBEnergy DiffuseColor;
     float ReflectionRoughness;
     float RefractionRoughness;
     float Transparency;

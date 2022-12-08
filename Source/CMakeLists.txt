@@ -20,7 +20,7 @@ add_library( ${library_name} SHARED
     Core/Mathematics/sources/LinearAlgebra.cpp
 
     Core/Physics/sources/Optics.cpp
-    Core/Physics/sources/Radiometry.cpp
+        Core/Physics/sources/Units.cpp
 
     Core/Renderers/sources/ImageRepresentation.cpp
     Core/Renderers/sources/PhysicallyBasedRenderer.cpp

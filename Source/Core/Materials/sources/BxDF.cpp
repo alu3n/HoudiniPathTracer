@@ -6,22 +6,22 @@
 #include "../include/BxDF.hpp"
 #include "../../Mathematics/include/LinearAlgebra.hpp"
 
-std::array<float,3> operator*(const std::array<float,3> & A,const std::array<float,3> & B){
-    return {A[0]*B[0],A[1]*B[1],A[2]*B[2]};
-}
+//std::array<float,3> operator*(const std::array<float,3> & A,const std::array<float,3> & B){
+//    return {A[0]*B[0],A[1]*B[1],A[2]*B[2]};
+//}
+//
+//RGBRadiance operator*(const std::array<float,3> & A, const RGBRadiance & B){
+//    return {A[0]*B[0].amount,A[1]*B[1].amount,A[2]*B[2].amount};
+//}
 
-RGBRadiance operator*(const std::array<float,3> & A, const RGBRadiance & B){
-    return {A[0]*B[0].amount,A[1]*B[1].amount,A[2]*B[2].amount};
-}
-
-std::array<float, 3> BSDF::EvaluateDiffuseBRDF(const TextureData & textureData, UT_Vector3F outgoingDir, UT_Vector3F observationDir,
+RGBEnergy BSDF::EvaluateDiffuseBRDF(const TextureData & textureData, UT_Vector3F outgoingDir, UT_Vector3F observationDir,
                                                UT_Vector3F normalDir) {
     auto multiplier = dot(observationDir,normalDir);
     multiplier = multiplier > 0 ? multiplier * (1-textureData.Transparency) : 0;
-    return {multiplier*textureData.DiffuseColor[0],multiplier*textureData.DiffuseColor[1],multiplier*textureData.DiffuseColor[2]};
+    return multiplier*textureData.DiffuseColor;
 }
 
-std::array<float, 3> BSDF::EvaluateSpecularBRDF(const TextureData & textureData, UT_Vector3F outgoingDir, UT_Vector3F incommingDir,
+RGBEnergy BSDF::EvaluateSpecularBRDF(const TextureData & textureData, UT_Vector3F outgoingDir, UT_Vector3F incommingDir,
                                                 UT_Vector3F normalDir) {
     auto perfectDir = PerfectReflection(incommingDir,normalDir);
     auto temp = dot(perfectDir,outgoingDir);
@@ -30,20 +30,15 @@ std::array<float, 3> BSDF::EvaluateSpecularBRDF(const TextureData & textureData,
     return {specular,specular,specular};
 }
 
-std::array<float, 3>
+RGBEnergy
 BSDF::EvaluateBRDF(const TextureData & textureData, UT_Vector3F outgoingDir, UT_Vector3F incommingDir, UT_Vector3F normalDir) {
     auto fresnell = SchlickApproximation(incommingDir, normalDir, 1, textureData.IOR); //reflected:refracted
     auto refractedCoeff = 1/(fresnell+1);
     auto reflectedCoeff = 1-refractedCoeff;
 
-    auto diffuse = EvaluateDiffuseBRDF(textureData,outgoingDir,incommingDir,normalDir);
-    auto specular = EvaluateSpecularBRDF(textureData,outgoingDir,incommingDir,normalDir);
-
-    float R = diffuse[0]*refractedCoeff+reflectedCoeff*specular[0];
-    float G = diffuse[1]*refractedCoeff+reflectedCoeff*specular[1];
-    float B = diffuse[2]*refractedCoeff+reflectedCoeff*specular[2];
-
-    return {R,G,B};
+    auto diffuse = refractedCoeff * EvaluateDiffuseBRDF(textureData,outgoingDir,incommingDir,normalDir);
+    auto specular = reflectedCoeff * EvaluateSpecularBRDF(textureData,outgoingDir,incommingDir,normalDir);
+    return diffuse + specular;
 }
 
 UT_Vector3F BSDF::GenerateReflection(const TextureData & textureData, UT_Vector3F observationDir, UT_Vector3F normalDir) {
@@ -55,7 +50,7 @@ UT_Vector3F BSDF::GenerateReflection(const TextureData & textureData, UT_Vector3
 }
 
 
-std::array<float, 3> BSDF::EvaluateBTDF(const TextureData & textureData) {
+RGBEnergy BSDF::EvaluateBTDF(const TextureData & textureData) {
     return {1,1,1};
     //Todo: Implement this function :)
 }

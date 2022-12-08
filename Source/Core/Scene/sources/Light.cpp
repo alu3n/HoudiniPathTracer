@@ -8,7 +8,7 @@
 #include "../../Mathematics/include/LinearAlgebra.hpp"
 #include "UT/UT_Matrix3.h"
 
-ConstantRectangularLight::ConstantRectangularLight(UT_Vector3F position, UT_Vector3F orientation, UT_Vector2F size, float constantIntensity, RGBRadiance color) : color(color){
+ConstantRectangularLight::ConstantRectangularLight(UT_Vector3F position, UT_Vector3F orientation, UT_Vector2F size, float constantIntensity, RGBEnergy color){
     dirX = UT_Vector3F(size.x(),0,0);
     dirY = UT_Vector3F(0,size.y(),0);
 
@@ -19,12 +19,13 @@ ConstantRectangularLight::ConstantRectangularLight(UT_Vector3F position, UT_Vect
     dirY = dirY*T;
 
     this->position = position - 0.5*dirX - 0.5*dirY;
-    ConstantIntensity = constantIntensity;
+    this->ConstantIntensity = constantIntensity;
+    this->Color = color;
 }
 
 LightSample ConstantRectangularLight::GenerateSample(UT_Vector3F targetPosition) {
     auto sample = Generator::GenerateF01<2>();
     auto onLightPosition = position + sample[0]*dirX + sample[1]*dirY;
     auto directionTargetToLight = onLightPosition - targetPosition;
-    return {onLightPosition,Normalize(directionTargetToLight),Norm(directionTargetToLight),ConstantIntensity,color};
+    return {onLightPosition,Normalize(directionTargetToLight),Norm(directionTargetToLight),{Color.R*ConstantIntensity,Color.G*ConstantIntensity,Color.B*ConstantIntensity}};
 }

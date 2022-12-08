@@ -74,11 +74,11 @@ void PhysicallyBasedRenderer::ImproveTile(ImageTile &tile, int sampleCount) {
 
 Color PhysicallyBasedRenderer::ComputePixel(UT_Vector2i coordinates) {
     auto ray = scene.camera.GenerateRay(coordinates);
-    auto energy = ComputeIllumination(ray.dir,ray.org,0);
-    return {energy[0].amount,energy[1].amount,energy[2].amount,0};
+    auto E = ComputeIllumination(ray.dir,ray.org,0);
+    return {E.R,E.G,E.B};
 }
 
-RGBRadiance
+RGBEnergy
 PhysicallyBasedRenderer::ComputeIllumination(UT_Vector3F observationDir, UT_Vector3F observationPos, int depth) {
     GU_RayInfo intersectionInfo;
 
@@ -99,7 +99,7 @@ PhysicallyBasedRenderer::ComputeIllumination(UT_Vector3F observationDir, UT_Vect
     return ComputeIntersectionIllumination(textureData,intersectionNormal,observationDir,intersectionPos,depth);
 }
 
-RGBRadiance
+RGBEnergy
 PhysicallyBasedRenderer::ComputeIntersectionIllumination(const TextureData &textureData, UT_Vector3F normalDir,
                                                          UT_Vector3F observationDir, UT_Vector3F intersectionPos,
                                                          int depth) {
@@ -115,23 +115,23 @@ PhysicallyBasedRenderer::ComputeIntersectionIllumination(const TextureData &text
         ComputeDirectIllumination(textureData,normalDir,observationDir,intersectionPos);
 }
 
-RGBRadiance PhysicallyBasedRenderer::ComputeDirectIllumination(const TextureData &textureData, UT_Vector3F normalDir,
+RGBEnergy PhysicallyBasedRenderer::ComputeDirectIllumination(const TextureData &textureData, UT_Vector3F normalDir,
                                                                UT_Vector3F observationDir,
                                                                UT_Vector3F intersectionPos) {
     auto chosenLight = Generator::GenerateIRange(0,scene.lights.size()-1);
     auto lightSample = scene.lights[chosenLight]->GenerateSample(intersectionPos);
 
-    if(Shadow(intersectionPos+epsilon*normalDir,lightSample.lightDir,lightSample.lightDistance)) return {0,0,0};
+    if(Shadow(intersectionPos+epsilon*normalDir,lightSample.LightDir,lightSample.LightDistance)) return {0,0,0};
 
-    RGBRadiance radiance = {lightSample.intensity*lightSample.color[0].amount,lightSample.intensity*lightSample.color[1].amount,lightSample.intensity*lightSample.color[2].amount};
+    auto energy = lightSample.Energy;
 
-    auto brdfMultiplier = BSDF::EvaluateBRDF(textureData,observationDir,lightSample.lightDir,normalDir);
-    auto distanceFalloff = 1.0/(pow(lightSample.lightDistance > epsilon ? lightSample.lightDistance : epsilon,2));
+    auto brdfMultiplier = BSDF::EvaluateBRDF(textureData,observationDir,lightSample.LightDir,normalDir);
+    auto distanceFalloff = 1.0/(pow(lightSample.LightDistance > epsilon ? lightSample.LightDistance : epsilon,2));
 
-    return brdfMultiplier*(distanceFalloff*radiance);
+    return distanceFalloff*brdfMultiplier*energy;
 }
 
-RGBRadiance PhysicallyBasedRenderer::ComputeReflection(const TextureData &textureData, UT_Vector3F normalDir,
+RGBEnergy PhysicallyBasedRenderer::ComputeReflection(const TextureData &textureData, UT_Vector3F normalDir,
                                                        UT_Vector3F observationDir, UT_Vector3F intersectionPos,
                                                        int depth) {
     auto reflectionDir = BSDF::GenerateReflection(textureData,observationDir, normalDir);
@@ -144,7 +144,7 @@ RGBRadiance PhysicallyBasedRenderer::ComputeReflection(const TextureData &textur
 }
 
 //Todo: Fix refractions
-RGBRadiance PhysicallyBasedRenderer::ComputeRefraction(const TextureData &textureData, UT_Vector3F normalDir,
+RGBEnergy PhysicallyBasedRenderer::ComputeRefraction(const TextureData &textureData, UT_Vector3F normalDir,
                                                        UT_Vector3F observationDir, UT_Vector3F intersectionPos,
                                                        int depth) {
     UT_Vector3F refractionDir = Normalize(BSDF::GenerateRefraction(textureData,observationDir, normalDir,1,textureData.IOR));

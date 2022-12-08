@@ -75,7 +75,7 @@ TextureData ProceduralTiles::Evaluate(UT_Vector3F position) {
     float mult = M_PI*2*period;
     float val = sin(position.x()*mult+0.9912938)*sin(position.y()*mult)*sin(position.z()*mult+1.378271);
 
-    std::array<float,3> Cd{0,0,0};
+    RGBEnergy Cd{0,0,0};
 
     if(val > 0){
         Cd = {1,1,1};
