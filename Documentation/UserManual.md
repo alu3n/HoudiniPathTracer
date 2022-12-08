@@ -58,23 +58,67 @@ You can specify certain parameters that can alter appearance of the rendered geo
   If you set the value to non-existent shader index, the default shader will be used instead.
 
 ## Camera
+During scene layout you might view your scene through the camera, renderer mimics that view. You might also use viewport representation of the camera.
+
 ### Supported parameters
-#### Translate
-#### Rotate
-#### Resolution
-#### Focal Length
-#### Aperature
-#### Focus Distance
-#### F-Stop
+- Translate
+- Rotate
+- Resolution
+- Focal Lenght
+- Aperature
+- Focus Distance
+- F-Stop
+
+Those parameters are described in the [Houdini Documentation](https://www.sidefx.com/docs/houdini/render/cameras.html)
 
 ## Light
+During layout you should use viewport as a guide for the light placement.
+
 ### Supported parameters
-#### Translate
-#### Color
-#### Area Size
+- Translate
+- Rotate
+- Color
+- Area Size
+- Intensity
+
+Those parameters are described in the [Houdini Documentation](https://www.sidefx.com/docs/houdini/render/cameras.html)
 
 ## Default shaders
+### Marble
+- Shader code: 0
+- Type: Constant
 
+### Rubber
+- Shader code: 1
+- Type: Constant
+
+### Porcelain
+- Shader code: 2
+- Type: Constant
+
+### Glass
+- Shader code: 3
+- Type: Constant
+
+### Piano Black
+- Shader code: 4
+- Type: Constant
+
+### Rock
+- Shader code: 5
+- Type: Constant
+
+### Plastic
+- Shader code: 6
+- Type: Constant
+
+### Marble
+- Shader code: 7
+- Type: Constant
+
+### Checker board
+- Shader code: 8
+- Type: Procedural
 
 ## Custom Shaders
 You can also create your own shader, which might even create values procedurally. This is described in the development documentation. Once you’ve added the shader to renderer you can use it the same way as default shaders.

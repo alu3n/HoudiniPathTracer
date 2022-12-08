@@ -78,10 +78,10 @@ TextureData ProceduralTiles::Evaluate(UT_Vector3F position) {
     std::array<float,3> Cd{0,0,0};
 
     if(val > 0){
-        Cd[0] = 1;
+        Cd = {1,1,1};
     }
     else{
-        Cd[2] = 1;
+
     }
 
     return {Cd,0.3,0.3,0,1.5};
