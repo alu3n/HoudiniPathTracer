@@ -6,28 +6,27 @@
 #define NPRG045_BXDF_HPP
 
 #include <array>
+#include "Texture.hpp"
 #include "../../Mathematics/include/Sampling.hpp"
 #include "../../Physics/include/Radiometry.hpp"
-#include "Texture.hpp"
 
-//Maybe move those functions elsewhere
+
+//Todo: Move those functions to separate header!
 std::array<float,3> operator*(const std::array<float,3> &,const std::array<float,3> &);
 RGBRadiance operator*(const std::array<float,3> &, const RGBRadiance &);
-//RGBRadiance operator*(float , const RGBRadiance &);
+
+//Todo: Maybe make the BRDF static
 
 class BSDF{
 public:
-//    void LoadTextureData();
-    std::array<float,3> EvaluateBRDF(const TextureData &, UT_Vector3F outgoingDir, UT_Vector3F incommingDir, UT_Vector3F normalDir);
-    std::array<float,3> EvaluateBSDF(const TextureData &);
-    UT_Vector3F GenerateReflection(const TextureData & textureData, UT_Vector3F incommingDir, UT_Vector3F normalDir);
-    UT_Vector3F GenerateRefraction(const TextureData & textureData, UT_Vector3F incommingDir, UT_Vector3F normalDir, float IOR1, float IOR2);
-private:
-    std::array<float,3> EvaluateDiffuseBRDF();
-    std::array<float,3> EvaluateSpecularBRDF();
+    static std::array<float,3> EvaluateBRDF(const TextureData &, UT_Vector3F outgoingDir, UT_Vector3F incommingDir, UT_Vector3F normalDir);
+    static std::array<float,3> EvaluateSpecularBRDF(const TextureData &, UT_Vector3F outgoingDir, UT_Vector3F incommingDir, UT_Vector3F normalDir);
+    static std::array<float,3> EvaluateDiffuseBRDF(const TextureData &, UT_Vector3F outgoingDir, UT_Vector3F incommingDir, UT_Vector3F normalDir);
 
-    float n1; //IOR of medium from which the ray is traveling
-    float n2; //IOR of medium to which the ray is traveling
+    static std::array<float,3> EvaluateBTDF(const TextureData &);
+
+    static UT_Vector3F GenerateReflection(const TextureData & textureData, UT_Vector3F incommingDir, UT_Vector3F normalDir);
+    static UT_Vector3F GenerateRefraction(const TextureData & textureData, UT_Vector3F incommingDir, UT_Vector3F normalDir, float IOR1, float IOR2);
 };
 
 #endif //NPRG045_BXDF_HPP

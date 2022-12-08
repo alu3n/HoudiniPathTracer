@@ -2,14 +2,12 @@
 // Created by Vojtěch Pröschl on 17.09.2022.
 //
 
-//#include "../../Mathematics/include/Vectors.hpp"
 #include "../include/Camera.hpp"
 #include "../../Mathematics/include/LinearAlgebra.hpp"
 
 Camera::Camera(OBJ_Camera *cam, OP_Context &context) {
     CameraNode = cam;
     LoadCamera(context);
-    generator = Generator();
 }
 
 
@@ -24,7 +22,6 @@ GU_Ray Camera::GenerateRay(UT_Vector2i PixelCoords) {
 
     UT_Vector3F org = {sensorPos.x(),sensorPos.y(),sensorPos.z()};
     UT_Vector3F dir = Normalize(dir3);
-
 
     UT_Vector3F planeNormal = {ZIncrement.x(),ZIncrement.y(),ZIncrement.z()};
     planeNormal = Normalize(planeNormal);
@@ -42,7 +39,7 @@ GU_Ray Camera::GenerateRay(UT_Vector2i PixelCoords) {
 
     UT_Vector3F Orig = {Origin.x(),Origin.y(),Origin.z()};
 
-    auto aperaturePos = Orig + generator.GenerateF01()*fstop*XIncr + generator.GenerateF01()*fstop*YIncr;
+    auto aperaturePos = Orig + Generator::GenerateF01()*fstop*XIncr + Generator::GenerateF01()*fstop*YIncr;
     auto newDir = P - aperaturePos;
     newDir = Normalize(newDir);
 

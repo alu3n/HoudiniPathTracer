@@ -5,11 +5,13 @@
 #ifndef NPRG045_SAMPLING_HPP
 #define NPRG045_SAMPLING_HPP
 
+#include <UT/UT_Vector3.h>
+#include <array>
+
 #include "Coordinates.hpp"
 
 //#include <UT/UT_Vector2.h>
-//#include <UT/UT_Vector3.h>
-#include <array>
+
 
 
 //Default generator is uniform
@@ -45,6 +47,8 @@ public:
         }
         return temp;
     }
+
+    static UT_Vector3F RandomDir(UT_Vector3F normalDir);
 };
 
 

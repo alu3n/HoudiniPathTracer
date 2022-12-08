@@ -43,7 +43,8 @@ You can specify certain parameters that can alter appearance of the rendered geo
 - **Attribute name:** Cd
 - **Attribute type:** Vector Float 3
 - **Limitation:** Each value has to be in [0,1]
-  By default renderer uses shader color, if you want to use the point color you have to set useCd to 1.
+
+By default renderer uses shader color, if you want to use the point color you have to set useCd to 1.
 
 ### Use Cd
 - **Geometry part:** Points
@@ -55,7 +56,8 @@ You can specify certain parameters that can alter appearance of the rendered geo
 - **Geometry part:** Points
 - **Attribute name:** shader
 - **Attribute type:** Int
-  If you set the value to non-existent shader index, the default shader will be used instead.
+
+If you set the value to non-existent shader index, the default shader will be used instead.
 
 ## Camera
 During scene layout you might view your scene through the camera, renderer mimics that view. You might also use viewport representation of the camera.
@@ -81,7 +83,7 @@ During layout you should use viewport as a guide for the light placement.
 - Area Size
 - Intensity
 
-Those parameters are described in the [Houdini Documentation](https://www.sidefx.com/docs/houdini/render/cameras.html)
+Those parameters are described in the [Houdini Documentation](https://www.sidefx.com/docs/houdini/nodes/obj/hlight.html
 
 ## Default shaders
 ### Marble

@@ -2,7 +2,6 @@
 // Created by Vojtěch Pröschl on 18.11.2022.
 //
 
-#include <exception>
 #include "../include/LinearAlgebra.hpp"
 
 float Norm(UT_Vector3F v){

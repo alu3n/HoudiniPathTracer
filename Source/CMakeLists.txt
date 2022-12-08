@@ -14,8 +14,6 @@ find_package( Houdini REQUIRED )
 
 set( library_name HoudiniPathTracer )
 
-#Todo: Break the project into multiple libraries to avoid linking problems
-
 add_library( ${library_name} SHARED
     Core/Mathematics/sources/Sampling.cpp
     Core/Mathematics/sources/Coordinates.cpp
@@ -23,8 +21,6 @@ add_library( ${library_name} SHARED
 
     Core/Physics/sources/Optics.cpp
     Core/Physics/sources/Radiometry.cpp
-
-    Core/Materials/sources/PB_BxDF.cpp
 
     Core/Renderers/sources/ImageRepresentation.cpp
     Core/Renderers/sources/PhysicallyBasedRenderer.cpp

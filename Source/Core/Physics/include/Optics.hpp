@@ -5,15 +5,12 @@
 #ifndef NPRG045_GEOMETRICALOPTICS_HPP
 #define NPRG045_GEOMETRICALOPTICS_HPP
 
-/* TODO:
- * - [ ] Ideal specular reflection
- * - [ ] Ideal refraction
- */
-
 #include <UT/UT_Vector.h>
 
-//This tells us how much light is reflected
-float ReflectionCoefficient(UT_Vector3F vectorToSource, UT_Vector3F normal, float travelingFromIOR, float travelingToIOR);
+
+UT_Vector3F PerfectReflection(UT_Vector3F observationDir, UT_Vector3F normalDir);
+UT_Vector3F PerfectRefraction(UT_Vector3F observationDir, UT_Vector3F normalDir, float IOR1, float IOR2);
+float SchlickApproximation(UT_Vector3F vectorToSource, UT_Vector3F normal, float travelingFromIOR, float travelingToIOR);
 
 
 #endif //NPRG045_GEOMETRICALOPTICS_HPP

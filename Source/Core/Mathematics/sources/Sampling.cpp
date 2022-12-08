@@ -20,3 +20,14 @@ float Generator::GenerateFRange(float min, float max) {
     auto dist = max - min;
     return min + GenerateF01()*dist;
 }
+
+UT_Vector3F Generator::RandomDir(UT_Vector3F normalDir) {
+    auto normalInSpherical = CartesianToSpherical(normalDir);
+    auto azimuth = Generator::GenerateF01()*2*M_PI;
+    auto zenith = Generator::GenerateF01()*M_PI-0.5*M_PI;
+    auto nextPath = SphericalCoords(azimuth,zenith);
+    nextPath.zenith += normalInSpherical.zenith;
+    nextPath.azimuth += normalInSpherical.azimuth;
+    auto randomDir = SphericalToCartesian(nextPath);
+    return randomDir;
+}

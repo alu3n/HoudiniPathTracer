@@ -47,3 +47,9 @@ This folder contains classes which make up the scene.
 
 ### Textures
 This folder is dedicated to textures.
+
+
+## Sample Scenes
+### Morning Room
+### Statue
+### Teapot

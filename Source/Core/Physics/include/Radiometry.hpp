@@ -81,16 +81,4 @@ RGBRadiance operator+(const RGBRadiance & C1, const RGBRadiance & C2);
 RGBRadiance operator-(const RGBRadiance & C1, const RGBRadiance & C2);
 RGBRadiance operator*(float a, const RGBRadiance &C);
 
-//RGBRadiance  operator+(RGBRadiance A, RGBRadiance B){
-//    auto temp = A;
-//    temp[0] = A[0] + B[0];
-//    temp[1] = A[1] + B[1];
-//    temp[2] = A[2] + B[2];
-//    return A;
-//}
-
-//RGBRadiance construct(float r, float g, float b);
-
-
-
 #endif //NPRG045_QUANTITIES_HPP

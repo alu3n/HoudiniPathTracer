@@ -12,7 +12,8 @@
 #include "../../Scene/include/Light.hpp"
 #include "ImageRepresentation.hpp"
 #include "../../Materials/include/Texture.hpp"
-#include "../../Materials/include/PB_BxDF.hpp"
+#include "../../Materials/include/BxDF.hpp"
+//#include "../../Materials/include/PB_BxDF.hpp"
 
 class PhysicallyBasedRenderer : public Renderer{
 public:
@@ -32,10 +33,9 @@ private:
 
     float EliminationProbability(int depth);
     bool ShouldEliminate(int depth);
-    std::vector<Material *> Materials;
+
+    std::vector<std::unique_ptr<Material>> Materials;
     std::unique_ptr<Material> DefaultMaterial;
-    BSDF bsdf;
-//    PB_BSDF BSDF;
 };
 
 #endif //NPRG045_PHYSICALLYBASEDRENDERER_HPP

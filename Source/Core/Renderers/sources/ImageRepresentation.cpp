@@ -2,12 +2,11 @@
 // Created by Vojtěch Pröschl on 15.11.2022.
 //
 
-#include "../include/ImageRepresentation.hpp"
 #include <iostream>
 #include <algorithm>
 #include <random>
 #include <stdexcept>
-
+#include "../include/ImageRepresentation.hpp"
 
 Color operator+(Color A, Color B){
     return {A.r+B.r,A.g+B.g,A.b+B.b,A.a+B.a};
@@ -28,13 +27,6 @@ Color operator/(Color C, float a){
     return {C.r/a,C.g/a,C.b/a,C.a};
 }
 
-ImageCoordinates::ImageCoordinates(int tx0, int tx1, int ty0, int ty1) {
-    this->tx0 = tx0;
-    this->tx1 = tx1;
-    this->ty0 = ty0;
-    this->ty1 = ty1;
-}
-
 Color::Color(float r, float g, float b) {
     this->r = r;
     this->g = g;
@@ -52,10 +44,9 @@ Color::Color(float r, float g, float b, float a) {
 
 
 
-ImageTile::ImageTile(ImageCoordinates coordinates, size_t id) : viewCoords(coordinates), renderCoords(coordinates) {
+ImageTile::ImageTile(ImageCoordinates coordinates, size_t id) : viewCoords(coordinates) {
     int sx = coordinates.tx1 - coordinates.tx0;
     int sy = coordinates.ty1 - coordinates.ty0;
-    this->tileId = id;
 
     for(int x = 0; x <= sx; ++x){
         data.push_back({});
@@ -65,11 +56,9 @@ ImageTile::ImageTile(ImageCoordinates coordinates, size_t id) : viewCoords(coord
     }
 }
 
-ImageTile::ImageTile(ImageCoordinates viewCoordinates, ImageCoordinates renderCoordinates, size_t id) : viewCoords(viewCoordinates),
-                                                                                             renderCoords(renderCoordinates) {
+ImageTile::ImageTile(ImageCoordinates viewCoordinates, ImageCoordinates renderCoordinates, size_t id) : viewCoords(viewCoordinates){
     int sx = viewCoordinates.tx1 - viewCoordinates.tx0;
     int sy = viewCoordinates.ty1 - viewCoordinates.ty0;
-    this->tileId = id;
 
     for(int x = 0; x <= sx; ++x){
         data.push_back({});
@@ -131,6 +120,9 @@ Image::Image(int imageResX, int imageResY, int tileResX, int tileResY) {
         }
     }
 
+    //Todo: Room for improvement - better tile rendering order
+    //Todo: Implement rendering of clicked tile :)
+    //This might require complete rework of the tile rendering system though
     auto rng = std::default_random_engine {};
     std::shuffle(data.begin(),data.end(),rng);
 }

@@ -18,15 +18,15 @@ constexpr float epsilon = 0.0001;
 
 PhysicallyBasedRenderer::PhysicallyBasedRenderer(Scene myScene) : Renderer(myScene){
     intersect = new GU_RayIntersect(scene.geometry.gdh->gdp());
-    Materials.push_back(new MaterialMarble());
-    Materials.push_back(new MaterialRubber());
-    Materials.push_back(new MaterialPorcelain());
-    Materials.push_back(new MaterialGlass());
-    Materials.push_back(new MaterialPianoBlack());
-    Materials.push_back(new MaterialRock());
-    Materials.push_back(new MaterialPlastic());
-    Materials.push_back(new ProceduralTiles());
-    DefaultMaterial = std::make_unique<ConstantMaterial>(MaterialDefault());
+    Materials.push_back(std::make_unique<MaterialMarble>());
+    Materials.push_back(std::make_unique<MaterialRubber>());
+    Materials.push_back(std::make_unique<MaterialPorcelain>());
+    Materials.push_back(std::make_unique<MaterialGlass>());
+    Materials.push_back(std::make_unique<MaterialPianoBlack>());
+    Materials.push_back(std::make_unique<MaterialRock>());
+    Materials.push_back(std::make_unique<MaterialPlastic>());
+    Materials.push_back(std::make_unique<ProceduralTiles>());
+    DefaultMaterial = std::make_unique<MaterialDefault>();
 }
 
 
@@ -125,7 +125,7 @@ RGBRadiance PhysicallyBasedRenderer::ComputeDirectIllumination(const TextureData
 
     RGBRadiance radiance = {lightSample.intensity*lightSample.color[0].amount,lightSample.intensity*lightSample.color[1].amount,lightSample.intensity*lightSample.color[2].amount};
 
-    auto brdfMultiplier = bsdf.EvaluateBRDF(textureData,observationDir,lightSample.lightDir,normalDir);
+    auto brdfMultiplier = BSDF::EvaluateBRDF(textureData,observationDir,lightSample.lightDir,normalDir);
     auto distanceFalloff = 1.0/(pow(lightSample.lightDistance > epsilon ? lightSample.lightDistance : epsilon,2));
 
     return brdfMultiplier*(distanceFalloff*radiance);
@@ -134,11 +134,11 @@ RGBRadiance PhysicallyBasedRenderer::ComputeDirectIllumination(const TextureData
 RGBRadiance PhysicallyBasedRenderer::ComputeReflection(const TextureData &textureData, UT_Vector3F normalDir,
                                                        UT_Vector3F observationDir, UT_Vector3F intersectionPos,
                                                        int depth) {
-    auto reflectionDir = bsdf.GenerateReflection(textureData,observationDir, normalDir);
+    auto reflectionDir = BSDF::GenerateReflection(textureData,observationDir, normalDir);
     auto reflectionOrigin = intersectionPos+epsilon*normalDir;
 
     auto radiance = ComputeIllumination(reflectionDir,reflectionOrigin,++depth);
-    auto brdfMultiplier = bsdf.EvaluateBRDF(textureData,observationDir,reflectionDir, normalDir);
+    auto brdfMultiplier = BSDF::EvaluateBRDF(textureData,observationDir,reflectionDir, normalDir);
 
     return brdfMultiplier*radiance;
 }
@@ -147,7 +147,7 @@ RGBRadiance PhysicallyBasedRenderer::ComputeReflection(const TextureData &textur
 RGBRadiance PhysicallyBasedRenderer::ComputeRefraction(const TextureData &textureData, UT_Vector3F normalDir,
                                                        UT_Vector3F observationDir, UT_Vector3F intersectionPos,
                                                        int depth) {
-    UT_Vector3F refractionDir = Normalize(bsdf.GenerateRefraction(textureData,observationDir, normalDir,1,textureData.IOR));
+    UT_Vector3F refractionDir = Normalize(BSDF::GenerateRefraction(textureData,observationDir, normalDir,1,textureData.IOR));
     UT_Vector3F refractionOrigin = intersectionPos-epsilon*normalDir;
 
 
@@ -157,9 +157,11 @@ RGBRadiance PhysicallyBasedRenderer::ComputeRefraction(const TextureData &textur
     auto refractionNormal = scene.geometry.IntersectionVertexNormal(intersectionInfo);
     auto refractionIntersectionPos = refractionOrigin + intersectionInfo.myT*refractionDir;
 
-    UT_Vector3F secondRefractionDir = bsdf.GenerateRefraction(GetTextureData(intersectionInfo,refractionIntersectionPos),refractionDir,-refractionNormal,textureData.IOR,1.0);
+    UT_Vector3F secondRefractionDir = BSDF::GenerateRefraction(GetTextureData(intersectionInfo,refractionIntersectionPos),refractionDir,-refractionNormal,textureData.IOR,1.0);
     auto secondRefractionOrigin = refractionIntersectionPos + epsilon*refractionNormal;
-    return textureData.Transparency*ComputeIllumination(secondRefractionDir,secondRefractionOrigin,++depth);
+    auto radiance = textureData.Transparency*ComputeIllumination(secondRefractionDir,secondRefractionOrigin,++depth);
+    return BSDF::EvaluateBTDF(textureData)*radiance;
+    //Todo: multiply the radiance by the bsdf
 }
 
 bool PhysicallyBasedRenderer::Shadow(UT_Vector3F intersectionPosition, UT_Vector3F lightDir, float lightDistance) {

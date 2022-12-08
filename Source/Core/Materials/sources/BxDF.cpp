@@ -14,96 +14,57 @@ RGBRadiance operator*(const std::array<float,3> & A, const RGBRadiance & B){
     return {A[0]*B[0].amount,A[1]*B[1].amount,A[2]*B[2].amount};
 }
 
-//RGBRadiance operator*(float a, const RGBRadiance & B){
-//    return {a*B[0].amount,a*B[1].amount,a*B[2].amount};
-//}
+std::array<float, 3> BSDF::EvaluateDiffuseBRDF(const TextureData & textureData, UT_Vector3F outgoingDir, UT_Vector3F observationDir,
+                                               UT_Vector3F normalDir) {
+    auto multiplier = dot(observationDir,normalDir);
+    multiplier = multiplier > 0 ? multiplier * (1-textureData.Transparency) : 0;
+    return {multiplier*textureData.DiffuseColor[0],multiplier*textureData.DiffuseColor[1],multiplier*textureData.DiffuseColor[2]};
+}
 
-constexpr float incIOR = 1;
-constexpr float outIOR = 1.5;
-//constexpr int phongEXP = 1000;
-
-UT_Vector3F PerfectReflection(UT_Vector3F incomming, UT_Vector3F normal){
-    return incomming - (dot(normal,incomming)*normal)*2;
+std::array<float, 3> BSDF::EvaluateSpecularBRDF(const TextureData & textureData, UT_Vector3F outgoingDir, UT_Vector3F incommingDir,
+                                                UT_Vector3F normalDir) {
+    auto perfectDir = PerfectReflection(incommingDir,normalDir);
+    auto temp = dot(perfectDir,outgoingDir);
+    auto phongEXP = textureData.ReflectionRoughness > 0.001 ? 1/textureData.ReflectionRoughness : 1/0.001;
+    float specular = temp > 0 ? pow(dot(perfectDir,outgoingDir),phongEXP) : 0;
+    return {specular,specular,specular};
 }
 
 std::array<float, 3>
 BSDF::EvaluateBRDF(const TextureData & textureData, UT_Vector3F outgoingDir, UT_Vector3F incommingDir, UT_Vector3F normalDir) {
-    auto normal = normalDir;
-
-    auto fresnell = ReflectionCoefficient(incommingDir,normal,incIOR,outIOR); //reflected:refracted
+    auto fresnell = SchlickApproximation(incommingDir, normalDir, 1, textureData.IOR); //reflected:refracted
     auto refractedCoeff = 1/(fresnell+1);
     auto reflectedCoeff = 1-refractedCoeff;
-    auto perfectDir = PerfectReflection(incommingDir,normal);
 
-    auto temp0 = dot(incommingDir,normal);
+    auto diffuse = EvaluateDiffuseBRDF(textureData,outgoingDir,incommingDir,normalDir);
+    auto specular = EvaluateSpecularBRDF(textureData,outgoingDir,incommingDir,normalDir);
 
-    auto diffuse = temp0 > 0 ? dot(incommingDir,normal) * (1-textureData.Transparency) : 0;
-
-    auto temp = dot(perfectDir,outgoingDir);
-
-    auto phongEXP = textureData.ReflectionRoughness > 0.001 ? 1/textureData.ReflectionRoughness : 1/0.001;
-
-    auto specular = temp > 0 ? pow(dot(perfectDir,outgoingDir),phongEXP) : 0;
-    auto C = textureData.DiffuseColor;
-
-    float R = C[0]*diffuse*refractedCoeff+reflectedCoeff*specular;
-    float G = C[1]*diffuse*refractedCoeff+reflectedCoeff*specular;
-    float B = C[2]*diffuse*refractedCoeff+reflectedCoeff*specular;
-
-    if(R < 0 || G < 0 || B < 0){
-        std::cout << R << " : " << G << " : " << B << std::endl;
-    }
+    float R = diffuse[0]*refractedCoeff+reflectedCoeff*specular[0];
+    float G = diffuse[1]*refractedCoeff+reflectedCoeff*specular[1];
+    float B = diffuse[2]*refractedCoeff+reflectedCoeff*specular[2];
 
     return {R,G,B};
 }
 
-UT_Vector3F BSDF::GenerateReflection(const TextureData & textureData, UT_Vector3F incommingDir, UT_Vector3F normalDir) {
-    auto normal = normalDir;
+UT_Vector3F BSDF::GenerateReflection(const TextureData & textureData, UT_Vector3F observationDir, UT_Vector3F normalDir) {
+    auto randomDir = Generator::RandomDir(normalDir);
+    auto perfectDir = PerfectReflection(observationDir,normalDir);
 
-    auto normalInSpherical = CartesianToSpherical(normal);
-    auto azimuth = Generator::GenerateF01()*2*M_PI;
-    auto zenith = Generator::GenerateF01()*M_PI-0.5*M_PI;
-    auto nextPath = SphericalCoords(azimuth,zenith);
-    nextPath.zenith += normalInSpherical.zenith;
-    nextPath.azimuth += normalInSpherical.azimuth;
-    auto randomPath = SphericalToCartesian(nextPath);
-    auto temp = textureData.ReflectionRoughness * randomPath + (1-textureData.ReflectionRoughness) * PerfectReflection(incommingDir,normal);
-    return Normalize(temp);
+    auto reflectionDir = textureData.ReflectionRoughness * randomDir + (1-textureData.ReflectionRoughness) * perfectDir;
+    return Normalize(reflectionDir);
 }
 
-//constexpr float ratioIOR = 0.75;
 
-std::array<float, 3> BSDF::EvaluateBSDF(const TextureData & textureData) {
+std::array<float, 3> BSDF::EvaluateBTDF(const TextureData & textureData) {
     return {1,1,1};
+    //Todo: Implement this function :)
 }
 
 
-UT_Vector3F BSDF::GenerateRefraction(const TextureData & textureData, UT_Vector3F incommingDir, UT_Vector3F normalDir, float IOR1, float IOR2) {
-    auto normal = normalDir;
+UT_Vector3F BSDF::GenerateRefraction(const TextureData & textureData, UT_Vector3F observationDir, UT_Vector3F normalDir, float IOR1, float IOR2) {
+    auto randomDir = Generator::RandomDir(normalDir);
+    auto perfectDir = PerfectRefraction(observationDir,normalDir,IOR1,IOR2);
 
-    auto normalInSpherical = CartesianToSpherical(normal);
-    auto azimuth = Generator::GenerateF01()*2*M_PI;
-    auto zenith = Generator::GenerateF01()*M_PI-0.5*M_PI;
-    auto nextPath = SphericalCoords(azimuth,zenith);
-    nextPath.zenith += normalInSpherical.zenith;
-    nextPath.azimuth += normalInSpherical.azimuth;
-    auto randomPath = SphericalToCartesian(nextPath);
-
-
-    auto l = incommingDir;
-    auto n = normalDir;
-
-    auto n12 = IOR1/IOR2;
-    float dt = dot(l,n);
-
-    auto c1 = 1 - dt*dt;
-    c1 = n12*n12*c1;
-    c1 = 1 - c1;
-    c1 = sqrt(c1);
-    c1 = n12*dt-c1;
-    auto A = c1*n;
-    auto B = n12*l;
-    auto perfect = A - B;
-
-    return Normalize(perfect*(1-textureData.RefractionRoughness) + randomPath*textureData.RefractionRoughness);
+    auto refractionDir = Normalize(perfectDir*(1-textureData.RefractionRoughness) + randomDir*textureData.RefractionRoughness);
+    return refractionDir;
 }
