@@ -9,7 +9,7 @@
 void newDriverOperator(OP_OperatorTable *table){
     table->addOperator(new OP_Operator(
             "nprg045_renderer",
-            "NPRG045 OldRenderer",
+            "NPRG045 Renderer",
             RendererNode::BuildOPNode,
             RendererNode::BuildPRMTemplate(),
             0,

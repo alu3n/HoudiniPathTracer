@@ -13,11 +13,6 @@ Camera::Camera(OBJ_Camera *cam, OP_Context &context) {
 }
 
 
-//constexpr float lensDistance = 0.05;
-//constexpr float focusPlaneDistance = 9.5;
-//constexpr float aperatureRadius = 0.15;
-
-
 GU_Ray Camera::GenerateRay(UT_Vector2i PixelCoords) {
     auto sample = Generator::GenerateF01<2>();
 
