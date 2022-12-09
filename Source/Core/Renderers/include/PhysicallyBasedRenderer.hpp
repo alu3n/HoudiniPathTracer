@@ -6,11 +6,12 @@
 #define NPRG045_PHYSICALLYBASEDRENDERER_HPP
 
 #include <tuple>
+#include <map>
 
 #include "Renderer.hpp"
+#include "ImageRepresentation.hpp"
 #include "../../Physics/include/Units.hpp"
 #include "../../Scene/include/Light.hpp"
-#include "ImageRepresentation.hpp"
 #include "../../Materials/include/Material.hpp"
 #include "../../Materials/include/BxDF.hpp"
 
@@ -33,7 +34,9 @@ private:
     float EliminationProbability(int depth);
     bool ShouldEliminate(int depth);
 
-    std::vector<std::unique_ptr<Material>> Materials;
+
+    std::map<std::string,std::unique_ptr<Material>> Materials;
+//    std::vector<std::unique_ptr<Material>> Materials;
     std::unique_ptr<Material> DefaultMaterial;
 };
 

@@ -87,39 +87,39 @@ Those parameters are described in the [Houdini Documentation](https://www.sidefx
 
 ## Default shaders
 ### Marble
-- Shader code: 0
+- Shader code: Marble
 - Type: Constant
 
 ### Rubber
-- Shader code: 1
+- Shader code: Rubber
 - Type: Constant
 
 ### Porcelain
-- Shader code: 2
+- Shader code: Porcelain
 - Type: Constant
 
 ### Glass
-- Shader code: 3
+- Shader code: Glass
 - Type: Constant
 
 ### Piano Black
-- Shader code: 4
+- Shader code: Piano Black
 - Type: Constant
 
 ### Rock
-- Shader code: 5
+- Shader code: Rock
 - Type: Constant
 
 ### Plastic
-- Shader code: 6
+- Shader code: Plastic
 - Type: Constant
 
 ### Marble
-- Shader code: 7
+- Shader code: Marble
 - Type: Constant
 
-### Checker board
-- Shader code: 8
+### Checker Board
+- Shader code: Checker Board
 - Type: Procedural
 
 ## Custom Shaders

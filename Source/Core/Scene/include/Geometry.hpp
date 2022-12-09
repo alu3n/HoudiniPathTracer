@@ -17,12 +17,12 @@ public:
     virtual UT_Vector3F IntersectionPointColor(const GU_RayInfo & info);
     virtual bool UsePointColor(const GU_RayInfo & info);
     virtual UT_Vector3F IntersectionVertexNormal(const GU_RayInfo & info);
-    virtual int IntersectionPointShader(const GU_RayInfo & info);
+    virtual std::string IntersectionPointShader(const GU_RayInfo & info);
 
 private:
     GA_RWHandleV3 * HandlePointColor;
     GA_RWHandleV3 * HandleVertexNormal;
-    GA_RWHandleI * HandlePointShader;
+    GA_RWHandleS * HandlePointShader;
     GA_RWHandleI * HandleUsePointColor;
 
     void LoadPointColor();

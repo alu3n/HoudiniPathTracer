@@ -37,11 +37,11 @@ UT_Vector3F Geometry::IntersectionPointColor(const GU_RayInfo &info) {
     return color;
 }
 
-int Geometry::IntersectionPointShader(const GU_RayInfo &info) {
+std::string Geometry::IntersectionPointShader(const GU_RayInfo &info) {
     UT_Array<GA_Offset> vertexOffsets;
     UT_Array<float> vertexWeights;
     info.myPrim->computeInteriorPointWeights(vertexOffsets,vertexWeights,info.myU,info.myV,info.myW);
-    return (int)HandlePointShader->get(gdh->gdpNC()->vertexPoint(vertexOffsets[0]));
+    return HandlePointShader->get(gdh->gdpNC()->vertexPoint(vertexOffsets[0])).toStdString();
 }
 
 bool Geometry::UsePointColor(const GU_RayInfo &info) {
@@ -80,8 +80,8 @@ void Geometry::LoadVertexNormal() {
 }
 
 void Geometry::LoadShader() {
-    gdh->gdpNC()->addFloatTuple(GA_ATTRIB_POINT,GA_SCOPE_PUBLIC,"shader",1);
-    HandlePointShader = new GA_RWHandleI(gdh->gdpNC(),GA_ATTRIB_POINT,"shader");
+    gdh->gdpNC()->addStringTuple(GA_ATTRIB_POINT,GA_SCOPE_PUBLIC,"shader",1);
+    HandlePointShader = new GA_RWHandleS(gdh->gdpNC(),GA_ATTRIB_POINT,"shader");
 }
 
 void Geometry::LoadUsePointColor() {

@@ -18,14 +18,15 @@ constexpr float epsilon = 0.0001;
 
 PhysicallyBasedRenderer::PhysicallyBasedRenderer(Scene myScene) : Renderer(myScene){
     intersect = new GU_RayIntersect(scene.geometry.gdh->gdp());
-    Materials.push_back(std::make_unique<MaterialMarble>());
-    Materials.push_back(std::make_unique<MaterialRubber>());
-    Materials.push_back(std::make_unique<MaterialPorcelain>());
-    Materials.push_back(std::make_unique<MaterialGlass>());
-    Materials.push_back(std::make_unique<MaterialPianoBlack>());
-    Materials.push_back(std::make_unique<MaterialRock>());
-    Materials.push_back(std::make_unique<MaterialPlastic>());
-    Materials.push_back(std::make_unique<ProceduralTiles>());
+
+    Materials.emplace("Marble",std::make_unique<MaterialMarble>());
+    Materials.emplace("Porcelain",std::make_unique<MaterialPorcelain>());
+    Materials.emplace("Rubber",std::make_unique<MaterialRubber>());
+    Materials.emplace("Glass",std::make_unique<MaterialGlass>());
+    Materials.emplace("Piano Black",std::make_unique<MaterialPianoBlack>());
+    Materials.emplace("Rock",std::make_unique<MaterialRock>());
+    Materials.emplace("Plastic",std::make_unique<MaterialPlastic>());
+    Materials.emplace("Checker Board",std::make_unique<ProceduralTiles>());
     DefaultMaterial = std::make_unique<MaterialDefault>();
 }
 
@@ -42,12 +43,11 @@ bool PhysicallyBasedRenderer::ShouldEliminate(int depth) {
 //Access shader index and assign appropriate material based on that
 TextureData PhysicallyBasedRenderer::GetTextureData(GU_RayInfo info, UT_Vector3F position) {
     auto shader = scene.geometry.IntersectionPointShader(info);
-    if(shader < 0 || shader >= Materials.size()){
-        return DefaultMaterial->Evaluate(position);
-    }
-    else{
+
+    if(Materials.count(shader) != 0){
         return Materials[shader]->Evaluate(position);
     }
+    return DefaultMaterial->Evaluate(position);
 }
 
 void PhysicallyBasedRenderer::ImproveTile(ImageTile &tile, int sampleCount) {
