@@ -31,7 +31,6 @@ constexpr float maxLightColor = 1;
 constexpr float minFStop = 0.001;
 constexpr float maxFStop = std::numeric_limits<float>::max();
 
-
 //Renderer boundaries
 
 

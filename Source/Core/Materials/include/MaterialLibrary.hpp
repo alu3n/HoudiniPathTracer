@@ -47,6 +47,11 @@ public:
     MaterialRock();
 };
 
+class MaterialRoughGlass : public ConstantMaterial{
+public:
+    MaterialRoughGlass();
+};
+
 class ProceduralTiles : public Material{
 public:
     TextureData Evaluate(UT_Vector3F position) override;

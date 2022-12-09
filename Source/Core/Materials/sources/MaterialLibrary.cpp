@@ -69,6 +69,14 @@ MaterialPlastic::MaterialPlastic() : ConstantMaterial({}){
     data.DiffuseColor = {0.755,0.560625,0.141185};
 }
 
+MaterialRoughGlass::MaterialRoughGlass() : ConstantMaterial({}){
+    data.RefractionRoughness = 0.08;
+    data.ReflectionRoughness = 0.08;
+    data.Transparency = 1;
+    data.IOR = 3;
+    data.DiffuseColor = {0.2,0.2,0.2};
+}
+
 constexpr float period = 1;
 
 TextureData ProceduralTiles::Evaluate(UT_Vector3F position) {

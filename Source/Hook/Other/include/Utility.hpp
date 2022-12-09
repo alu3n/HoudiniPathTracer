@@ -10,7 +10,6 @@
 #include <OBJ/OBJ_Geometry.h>
 
 void copyParmWithInvisible(PRM_Template &source, PRM_Template &destination);
-PRM_Template * defaultGeoTemplate();
 
 
 #endif //NPRG045_UTILITY_HPP

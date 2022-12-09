@@ -11,7 +11,6 @@
 constexpr int eliminationDepth = 20;
 constexpr float epsilon = 0.0001;
 
-
 //If you want to introduce new shader to the scene just push it to the Textures vector. It will be accessible
 //via corresponding index. E.g. object will be assigned MaterialRubber when it has integer point attribute
 //"shader" set to 1.
@@ -27,6 +26,7 @@ PhysicallyBasedRenderer::PhysicallyBasedRenderer(Scene myScene) : Renderer(mySce
     Materials.emplace("Rock",std::make_unique<MaterialRock>());
     Materials.emplace("Plastic",std::make_unique<MaterialPlastic>());
     Materials.emplace("Checker Board",std::make_unique<ProceduralTiles>());
+    Materials.emplace("Rough Glass",std::make_unique<MaterialRoughGlass>());
     DefaultMaterial = std::make_unique<MaterialDefault>();
 }
 
@@ -161,7 +161,6 @@ RGBEnergy PhysicallyBasedRenderer::ComputeRefraction(const TextureData &textureD
     auto secondRefractionOrigin = refractionIntersectionPos + epsilon*refractionNormal;
     auto radiance = textureData.Transparency*ComputeIllumination(secondRefractionDir,secondRefractionOrigin,++depth);
     return BSDF::EvaluateBTDF(textureData)*radiance;
-    //Todo: multiply the radiance by the bsdf
 }
 
 bool PhysicallyBasedRenderer::Shadow(UT_Vector3F intersectionPosition, UT_Vector3F lightDir, float lightDistance) {
@@ -171,8 +170,3 @@ bool PhysicallyBasedRenderer::Shadow(UT_Vector3F intersectionPosition, UT_Vector
     }
     return false;
 }
-
-
-
-
-

@@ -17,7 +17,6 @@ class RenderInterface{
 public:
     RenderInterface(RendererNode * node);
     void RenderFrame(fpreal time);
-//    void RenderFramerange();
 private:
     RendererNode * rendererNode;
     RenderWindow renderWindow;
