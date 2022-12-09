@@ -11,38 +11,6 @@ The core algorithm of the renderer is pathtracing, which is described in multipl
 
 Notable modification to the algorithm is that, light sources aren’t treated as geometry, but are treated as separate entities. During the computation of intersection point algorithm choses one of the lights (uniform probability) and generates sample on the light surface (also uniform probability). The sample is then used to compute direct illumination at the point.  This can be seen in the file `PhysicallyBasedRenderer.cpp` int the method `ComputeDirectIllumination`.
 
-
-### Resources
-Resources used during implementation are the following lectures and books.
-#### Books
-- [Fundamentals of Computer Graphics](https://www.goodreads.com/book/show/1933732.Fundamentals_of_Computer_Graphics)
-- [Physically Based Rendering: From Theory to Implementation](https://www.pbr-book.org)
-- [Ray Tracing Gems Series](https://www.realtimerendering.com/raytracinggems/)
-
-#### Lectures
-- [Fotorealistická grafika (NPGR004)](https://cgg.mff.cuni.cz/lectures/npgr004.cz.php)
-- [Advanced 3D Graphics for Movies and Games](https://cgg.mff.cuni.cz/courses/advanced-3d-graphics-for-movies-and-games/)
-
-## Compilation
-### Compilation scripts
-
-### Environment variables
-
-### Setting up IDE
-You should set variables in `HFS` and `CMAKE_PREFIX_PATH` in the `CMakeLists.txt` if you want your IDE to be able to load the project.
-
-
-
-## Basics
-### Technologies
-
-
-### Resources
-
-- Program is compiled as a houdini plugin
-- Program uses HDK for some of its computations
--
-
 ### Project Structure
 Projects root folder contains the following folders and files
 **`/Compilation`**
@@ -57,17 +25,39 @@ This folder contains sample houdini files to test out the plugin.
 **`/Sources`**
 This folder contains source code for the plugin itself.
 
-### Build and debug
+### Resources
+Resources used during implementation are the following lectures and books.
+#### Books
+- [Fundamentals of Computer Graphics](https://www.goodreads.com/book/show/1933732.Fundamentals_of_Computer_Graphics)
+- [Physically Based Rendering: From Theory to Implementation](https://www.pbr-book.org)
+- [Ray Tracing Gems Series](https://www.realtimerendering.com/raytracinggems/)
 
-### Terms
-#### Material
-Materials are classes derived from the `Material` class that are keepable of evaluating texture data at a certain point in space. The texture data is then used to drive appearance of the object via BxDFs.
+#### Lectures
+- [Fotorealistická grafika (NPGR004)](https://cgg.mff.cuni.cz/lectures/npgr004.cz.php)
+- [Advanced 3D Graphics for Movies and Games](https://cgg.mff.cuni.cz/courses/advanced-3d-graphics-for-movies-and-games/)
 
-#### BxDF
+## Compilation
+### Compilation scripts
+There are two scripts used to compile the projects. In order for them to work you have to set the environment variables.
+#### `Build.sh`
+This script builds the plugin. It **should** put the plugin into the houdini plugin folder automatically.
 
-#### 
+#### `BuildDebug.sh`
+This script does the same thing as previous one, but also opens Houdini with the debug scene. It is useful for faster debuging of the plugin.
 
+### Environment variables
+Before compiling the project you have to set a few environemnt variables. You have to do so in the file `Compilation/config.env`.
+- **`HFS`**
+    - This variable can be provided via typing `echo $HFS` to the **Houdini Terminal**
+- **`CMAKE_PREFIX_PATH`**
+    - This variable is path to the cmake folder in the HFS (it will probably be `${HFS}/toolkit/cmake`)
+- **`HOUDINI_BINARY_PATH`** (optional - needed only if you want to compile using `BuildDebug.sh`)
+    - This is path to the binary file of the houdini application itself (used to start houdini)
+- **`DEBUG_SCENE_PATH`** (optional - needed only if you want to compile using `BuildDebug.sh`)
+    - This is path to the scene you want to start using `BuildDebug.sh`
 
+### Setting up IDE
+You might have to set variables in `HFS` and `CMAKE_PREFIX_PATH` in the `CMakeLists.txt` if you want your IDE to be able to load the project properly.
 
 ## Source Code Structure
 The project code is divided into two main parts - `Source/Core` which contains code that is used by the rendering algorithm  itself and `Source/Hook` that contains code for direct comunication with Houdini.
@@ -76,6 +66,7 @@ Both of the folders are in turn devided on subfolders depending on usecase of th
 
 ### `Sources/Core`
 #### `/Materials`
+
 **TODO**
 #### `/Mathematics`
 **TODO**
@@ -92,7 +83,7 @@ Both of the folders are in turn devided on subfolders depending on usecase of th
 #### `/Other`
 **TODO**
 
-## Functionality in detail
+## Implementation details
 ### Plugin
 **TODO**
 
@@ -135,6 +126,11 @@ If you want to add entirely new scene element you can use one of the existing sc
 You might also want to implement different light than the default one (`ConstantRectangularLight`). In that case you should use `Light` as a base clase and implement its `GenerateSample` method.  This light may then be added to the scene during the light loading in the `RenderInterface.cpp`.
 
 ### Changing the node interface
-If you want to change node interface you can do so in the `RendererNode.cpp`.  More information on node interfaces is available in the [HDK: Working with Parameters](https://www.sidefx.com/docs/hdk/_h_d_k__node_intro__working_with_parameters.html). After adding new parameters correct place to access them is the `RenderInterface.cpp`. 
+If you want to change node interface you can do so in the `RendererNode.cpp`.  More information on node interfaces is available in the [HDK: Working with Parameters](https://www.sidefx.com/docs/hdk/_h_d_k__node_intro__working_with_parameters.html). After adding new parameters correct place to access them is the `RenderInterface.cpp`.
+
+
+
+# OTHER
+Materials are classes derived from the `Material` class that are keepable of evaluating texture data at a certain point in space. The texture data is then used to drive appearance of the object via BxDFs.
 
 
