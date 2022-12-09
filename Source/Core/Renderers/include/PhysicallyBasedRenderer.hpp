@@ -11,9 +11,8 @@
 #include "../../Physics/include/Units.hpp"
 #include "../../Scene/include/Light.hpp"
 #include "ImageRepresentation.hpp"
-#include "../../Materials/include/Texture.hpp"
+#include "../../Materials/include/Material.hpp"
 #include "../../Materials/include/BxDF.hpp"
-//#include "../../Materials/include/PB_BxDF.hpp"
 
 class PhysicallyBasedRenderer : public Renderer{
 public:

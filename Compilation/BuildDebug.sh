@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source ../config.env
+source ./config.env
 
 mkdir Build
 cd Build

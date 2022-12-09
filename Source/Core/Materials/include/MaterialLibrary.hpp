@@ -5,7 +5,7 @@
 #ifndef NPRG045_MATERIALLIBRARY_HPP
 #define NPRG045_MATERIALLIBRARY_HPP
 
-#include "Texture.hpp"
+#include "../include/Material.hpp"
 
 class MaterialDefault : public ConstantMaterial{
 public:

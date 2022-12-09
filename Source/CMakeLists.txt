@@ -20,7 +20,7 @@ add_library( ${library_name} SHARED
     Core/Mathematics/sources/LinearAlgebra.cpp
 
     Core/Physics/sources/Optics.cpp
-        Core/Physics/sources/Units.cpp
+    Core/Physics/sources/Units.cpp
 
     Core/Renderers/sources/ImageRepresentation.cpp
     Core/Renderers/sources/PhysicallyBasedRenderer.cpp
@@ -29,8 +29,8 @@ add_library( ${library_name} SHARED
     Hook/Other/sources/RenderWindow.cpp
 
     Core/Materials/sources/BxDF.cpp
-    Core/Materials/sources/Texture.cpp
     Core/Materials/sources/MaterialLibrary.cpp
+    Core/Materials/sources/Material.cpp
 
     Core/Scene/sources/Camera.cpp
     Core/Scene/sources/Geometry.cpp

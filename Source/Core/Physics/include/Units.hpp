@@ -15,7 +15,6 @@ struct RGBEnergy{
     float B;
 };
 
-
 RGBEnergy operator+(const RGBEnergy &, const RGBEnergy &);
 RGBEnergy operator-(const RGBEnergy &, const RGBEnergy &);
 RGBEnergy operator*(const RGBEnergy &, const RGBEnergy &);
