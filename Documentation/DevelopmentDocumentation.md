@@ -1,25 +1,44 @@
 # Development Documentation
-##### TODOS - What to describe
+## Basics
+### Technologies
+The software is compiled as a plugin for a commercial 3D graphics software [SideFX Houdini](https://www.sidefx.com). Main programming language of the project is C++ 17. The only external library used for this project is the [Houdini Development Kit](https://www.sidefx.com/docs/hdk/) which is used by the developers at SideFX to develop Houdini.
+
+Build system used for the project is [CMake](https://cmake.org). For more information about compiling Houdini plugins you can visit [HDK: Compiling HDK Code](https://www.sidefx.com/docs/hdk/_h_d_k__intro__compiling.html).
+
+### Algorithms
+#### Path Tracing
+The core algorithm of the renderer is pathtracing, which is described in multiple articles and books (e.g. books mentioned in the resources sections).
+
+Notable modification to the algorithm is that, light sources aren’t treated as geometry, but are treated as separate entities. During the computation of intersection point algorithm choses one of the lights (uniform probability) and generates sample on the light surface (also uniform probability). The sample is then used to compute direct illumination at the point.  This can be seen in the file `PhysicallyBasedRenderer.cpp` int the method `ComputeDirectIllumination`.
+
+
+### Resources
+Resources used during implementation are the following lectures and books.
+#### Books
+- [Fundamentals of Computer Graphics](https://www.goodreads.com/book/show/1933732.Fundamentals_of_Computer_Graphics)
+- [Physically Based Rendering: From Theory to Implementation](https://www.pbr-book.org)
+- [Ray Tracing Gems Series](https://www.realtimerendering.com/raytracinggems/)
+
+#### Lectures
+- [Fotorealistická grafika (NPGR004)](https://cgg.mff.cuni.cz/lectures/npgr004.cz.php)
+- [Advanced 3D Graphics for Movies and Games](https://cgg.mff.cuni.cz/courses/advanced-3d-graphics-for-movies-and-games/)
+
+## Compilation
+### Compilation scripts
+
+### Environment variables
+
+### Setting up IDE
+You should set variables in `HFS` and `CMAKE_PREFIX_PATH` in the `CMakeLists.txt` if you want your IDE to be able to load the project.
 
 
 
 ## Basics
 ### Technologies
-- C++
-- HDK
 
-### Algorithms
-- Path Tracing
 
 ### Resources
-- Ray Tracing Gems
-- The PBR Book
-- Fundamentals of Computer Graphics
 
-
-
-
-## Basics
 - Program is compiled as a houdini plugin
 - Program uses HDK for some of its computations
 -
@@ -84,23 +103,22 @@ Both of the folders are in turn devided on subfolders depending on usecase of th
 **TODO**
 
 ### Data transfer
-#### Houdini -> Renderer
+#### Houdini -> Plugin
 **TODO**
 
-#### Renderer -> Houdini
+#### Plugin -> Houdini
 **TODO**
 
 
 ## Algorithms
 
 
-
 ## Extending Functionality
 ### Changing the rendering algorithm
-**TODO**
+Entire rendering algorithm is in the file `PhysicallyBasedRenderer.cpp`.  If you want change it you should do that here.
 
 ### Changing the BxDFs
-**TODO**
+You can change BxDFs in the `BxDF.cpp`. There are both methods for evaluating BRDF/BTDF as well as generating sample direction.
 
 ### Adding materials
 To create a new material you have to make it a public child of `Material` class.  You have to implement `Evaluate` method which is purely virtual in the base class. You’re free to output any `TextureData` as long its values are inside the boundaries for texture data.
@@ -110,8 +128,10 @@ I. e., each individual parameter in the `TextureData` has to be in the interval 
 After implementing the material you have to register it into the texture hashmap. This is done in the file `PhysicallyBasedRenderer.cpp` in the renderers constructor. You have to pick keyword which isn’t in the hashmap yet as a key.
 
 ### Adding scene elements
+#### New Elements
 If you want to add entirely new scene element you can use one of the existing scene elements as reference e.g. `Camera`.
 
+#### Lights
 You might also want to implement different light than the default one (`ConstantRectangularLight`). In that case you should use `Light` as a base clase and implement its `GenerateSample` method.  This light may then be added to the scene during the light loading in the `RenderInterface.cpp`.
 
 ### Changing the node interface

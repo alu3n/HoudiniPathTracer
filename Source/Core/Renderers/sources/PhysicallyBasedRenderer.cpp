@@ -143,7 +143,6 @@ RGBEnergy PhysicallyBasedRenderer::ComputeReflection(const TextureData &textureD
     return brdfMultiplier*radiance;
 }
 
-//Todo: Fix refractions
 RGBEnergy PhysicallyBasedRenderer::ComputeRefraction(const TextureData &textureData, UT_Vector3F normalDir,
                                                        UT_Vector3F observationDir, UT_Vector3F intersectionPos,
                                                        int depth) {
