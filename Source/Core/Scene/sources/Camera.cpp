@@ -34,7 +34,7 @@ GU_Ray Camera::GenerateRay(UT_Vector2i PixelCoords) {
     UT_Vector3F XIncr = {XIncrement.x(),XIncrement.y(),XIncrement.z()};
     XIncr = Normalize(XIncr);
 
-    UT_Vector3F YIncr = {YIncrement.x(),YIncrement.y(),ZIncrement.z()};
+    UT_Vector3F YIncr = {YIncrement.x(),YIncrement.y(),YIncrement.z()};
     YIncr = Normalize(YIncr);
 
     UT_Vector3F Orig = {Origin.x(),Origin.y(),Origin.z()};

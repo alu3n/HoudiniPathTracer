@@ -25,6 +25,15 @@ This folder contains sample houdini files to test out the plugin.
 **`/Sources`**
 This folder contains source code for the plugin itself.
 
+### Data transfer
+#### Houdini -> Plugin
+The plugin is represented in Houdini as a ROP (Rendering Operator) node, whose parameters are treated as input to the plugin.  The parameters are combination of numeric parameters and links to builtin Houdini nodes.
+
+Once user presses the render button, those nodes are processed and transformed into scene elements. If the conversion was succesful scene is then rendered - this is done in `RenderInterface.cpp`.
+
+#### Plugin -> Houdini
+During rendering renderer progressively improves rendered image, which is displayed to MPlay window. Implementation of this can be seen in `RenderWindow.cpp`
+
 ### Resources
 Resources used during implementation are the following lectures and books.
 #### Books
@@ -48,13 +57,13 @@ This script does the same thing as previous one, but also opens Houdini with the
 ### Environment variables
 Before compiling the project you have to set a few environemnt variables. You have to do so in the file `Compilation/config.env`.
 - **`HFS`**
-    - This variable can be provided via typing `echo $HFS` to the **Houdini Terminal**
+  - This variable can be provided via typing `echo $HFS` to the **Houdini Terminal**
 - **`CMAKE_PREFIX_PATH`**
-    - This variable is path to the cmake folder in the HFS (it will probably be `${HFS}/toolkit/cmake`)
+  - This variable is path to the cmake folder in the HFS (it will probably be `${HFS}/toolkit/cmake`)
 - **`HOUDINI_BINARY_PATH`** (optional - needed only if you want to compile using `BuildDebug.sh`)
-    - This is path to the binary file of the houdini application itself (used to start houdini)
+  - This is path to the binary file of the houdini application itself (used to start houdini)
 - **`DEBUG_SCENE_PATH`** (optional - needed only if you want to compile using `BuildDebug.sh`)
-    - This is path to the scene you want to start using `BuildDebug.sh`
+  - This is path to the scene you want to start using `BuildDebug.sh`
 
 ### Setting up IDE
 You might have to set variables in `HFS` and `CMAKE_PREFIX_PATH` in the `CMakeLists.txt` if you want your IDE to be able to load the project properly.
@@ -66,43 +75,26 @@ Both of the folders are in turn devided on subfolders depending on usecase of th
 
 ### `Sources/Core`
 #### `/Materials`
+This folder is intended to store classes and functions related to textures, materials, reflection models etc.
 
-**TODO**
 #### `/Mathematics`
-**TODO**
+This folder is intended to store classes and functions doing mathematical computations - such as generating random samples or normalizing vectors.
+
 #### `/Physics`
-**TODO**
+This folder is intended to store classes and functions doing or supporting physical computations such as computing ideal reflections, units for storing energy etc.
+
 #### `/Renderers`
-**TODO**
+This folder contains render engine itself and some classes which help with storing of rendered images.
+
 #### `/Scene`
-**TODO**
+This folder contains scene elements such as cameras, lights, geometry etc.
 
 ### `Sources/Hook`
 #### `/Nodes`
-**TODO**
+This folder stores implementation of the renderer node interface.
+
 #### `/Other`
-**TODO**
-
-## Implementation details
-### Plugin
-**TODO**
-
-### Renderer
-**TODO**
-
-### Scene
-**TODO**
-
-### Data transfer
-#### Houdini -> Plugin
-**TODO**
-
-#### Plugin -> Houdini
-**TODO**
-
-
-## Algorithms
-
+This folder stores functions and classes that provide means of communication between the render engine and houdini application, as well as support methods for hooking the plugin into houdini.
 
 ## Extending Functionality
 ### Changing the rendering algorithm
@@ -126,11 +118,6 @@ If you want to add entirely new scene element you can use one of the existing sc
 You might also want to implement different light than the default one (`ConstantRectangularLight`). In that case you should use `Light` as a base clase and implement its `GenerateSample` method.  This light may then be added to the scene during the light loading in the `RenderInterface.cpp`.
 
 ### Changing the node interface
-If you want to change node interface you can do so in the `RendererNode.cpp`.  More information on node interfaces is available in the [HDK: Working with Parameters](https://www.sidefx.com/docs/hdk/_h_d_k__node_intro__working_with_parameters.html). After adding new parameters correct place to access them is the `RenderInterface.cpp`.
-
-
-
-# OTHER
-Materials are classes derived from the `Material` class that are keepable of evaluating texture data at a certain point in space. The texture data is then used to drive appearance of the object via BxDFs.
+If you want to change node interface you can do so in the `RendererNode.cpp`.  More information on node interfaces is available in the [HDK: Working with Parameters](https://www.sidefx.com/docs/hdk/_h_d_k__node_intro__working_with_parameters.html). After adding new parameters correct place to access them is the `RenderInterface.cpp`. 
 
 
