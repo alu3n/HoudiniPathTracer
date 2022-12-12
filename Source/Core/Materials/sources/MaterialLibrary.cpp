@@ -77,6 +77,7 @@ MaterialRoughGlass::MaterialRoughGlass() : ConstantMaterial({}){
     data.DiffuseColor = {0.2,0.2,0.2};
 }
 
+
 constexpr float period = 1;
 
 TextureData ProceduralTiles::Evaluate(UT_Vector3F position) {

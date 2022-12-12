@@ -7,6 +7,14 @@
 
 #include "../include/Material.hpp"
 
+/*
+ * This header file serves as a common place for all Materials
+ *
+ * When you're creating a new material put its declaration in here,
+ * you can implement it elsewhere but to avoid including multiple
+ * into the PhysicallyBasedRenderer.cpp keep them in here!
+ */
+
 class MaterialDefault : public ConstantMaterial{
 public:
     MaterialDefault();

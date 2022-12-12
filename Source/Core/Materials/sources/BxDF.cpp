@@ -38,6 +38,8 @@ BSDF::EvaluateBRDF(const TextureData & textureData, UT_Vector3F outgoingDir, UT_
 
     auto diffuse = refractedCoeff * EvaluateDiffuseBRDF(textureData,outgoingDir,incommingDir,normalDir);
     auto specular = reflectedCoeff * EvaluateSpecularBRDF(textureData,outgoingDir,incommingDir,normalDir);
+
+
     return diffuse + specular;
 }
 

@@ -8,6 +8,14 @@
 #include <vector>
 #include <UT/UT_Vector3.h>
 
+/*
+ * Purpose of this header is to create image representation flexible enough,
+ * so it can be broken into individual tiles together making up the image.
+ *
+ * Each tile contains information about the part of the image it is representing
+ * therefore we can pass the renderer image tile and a number of samples
+ * which whom we want to improve the image.
+ */
 
 struct Color{
     float r;

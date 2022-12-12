@@ -5,8 +5,13 @@
 #ifndef NPRG045_RENDERER_HPP
 #define NPRG045_RENDERER_HPP
 
-#include "../../Scene/include/Scene.hpp"
 #include "ImageRepresentation.hpp"
+#include "../../Scene/include/Scene.hpp"
+
+/*
+ * This is predecessor for all render engines. If you want to implement new render engine you should
+ * base it on this class.
+ */
 
 class Renderer{
 public:

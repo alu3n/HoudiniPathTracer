@@ -11,6 +11,10 @@
 
 #include "../../Physics/include/Units.hpp"
 
+/*
+ * TextureData is struct used by the BSDF to alter its output values.
+ */
+
 struct TextureData{
     RGBEnergy DiffuseColor;
     float ReflectionRoughness;

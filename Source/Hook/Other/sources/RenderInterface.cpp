@@ -65,17 +65,12 @@ void RenderInterface::Render() {
     PhysicallyBasedRenderer Renderer = PhysicallyBasedRenderer(*scene.get());
     Image img(ImageResX,ImageResY,TileResX,TileResY);
 
-//    renderWindow.Device->terminateOnConnectionLost(true);
-//    renderWindow.Device->close(false);
-
-//    UT_Exit::exit(UT_Exit::EXIT_OK);
 
     for(int i = 0; i < CycleCount; ++i){
+        std::cout << "Rendering Cycle " << i << "/" << CycleCount << std::endl;
         for(auto && tile : img.data){
             Renderer.ImproveTile(tile,SamplesPerCycle);
-//            renderWindow.Open({ImageResX,ImageResY},{TileResX,TileResY});
             renderWindow.DisplayTile(tile);
-//            renderWindow.Device->close();
         }
     }
 
@@ -104,7 +99,6 @@ void RenderInterface::RenderFrame(fpreal time) {
 //Throw exception when unable to load the light
 Light* RenderInterface::LoadLight(UT_String lightPath,OP_Context context) {
     if(OPgetDirector()->findNode(lightPath) == NULL) throw "non existent node";
-//    auto lightNode = OPgetDirector()->getOBJNode(lightPath)->castToOBJLight();
     auto lightNode = OPgetDirector()->getOBJNode(lightPath);
     if(!lightNode) throw "wrong node";
 

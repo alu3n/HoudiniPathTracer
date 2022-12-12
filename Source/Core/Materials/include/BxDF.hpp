@@ -10,12 +10,10 @@
 #include "../../Mathematics/include/Sampling.hpp"
 #include "../../Physics/include/Units.hpp"
 
-
-//Todo: Move those functions to separate header!
-//std::array<float,3> operator*(const std::array<float,3> &,const std::array<float,3> &);
-//RGBRadiance operator*(const std::array<float,3> &, const RGBRadiance &);
-
-//Todo: Maybe make the BRDF static
+/*
+ * This class is representing BSDF, which is combination of BRDF and BTDF
+ * It houses methods for both evaluating BRDF adn generating samples
+ */
 
 class BSDF{
 public:

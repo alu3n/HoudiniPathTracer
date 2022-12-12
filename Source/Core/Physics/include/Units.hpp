@@ -6,8 +6,10 @@
 #define NPRG045_QUANTITIES_HPP
 
 #include <stdexcept>
-#include <array>
 
+/*
+ * This header contains struct which is used as a main representation of energy during the rendering.
+ */
 
 struct RGBEnergy{
     float R;

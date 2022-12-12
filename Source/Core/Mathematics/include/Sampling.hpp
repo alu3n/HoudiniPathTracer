@@ -10,17 +10,16 @@
 
 #include "Coordinates.hpp"
 
-//#include <UT/UT_Vector2.h>
-
-
-
-//Default generator is uniform
+/*
+ * This header contains all functions which are meant to generate random values
+ */
 
 class Generator{
 public:
     static float GenerateF01();
     static float GenerateFRange(float min, float max);
     static int GenerateIRange(int min, int max);
+    static UT_Vector3F RandomDir(UT_Vector3F normalDir);
 
     template<int num>
     static std::array<float,num> GenerateF01(){
@@ -48,7 +47,6 @@ public:
         return temp;
     }
 
-    static UT_Vector3F RandomDir(UT_Vector3F normalDir);
 };
 
 

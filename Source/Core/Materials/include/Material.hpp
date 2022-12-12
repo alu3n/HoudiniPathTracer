@@ -7,6 +7,17 @@
 
 #include "Texture.hpp"
 
+/*
+ * Materials are used to drive the appearance, the BSDF utilizes TextureData values
+ * for its computations, material is responsible for generating of TextureData values
+ * at a certain point.
+ *
+ * Materials can be used to create both procedural R3->TextureSpace which vary depending
+ * on the position in 3D space and textures that are constant.
+ *
+ * For procedural textures use Material as predecessor, for constant use ConstantMaterial
+ */
+
 class Material{
 public:
     virtual TextureData Evaluate(UT_Vector3F position) = 0;

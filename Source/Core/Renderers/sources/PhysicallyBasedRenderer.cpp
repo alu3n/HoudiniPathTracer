@@ -36,7 +36,7 @@ float PhysicallyBasedRenderer::EliminationProbability(int depth){
 }
 
 bool PhysicallyBasedRenderer::ShouldEliminate(int depth) {
-    return gen.GenerateF01() < EliminationProbability(depth);
+    return Generator::GenerateF01() < EliminationProbability(depth);
 }
 
 

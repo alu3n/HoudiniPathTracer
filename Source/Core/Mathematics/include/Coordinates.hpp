@@ -7,13 +7,9 @@
 
 #include <UT/UT_Vector.h>
 
-//struct PolarCoordinates{
-//    float r = 0;
-//    float azimuth = 0;
-//    PolarCoordinates(float r, float azimuth);
-//    PolarCoordinates(float azimuth);
-//    PolarCoordinates() = default;
-//};
+/*
+ * This file is intended to store definitions of all classes and functions regarding Coordinates
+ */
 
 struct SphericalCoords{
     float r = 0;

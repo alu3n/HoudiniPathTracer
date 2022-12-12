@@ -7,6 +7,9 @@
 
 #include <UT/UT_Vector.h>
 
+/*
+ * This header contains all functions related to optics computations
+ */
 
 UT_Vector3F PerfectReflection(UT_Vector3F observationDir, UT_Vector3F normalDir);
 UT_Vector3F PerfectRefraction(UT_Vector3F observationDir, UT_Vector3F normalDir, float IOR1, float IOR2);

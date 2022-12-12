@@ -15,12 +15,15 @@
 #include "../../Materials/include/Material.hpp"
 #include "../../Materials/include/BxDF.hpp"
 
+/*
+ * This is the class responsible for rendering the scene.
+ */
+
 class PhysicallyBasedRenderer : public Renderer{
 public:
-    PhysicallyBasedRenderer(Scene myScene);
-    virtual void ImproveTile(ImageTile & tile,int sampleCount) override;
+    explicit PhysicallyBasedRenderer(Scene myScene);
+    void ImproveTile(ImageTile & tile,int sampleCount) override;
 private:
-    Generator gen{};
     GU_RayIntersect * intersect;
     Color ComputePixel(UT_Vector2i coordinates);
     TextureData GetTextureData(GU_RayInfo info, UT_Vector3F position);
@@ -34,9 +37,7 @@ private:
     float EliminationProbability(int depth);
     bool ShouldEliminate(int depth);
 
-
     std::map<std::string,std::unique_ptr<Material>> Materials;
-//    std::vector<std::unique_ptr<Material>> Materials;
     std::unique_ptr<Material> DefaultMaterial;
 };
 
