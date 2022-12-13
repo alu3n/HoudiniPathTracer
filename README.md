@@ -17,6 +17,7 @@ Individual software project for [NPRG045](https://is.cuni.cz/studium/predmety/in
 
 ## Further Documentation
 **Development Documentation** - `Documentation/DevelopmentDocumentation.md`
+
 **User Manual** - `Documentation/UserManual.md`
 
 ## Sample scenes
