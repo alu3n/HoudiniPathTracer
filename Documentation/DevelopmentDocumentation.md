@@ -46,6 +46,16 @@ Resources used during implementation are the following lectures and books.
 - [Advanced 3D Graphics for Movies and Games](https://cgg.mff.cuni.cz/courses/advanced-3d-graphics-for-movies-and-games/)
 
 ## Compilation
+### Requirements
+#### General
+- Houdini 19.5
+
+#### MacOS
+- XCode
+
+#### Linux
+- Follow instructions from the [HDK documentation](https://www.sidefx.com/docs/hdk/_h_d_k__intro__getting_started.html)
+
 ### Compilation scripts
 There are two scripts used to compile the projects. In order for them to work you have to set the environment variables.
 #### `Build.sh`
@@ -118,6 +128,4 @@ If you want to add entirely new scene element you can use one of the existing sc
 You might also want to implement different light than the default one (`ConstantRectangularLight`). In that case you should use `Light` as a base clase and implement its `GenerateSample` method.  This light may then be added to the scene during the light loading in the `RenderInterface.cpp`.
 
 ### Changing the node interface
-If you want to change node interface you can do so in the `RendererNode.cpp`.  More information on node interfaces is available in the [HDK: Working with Parameters](https://www.sidefx.com/docs/hdk/_h_d_k__node_intro__working_with_parameters.html). After adding new parameters correct place to access them is the `RenderInterface.cpp`. 
-
-
+If you want to change node interface you can do so in the `RendererNode.cpp`.  More information on node interfaces is available in the [HDK: Working with Parameters](https://www.sidefx.com/docs/hdk/_h_d_k__node_intro__working_with_parameters.html). After adding new parameters correct place to access them is the `RenderInterface.cpp`.

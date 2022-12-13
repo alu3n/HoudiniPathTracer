@@ -1,55 +1,24 @@
 # HoudiniPathTracer
-Individual software project for NPRG045.
-
-## Compatibility
-As of September 3. 2022 this library was only tested on Apple Silicon based macOS machine (version 19.5.353 arm64). The code should be compatible with other builds of the Houdini 19.5 but it wasn't tested yet.
+Individual software project for [NPRG045](https://is.cuni.cz/studium/predmety/index.php?do=predmet&kod=NPRG045).
 
 ## Requirements
-For more information check out [HDK documentation](https://www.sidefx.com/docs/hdk/_h_d_k__intro.html)
-### MacOS
-- XCode
-- Houdini 19.5
-### Linux
-- TODO
-### Windows
-- TODO
+### Compatibility
+**OS:** MacOS, Linux 
+**Houdini version:** 19.5
 
-## Build instructions
-1) Download and install required libraries
-2) Set environment variables in the `config.env` file
-3) Run `run.sh`
+### Precompiled Binaries
+**Mac OS (Apple Silicon):** There is precompiled dynamic library for this OS, you can find it in the binaries folder.
+**Other OS:** You have to compile the plugin yourself - therefore there will be some additional requirements. For more information check out the development documentation.
 
-# Technical documentation
-There are technically two main parts of the source code - first one is core part,
-which encapsulates functionality of the renderer itself such as illumination computation, 
-etc.. Second part is houdini hook which is responsible for the communication with the
-houdini software through their api.
+## Instalation guide
+### MacOS (Apple Silicon)
+1) Put the `HoudiniPathTracer.dylib` into this folder `$HOME/Library/Preferences/houdini/19.5/dso`
+2) Restart houdini
 
-**STRUCTURE**
-## Core
-### Materials
-This folder is dedicated to classes and functions related to the materials
-in the renderer portion of the project.
+## Further Documentation
+**Development Documentation** - `Documentation/DevelopmentDocumentation.md`
+**User Manual** - `Documentation/UserManual.md`
 
-### Mathematics
-This folder is dedicated to mathematical classes and functions used all over
-the project.
-
-### Physics
-This folder is dedicated to physical classes and functions used in the renderer
-portion of the project.
-
-### Renderers
-This folder contains the main rendering logic for the project renderers.
-
-### Scene
-This folder contains classes which make up the scene.
-
-### Textures
-This folder is dedicated to textures.
-
-
-## Sample Scenes
-### Morning Room
-### Statue
-### Teapot
+## Sample scenes
+- There is a folder `Samples`, which contains a few test scenes with the scene ready to render
+- There are available renders of those scenes in the `Galery` folder

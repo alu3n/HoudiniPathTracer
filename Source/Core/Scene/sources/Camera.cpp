@@ -5,9 +5,10 @@
 #include "../include/Camera.hpp"
 #include "../../Mathematics/include/LinearAlgebra.hpp"
 
-Camera::Camera(OBJ_Camera *cam, OP_Context &context) {
+
+Camera::Camera(OBJ_Camera *cam, OP_Context &context, int resX, int resY, float focalLength, float aperature, float fStop, float focusDistance) {
     CameraNode = cam;
-    LoadCamera(context);
+    LoadCamera(context,resX,resY,focalLength,aperature,fStop,focusDistance);
 }
 
 
@@ -46,20 +47,15 @@ GU_Ray Camera::GenerateRay(UT_Vector2i PixelCoords) {
     return {aperaturePos,newDir};
 }
 
-void Camera::LoadCamera(OP_Context &context) {
-    auto time = context.getTime();
-
-    ImageResolution = UT_Vector2i(
-            CameraNode->evalInt("res", 0, time),
-            CameraNode->evalInt("res", 1, time)
-    );
+void Camera::LoadCamera(OP_Context & context, int resX, int resY, float focalLength, float aperature, float fStop, float focusDistance) {
+    ImageResolution = {resX,resY};
 
     UT_Matrix4F worldTransform{0};
 
-    FocalLength = CameraNode->evalFloat("focal", 0, time) / 1000.0; //mm -> m
-    Aperture = CameraNode->evalFloat("aperture", 0, time) / 1000.0; //mm -> m
-    fstop = 1/CameraNode->evalFloat("fstop",0,time);
-    focus = CameraNode->evalFloat("focus",0,time);
+    FocalLength = focalLength / 1000.0; //mm -> m
+    Aperture = aperature / 1000.0; //mm -> m
+    fstop = 1/fStop;
+    focus = focusDistance;
 
     CameraNode->getLocalToWorldTransform(context,worldTransform);
 

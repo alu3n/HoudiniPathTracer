@@ -13,11 +13,11 @@
 
 class Camera{
 public:
-    Camera(OBJ_Camera * cam, OP_Context & context);
+    Camera(OBJ_Camera * cam, OP_Context & context, int resX, int resY, float focalLength, float aperature, float fStop, float focusDistance);
     GU_Ray GenerateRay(UT_Vector2i);
     UT_Vector2i ImageResolution{0,0};
 private:
-    void LoadCamera(OP_Context & context);
+    void LoadCamera(OP_Context & context, int resX, int resY, float focalLength, float aperature, float fStop, float focusDistance);
 
     OBJ_Camera * CameraNode;
 

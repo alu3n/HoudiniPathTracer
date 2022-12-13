@@ -16,35 +16,42 @@
 
 
 
-constexpr float currentTime = 0;
+//constexpr float currentTime = 0;
 
+/*
+ * Purpose of those boundaries is to prevent unwanted numerical errors etc.
+ */
+
+constexpr float largeF = 1000000.0;
+constexpr float smallF = 0.0001;
 
 //Light boundaries
 constexpr float minLightIntensity = 0;
-constexpr float maxLightIntensity = std::numeric_limits<float>::max();
+constexpr float maxLightIntensity = largeF;
 constexpr float minLightArea = 0;
-constexpr float maxLightArea = std::numeric_limits<float>::max();
+constexpr float maxLightArea = largeF;
 constexpr float minLightColor = 0;
 constexpr float maxLightColor = 1;
 
-//Camera boundaries
-constexpr float minFStop = 0.001;
-constexpr float maxFStop = std::numeric_limits<float>::max();
-
 //Renderer boundaries
+constexpr int minTileSize = 1;
+constexpr int maxTileSize = 128;
+constexpr int minCycleCount = 1;
+constexpr int maxCycleCount = 10000;
+constexpr int minSamplesPerCycle = 1;
+constexpr int maxSamplesPerCycle = 100;
 
-
-
-
-
-//constexpr float min
-
-
-//Render boundaries
-
-
-
-
+//Camera boundaries
+constexpr float minFStop = smallF;
+constexpr float maxFStop = largeF;
+constexpr int minResolution = 1;
+constexpr int maxResolution = 4096;
+constexpr float minAperature = 1;
+constexpr float maxAperature = 10000;
+constexpr float minFocalLenght = 1;
+constexpr float maxFocalLength = 10000;
+constexpr float minFocusDistance = smallF;
+constexpr float maxFocusDistance = largeF;
 
 
 RenderInterface::RenderInterface(RendererNode *node) {
@@ -80,13 +87,10 @@ void RenderInterface::Render() {
 }
 
 void RenderInterface::RenderFrame(fpreal time) {
-    std::cout << "Started Loading" << std::endl;
-
     OP_Context context(time);
     LoadData(context);
 
     if(!LoadFailed){
-        std::cout << "Starting render" << std::endl;
         auto start = std::chrono::steady_clock::now();
         Render();
         std::cout << "Render done in " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() << "ms" << std::endl;
@@ -96,7 +100,6 @@ void RenderInterface::RenderFrame(fpreal time) {
     }
 }
 
-//Throw exception when unable to load the light
 Light* RenderInterface::LoadLight(UT_String lightPath,OP_Context context) {
     if(OPgetDirector()->findNode(lightPath) == NULL) throw "non existent node";
     auto lightNode = OPgetDirector()->getOBJNode(lightPath);
@@ -124,9 +127,9 @@ Light* RenderInterface::LoadLight(UT_String lightPath,OP_Context context) {
     ConstantRectangularLight * light = new ConstantRectangularLight(
         {PX,PY,PZ},
         {RX,RY,RZ},
-        {SX,SY},
-        I,
-        {CR,CG,CB}
+        {B(SX,minLightArea,maxLightArea),B(SY,minLightArea,maxLightArea)},
+        B(I,minLightIntensity,maxLightIntensity),
+        {B(CR,minLightColor,maxLightColor),B(CG,minLightColor,maxLightColor),B(CB,minLightColor,maxLightColor)}
     );
 
     return light;
@@ -162,7 +165,13 @@ Camera RenderInterface::LoadCamera(UT_String cameraPath, OP_Context context) {
         ImageResY = cameraNode->evalInt("res",1,0);
 
 
-        return Camera(cameraNode,context);
+        auto focalLength = B(cameraNode->evalFloat("focal", 0, 0),minFocalLenght,maxFocalLength);
+        auto aperture = B(cameraNode->evalFloat("aperture", 0, 0),minAperature,maxAperature);
+        auto fStop = B(cameraNode->evalFloat("fstop",0,0),minFStop,maxFStop);
+        auto focusDistance = B(cameraNode->evalFloat("focus",0,0),minFocusDistance,maxFocusDistance);
+
+
+        return Camera(cameraNode,context,ImageResX,ImageResY,focalLength,aperture,fStop,focusDistance);
     }
     catch(...){
         std::cout << "Camera EXP" << std::endl;
@@ -192,10 +201,10 @@ Lights RenderInterface::LoadLights(OP_Context context) {
 void RenderInterface::LoadData(OP_Context context) {
     float t = context.getTime();
 
-    TileResX = rendererNode->evalInt("tileSize", 0, t);
-    TileResY = rendererNode->evalInt("tileSize", 1, t);
-    CycleCount = rendererNode->evalInt("cycleCount", 0, t);
-    SamplesPerCycle = rendererNode->evalInt("samplesPerCycle", 0, t);
+    TileResX = B(rendererNode->evalInt("tileSize", 0, t),minTileSize,maxTileSize);
+    TileResY = B(rendererNode->evalInt("tileSize", 1, t),minTileSize,maxTileSize);
+    CycleCount = B(rendererNode->evalInt("cycleCount", 0, t),minCycleCount,maxCycleCount);
+    SamplesPerCycle = B(rendererNode->evalInt("samplesPerCycle", 0, t),minSamplesPerCycle,maxSamplesPerCycle);
 
     UT_String cameraPath;
     UT_String geometryPath;

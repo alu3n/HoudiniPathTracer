@@ -28,14 +28,15 @@ static PRM_Name prmNames[]{
 };
 
 
-void foo(void *data){
+void Render(void *data){
     RenderInterface Interface((RendererNode *)data);
     Interface.RenderFrame(0);
 }
 
 int RenderFrame(void *data, int index, fpreal64 time, const PRM_Template *tplate){
-    std::thread th1(foo,data);
+    std::thread th1(Render,data);
     th1.detach();
+    return 0;
 }
 
 //static auto callBack = {PRM_Callback(RenderFrame)};
