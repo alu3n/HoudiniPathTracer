@@ -4,10 +4,12 @@ Individual software project for [NPRG045](https://is.cuni.cz/studium/predmety/in
 ## Requirements
 ### Compatibility
 **OS:** MacOS, Linux 
+
 **Houdini version:** 19.5
 
 ### Precompiled Binaries
 **Mac OS (Apple Silicon):** There is precompiled dynamic library for this OS, you can find it in the binaries folder.
+
 **Other OS:** You have to compile the plugin yourself - therefore there will be some additional requirements. For more information check out the development documentation.
 
 ## Instalation guide
