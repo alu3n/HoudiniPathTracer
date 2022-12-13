@@ -24,4 +24,4 @@ Individual software project for [NPRG045](https://is.cuni.cz/studium/predmety/in
 
 ## Sample scenes
 - There is a folder `Samples`, which contains a few test scenes with the scene ready to render
-- There are available renders of those scenes in the `Galery` folder
+- There are available renders of those scenes in the `Gal sery` folder
