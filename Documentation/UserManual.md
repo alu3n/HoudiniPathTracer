@@ -7,12 +7,15 @@ In order to render an image you have to specify the following parameters in the 
 
 ### Renderer Parameters
 #### Tile Size
+- Values range: [1,128]
 Image is broken down into individual tiles whose size is determined by this parameter. Renderer updates individual tiles. Keeping this value small will result in more frequent update of the rendered image, but it might slow down the rendering a bit.
 
 #### Cycle Count
+- Values range: [1,10000]
 Each tile is improved n number of times, where n is the cycle count.
 
 #### Samples Per Cycle
+- Values range: [1,100]
 During each improvement cycle each pixel will be sampled n times, where n is the number of samples per cycle.
 
 #### Geometry
@@ -66,10 +69,15 @@ During scene layout you might view your scene through the camera, renderer mimic
 - Translate
 - Rotate
 - Resolution
-- Focal Lenght
+  - Values range: [1,4096]
+- Focal Length
+  - Values range: [1,10000]
 - Aperature
+  - Values range: [1,10000]
 - Focus Distance
+  - Values range: [0.0001,1000000]
 - F-Stop
+  - Values range: [0.0001,1000000]
 
 Those parameters are described in the [Houdini Documentation](https://www.sidefx.com/docs/houdini/render/cameras.html)
 

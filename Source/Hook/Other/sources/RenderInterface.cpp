@@ -64,7 +64,6 @@ float B(float val, float min, float max){
     return rtrval > max ? max : rtrval;
 }
 
-//Todo: Avoid crashing when wrong node provided
 
 void RenderInterface::Render() {
 
@@ -161,15 +160,13 @@ Camera RenderInterface::LoadCamera(UT_String cameraPath, OP_Context context) {
         auto cameraNode = OPgetDirector()->getOBJNode(cameraPath)->castToOBJCamera();
         if(!cameraNode) throw "wrong node";
 
-        ImageResX = cameraNode->evalInt("res",0,0);
-        ImageResY = cameraNode->evalInt("res",1,0);
-
+        ImageResX = B(cameraNode->evalInt("res",0,0),minResolution,maxResolution);
+        ImageResY = B(cameraNode->evalInt("res",1,0),minResolution,maxResolution);
 
         auto focalLength = B(cameraNode->evalFloat("focal", 0, 0),minFocalLenght,maxFocalLength);
         auto aperture = B(cameraNode->evalFloat("aperture", 0, 0),minAperature,maxAperature);
         auto fStop = B(cameraNode->evalFloat("fstop",0,0),minFStop,maxFStop);
         auto focusDistance = B(cameraNode->evalFloat("focus",0,0),minFocusDistance,maxFocusDistance);
-
 
         return Camera(cameraNode,context,ImageResX,ImageResY,focalLength,aperture,fStop,focusDistance);
     }

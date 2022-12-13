@@ -10,7 +10,6 @@
 #include "../include/Geometry.hpp"
 #include "../../Mathematics/include/LinearAlgebra.hpp"
 
-//Todo: Load gdh in the core part
 Geometry::Geometry(SOP_Node *geometryNode, OP_Context & context){
     gdh = static_cast<GU_DetailHandle *>(geometryNode->getCookedData(context));
 

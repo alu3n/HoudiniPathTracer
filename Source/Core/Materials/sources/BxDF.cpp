@@ -54,7 +54,6 @@ UT_Vector3F BSDF::GenerateReflection(const TextureData & textureData, UT_Vector3
 
 RGBEnergy BSDF::EvaluateBTDF(const TextureData & textureData) {
     return {1,1,1};
-    //Todo: Implement this function :)
 }
 
 

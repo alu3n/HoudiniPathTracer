@@ -119,9 +119,6 @@ Image::Image(int imageResX, int imageResY, int tileResX, int tileResY) {
             ++id;
         }
     }
-
-    //Todo: Room for improvement - better tile rendering order
-    //Todo: Implement rendering of clicked tile :)
     //This might require complete rework of the tile rendering system though
     auto rng = std::default_random_engine {};
     std::shuffle(data.begin(),data.end(),rng);
